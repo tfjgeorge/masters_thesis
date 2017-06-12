@@ -4,8 +4,13 @@
 \begin_header
 \save_transient_properties true
 \origin unavailable
-\textclass article
+\textclass amsbook
 \use_default_options true
+\begin_removed_modules
+theorems-ams
+eqs-within-sections
+figs-within-sections
+\end_removed_modules
 \maintain_unincluded_children false
 \language english
 \language_package default
@@ -27,6 +32,7 @@
 \bibtex_command default
 \index_command default
 \paperfontsize default
+\spacing single
 \use_hyperref false
 \papersize default
 \use_geometry false
@@ -71,7 +77,232 @@
 \begin_body
 
 \begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
 
+\end_inset
+
+
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Chapter
+Neural networks
+\end_layout
+
+\begin_layout Section
+Artificial intelligence
+\end_layout
+
+\begin_layout Section
+Machine learning
+\end_layout
+
+\begin_layout Subsection
+Parametric functions and learning
+\end_layout
+
+\begin_layout Itemize
+
+\end_layout
+
+\begin_layout Subsection
+Empirical risk
+\end_layout
+
+\begin_layout Subsection
+Regularization
+\end_layout
+
+\begin_layout Section
+Neural networks
+\end_layout
+
+\begin_layout Itemize
+stack layers that produce new representations of the incoming data
+\end_layout
+
+\begin_layout Itemize
+standard architecture : linear transformation / non-linearity elementwise
+\end_layout
+
+\begin_layout Section
+Common types of neural networks
+\end_layout
+
+\begin_layout Subsection
+Recurrent neural networks
+\end_layout
+
+\begin_layout Subsection
+Convolutions
+\end_layout
+
+\begin_layout Subsection
+Autoencoders
+\end_layout
+
+\begin_layout Section
+More elaborated cost functions
+\end_layout
+
+\begin_layout Itemize
+quadratic, cross entropy
+\end_layout
+
+\begin_layout Itemize
+neural art
+\end_layout
+
+\begin_layout Itemize
+GANs
+\end_layout
+
+\begin_layout Chapter
+An example task for neural networks: learning to generate texture images
+\end_layout
+
+\begin_layout Chapter
+Optimization of neural networks
+\end_layout
+
+\begin_layout Section
+Gradient descent and backpropagation
+\end_layout
+
+\begin_layout Itemize
+no closed form solution
+\end_layout
+
+\begin_layout Itemize
+gradient descent
+\end_layout
+
+\begin_layout Itemize
+backpropagation
+\end_layout
+
+\begin_layout Section
+Stochastic gradient descent
+\end_layout
+
+\begin_layout Itemize
+gradient estimate
+\end_layout
+
+\begin_layout Itemize
+computational considerations
+\end_layout
+
+\begin_layout Itemize
+regularization effect of stochasticity ?
+\end_layout
+
+\begin_layout Section
+Hyperparameters and focus on the learning rate
+\end_layout
+
+\begin_layout Itemize
+hyperparameters (difference with parameters)
+\end_layout
+
+\begin_layout Itemize
+learning rate using the hessian + mathematical results
+\end_layout
+
+\begin_layout Section
+Limits of (stochastic) gradient descent
+\end_layout
+
+\begin_layout Section
+A standard benchmark: Autoencoding written digits
+\end_layout
+
+\begin_layout Itemize
+presentation mnist
+\end_layout
+
+\begin_layout Itemize
+task, history (hinton)
+\end_layout
+
+\begin_layout Itemize
+limits of the architecture
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+sigmoids
+\end_layout
+
+\begin_layout Itemize
+multi layer perceptron instead of conv
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+limits of the benchmark
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+specific task
+\end_layout
+
+\begin_layout Itemize
+quadratic loss
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+HP plots
+\end_layout
+
+\begin_layout Chapter
+Advanced optimization
+\end_layout
+
+\begin_layout Section
+Gradient smoothing methods
+\end_layout
+
+\begin_layout Itemize
+cost landscape with valleys and plateaus
+\end_layout
+
+\begin_layout Itemize
+momentum
+\end_layout
+
+\begin_layout Section
+Batch normalization
+\end_layout
+
+\begin_layout Section
+Gradient linearization
+\end_layout
+
+\begin_layout Section
+Second order methods
+\end_layout
+
+\begin_layout Section
+Second order: a new perspective
+\end_layout
+
+\begin_layout Section
+Methods using the FIM
+\end_layout
+
+\begin_layout Section
+Links with well-known methods
+\end_layout
+
+\begin_layout Chapter*
+Conclusions
 \end_layout
 
 \end_body
