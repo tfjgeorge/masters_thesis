@@ -106,7 +106,15 @@ Parametric functions and learning
 \end_layout
 
 \begin_layout Itemize
+task : given input datum, give an answer
+\end_layout
 
+\begin_layout Itemize
+common probabilistic tasks 
+\end_layout
+
+\begin_layout Itemize
+common industry tasks
 \end_layout
 
 \begin_layout Subsection
@@ -115,6 +123,14 @@ Empirical risk
 
 \begin_layout Subsection
 Regularization
+\end_layout
+
+\begin_layout Itemize
+bias / variance trade off
+\end_layout
+
+\begin_layout Itemize
+overfitting
 \end_layout
 
 \begin_layout Section
@@ -281,24 +297,78 @@ momentum
 Batch normalization
 \end_layout
 
-\begin_layout Section
-Gradient linearization
+\begin_layout Itemize
+covariate shift
+\end_layout
+
+\begin_layout Itemize
+effect on the forward pass, and the gradient
 \end_layout
 
 \begin_layout Section
 Second order methods
 \end_layout
 
+\begin_layout Itemize
+quadratic hypothesis
+\end_layout
+
+\begin_layout Itemize
+Newton, gauss-newton
+\end_layout
+
+\begin_layout Section
+Gradient linearization
+\end_layout
+
+\begin_layout Itemize
+motivation: do not update all parameters at once but instead layer by layer,
+ updating the gradient to account for modification of the parameters before
+ updating other layers
+\end_layout
+
+\begin_layout Itemize
+expressions for common loss functions
+\end_layout
+
 \begin_layout Section
 Second order: a new perspective
+\end_layout
+
+\begin_layout Itemize
+factorization of the hessian & 
+\end_layout
+
+\begin_layout Itemize
+measure of the induced change on the output of the function/on the loss
 \end_layout
 
 \begin_layout Section
 Methods using the FIM
 \end_layout
 
+\begin_layout Itemize
+kfac
+\end_layout
+
+\begin_layout Itemize
+nnn
+\end_layout
+
+\begin_layout Itemize
+overcoming catastrophic forgetting
+\end_layout
+
 \begin_layout Section
 Links with well-known methods
+\end_layout
+
+\begin_layout Itemize
+rmsprop
+\end_layout
+
+\begin_layout Itemize
+msprop
 \end_layout
 
 \begin_layout Chapter*
