@@ -1,0 +1,307 @@
+% N.B. : Assurez-vous de compiler ce fichier en employant "pdflatex" afin que les images soient incluses.
+
+% Tout commentaire est bienvenu et devrait être adressé à "support@dms.umontreal.ca".
+%\PassOptionToPackage{longnamesfirst,numbers}{natbib}
+\documentclass[12pt,maitrise,nobabel,anglais,twoside,initial]{dms} 
+% La commande précédente charge la classe "dms.cls" avec les options suivantes : 
+%   -police de caractères en 12 pts 
+%   -format adapté à une thèse de doctorat 
+%   -écriture en anglais
+%   -impression recto-verso.
+%   -adapté pour le dépôt initial (enlever l'option pour le dépôt final)
+%
+% Modifiez cette commande selon vos besoin à l'aide des options suivants :
+% maitrise			mémoire de maîtrise;
+% phd				thèse de doctorat;
+% phdart                        thèse de doctorat par articles;
+% rapport			rapport de stage;
+% travaildirige			travail dirigé;
+% oneside			impression recto;
+% twoside			impression recto-verso.
+% initial			depot initial (sans l'option pour depot final)
+% policeTNR                     pour utiliser (l'équivalent de) Times New Roman (sinon <lmodern> est chargé, la fonte par défaut)
+% nobabel=anglais		document en anglais seulement
+% frenchb			document en français
+% frenchb,english		document en français contenant de l'anglais (utiliser \selectlanguage{} )
+
+%\usepackage[utf8]{inputenc}		% Déjà chargés dans la classe
+%\usepackage[T1]{fontenc}
+
+\usepackage[canadian]{babel}  %Equivalent to USenglish.  As options, there are also : british, australian, newzealand
+\usepackage{standalone}
+
+
+% La commande \sloppy peut avoir des effets étranges sur les
+% lignes de certains paragraphes.  Dans ce cas, essayez \fussy
+% qui suppresse les effets de \sloppy. (\fussy est le comportement par défaut.)
+% On redéfinit \sloppy, pour tenter de réduire les comportements étranges.  
+% Le seul changement apporté à la version originale est la valeur de \tolerance.
+\def\sloppy{%
+  \tolerance 500%  %9999 dans LaTeX ordinaire, mauvaise idée.
+  \emergencystretch 3em%
+  \hfuzz .5\csname p@\endcsname
+  \vfuzz\hfuzz}
+\sloppy  
+
+
+
+\usepackage{graphicx,amsmath,amsfonts,amssymb,setspace,subfigure,color,dsfont}
+% graphicx		Pour importer des images (PDF, JPG, PNG).
+% amsmath		Écriture selon les normes de l'AMS.
+% amsfonts		Fontes additionnelles de l'AMS.
+% amssymb		Écriture des symbols de l'AMS.
+% setspace		Permet de régler la distance interligne dans le document.
+% subfigure		Simplifie l'inclusion de figures côtes-\`a-côtes.
+% color			Pour l'utilisation de couleurs dans le texte.
+% icomma		Reconnait la virgule comme caractère mathematique de facon intelligent
+% dsfont		symboles mathématiques
+
+
+\usepackage[pdfpagemode=UseNone,pdfstartview={XYZ null null null}]{hyperref}	% Cette extension permet l'insertion d'hyperliens dans votre document pdf.
+ \definecolor{dark-red}{rgb}{0.4,0.15,0.15}					% Ici, trois couleurs sont définies et seront utilisées pour colorer les "hyperliens".
+ \definecolor{dark-blue}{rgb}{0.15,0.15,0.4}
+ \definecolor{medium-blue}{rgb}{0,0,0.5}
+ \hypersetup{colorlinks,linkcolor={dark-red},citecolor={dark-blue},urlcolor={medium-blue}}
+\usepackage{bookmark}  % Remédie à des petits problème de <hyperref> (important qu'il soit chargé après <hyperref>)
+  % Enlever les commentaires et remplir cette section avec l'information pertinente.
+  % Ceci ajoute des « méta-données » au pdf.  C'est optionnel, mais recommandé.
+  % Vous pouvez voir ces méta-données en ouvrant un visionneur de pdf et en cherchant les
+  % propriétés du pdf.  (Vous pouvez aussi tapez ' pdfinfo <nom-du-pdf> '  dans un terminal.)
+  % Ces données sont utiles, par exemple, pour augmenter les chances qu'un algorithme de
+  % recherche trouve votre document sur Internet, une fois diffusé.  Autrement dit, ceci
+  % peut aider à augmenter la visibilité de votre travail.
+%\hypersetup{
+%    pdftitle = {Exemple d'une thèse}, 
+%    pdfauthor = {Coadmin},
+%    pdfsubject = {Exemple pour utiliser le gabarit du DMS},
+%    pdfkeywords = {DMS, gabarit, exemple, thèse, mémoire, coadministrateur}
+%}
+
+% Numérotation des équations par section et numérotation des tableaux et figures par chapitre.
+\numberwithin{equation}{section}
+\numberwithin{table}{chapter}
+\numberwithin{figure}{chapter}
+
+% Définition des environnements utiles pour un mémoire scientifique.
+% 1	%EN
+\newtheorem{corollary}{Corollary}[chapter] %[section]
+\newtheorem{definition}{Definition}[chapter] %[section]
+\newtheorem{example}{Example}[chapter] %[section]
+\newtheorem{lemma}{Lemma}[chapter] %[section]
+\newtheorem{proposition}{Proposition}[chapter] %[section]
+\newtheorem{remark}{Remark}[chapter] %[section]
+\newtheorem{theorem}{Theorem}[chapter] %[section]
+
+
+% Si vous préférez que les corollaires, definitions, théor\`emes, etc. soient numérotés par le même compteur, utilisez plutôt ce bloc de commandes : 
+%2	% EN
+%\newtheorem{corollary}{Corollary}[section] 
+%\newtheorem{definition}[corollary]{Definition}
+%\newtheorem{example}[corollary]{Example}
+%\newtheorem{lemma}[corollary]{Lemma}
+%\newtheorem{proposition}[corollary]{Proposition}
+%\newtheorem{remark}[corollary]{Remark}
+%\newtheorem{theorem}[corollary]{Theorem}
+
+
+\onehalfspacing				% Fixe la distance interligne \`a "1.5". Pour une interligne double, utilisez plutôt "\doublespacing".
+
+\allowdisplaybreaks			% Cette commande autorise LaTeX \`a briser les blocs d'équations, permettant ainsi une couverture plus uniforme des pages.
+
+
+%
+% ---------  D É B U T  D U  D O C U M E N T  ---------
+%
+
+%Commande pour numéroter les tableaux en chiffres romains (préfixe: le numéro du chapitre)
+\renewcommand{\thetable}{\thechapter. \Roman{table}}
+
+\begin{document}
+
+% La commande "\brouillon" imprime, au bas de chaque page, la date ainsi que l'heure de la derni\`ere compilation de votre fichier.
+%\brouillon            
+
+% Voici les variables pour la création de votre page titre.
+
+\title{Factorized second order methods in neural networks}
+\author{Thomas George}
+\copyrightyear{2017}
+\date{\today}									% Date de dépôt du document.
+	% ces éléments ne doivent plus apparaittre selon les dierectives de la FESP
+	% si toutefois vou souhaitez les inclure, il faudra aussi modifier le document dms.cls
+% \president{Nom du président du jury}
+% \directeur{Nom du directeur de recherche}
+% \codirecteur{Nom du codirecteur}
+% \membrejury{Nom du membre du jury} 
+% \examinateur{Nom de l'examinateur externe}
+% %\membresjury{alpha, beta, gamma}
+% %\plusmembresjury{psi, zeta, omega} 
+% \repdoyen{Nom du représentant du doyen} 
+\dateacceptation{Date d'acceptation}
+\sujet{informatique}							% Votre discipline de recherche, soit "mathématiques" ou "statistique".
+%\orientation{mathématiques fondamentales}		% Cette commande est optionnelle. Les choix courants sont : "mathématiques fondamentales", "mathématiques de l'ingénieur" et "mathématiques appliquées".
+
+\department{D\'epartement de math\'ematiques et de statistique}
+
+% Fin des variables \`a définir. La commande "\maketitle" créera votre page titre.
+
+
+\pagenumbering{roman}
+\maketitle    
+ 
+\chapter*{Sommaire} 	% La commande "\chapter*" crée un chapitre sans numéro, contrairement \`a la commande "\chapter" réguli\`ere.
+
+\noindent Sommaire et mots-clés français\dots	% N.B. : La commande "\noindent" force LaTeX \`a ne pas indenter le nouveau paragraphe.
+
+\chapter*{Summary}
+
+\noindent English summary and keywords\dots
+
+
+% TABLE DES MATIÈRES
+\cleardoublepage
+\pdfbookmark[chapter]{\contentsname}{toc}  %Crée un bouton sur la bar de navigation
+\tableofcontents				% Table des mati\`eres.
+% LISTE DES TABLEAUX
+\cleardoublepage
+\phantomsection
+\listoftables
+% LISTE DES FIGURES
+\cleardoublepage
+\phantomsection
+\listoffigures	
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% LISTE DES SIGLES ET ABRÉVIATION %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Il est obligatoire, selon les directives de la FESP, 
+%% pour une thèse ou un mémoire d'avoir une liste des sigles et 
+%% des abréviations.  Si vous considérez que de telles listes ne seraient pas
+%% pertinentes (si, par exemple, vous n'utilisez aucun sigle ou abré.), son
+%% inclusion ou omission est laissé à votre discrétion.  En cas de doute,
+%% parlez-en à votre directeur de recherche, le coadministrateur ou, ultimement, à
+%% la FESP directement.
+%%
+%% Dans le cas où vous incluez une table des sigles et des abréviations,
+%% vous pouvez enlever les % de la section suivante pour faire apparaître
+%% un exemple d'une telle liste « fait à la main ».  Il existe des outils
+%% plus sophistiqués si vous devez inclure une multitude de sigles et abréviations.
+%% (Par exemple, le package <glossaries> peut faire des index élaborés.  Comme
+%% son utilisation est technique, il n'y a pas d'exemple directement dans ce gabarit.
+%% On invite les gens qui aurait à l'utiliser à consulter le wiki
+%% du dms, le coadministrateur ou faire leur propre recherche.)
+
+%\chapter*{Liste des sigles et des abréviations}
+%\begingroup %Pour que le \renewcommand soit local
+%%Modifiez ce nombre (p.ex.remplacez 2 par 1.5) pour augmenter ou diminuer l'espace entre les lignes du tableau.
+%\renewcommand{\arraystretch}{2} 
+%\noindent\begin{tabular}{p{.2\textwidth} p{.7\textwidth}}
+%  MCMC  & Monte Carlo par chaînes de Markov, de l'anglais
+%      \textit{Markov Chain Monte Carlo} \\
+%  MSE  &  Erreur quadratique moyenne, de l'anglais \textit{Mean Square Error}\\
+%  NDR & Retract d'un voisinage, de l'anglais \textit{Neighbourhood Deformation Retract}\\
+%  OLS  &  Moindres carrés ordinaires, de l'anglais \textit{Ordinary Least Square}\\
+%  ZFC & Théorie des ensembles de Zermelo-Fraenkel avec l'axiome du choix\\
+%\end{tabular}
+%\endgroup  %Fin du groupe local pour \arraystretch
+
+
+\chapter*{D\protect\'edicaces}
+
+\vspace{2cm}
+\hspace{2.5cm}Vos d\'edicaces.
+
+\chapter*{Acknowledgements} %Remerciements
+
+\noindent I would like to thank\ldots
+
+
+% Fin des pages liminaires. À partir d'ici, les premi\`eres pages des chapitres ne doivent pas être numérotées.
+
+% Voici maintenant le chapitre d'introduction.
+\NoChapterPageNumber 
+\cleardoublepage
+
+\pagenumbering{arabic}
+
+
+\chapter*{Introduction}
+\pagenumbering{arabic}
+
+
+\noindent In this example thesis, we will introduce
+  the \texttt{dms} template.  Scroll down for more!
+
+
+\
+
+\input{../../master}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%   BIBLIOGRAPHIE                  %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  % Enlever les commentaires de la prochaine commande si vous préférez que le
+  % chapitre s'appelle « Références » plutôt que « Bibliographie » (au choix selon le contexte).
+%\let\bibname=\refname   
+
+%% Lorsque vous serez prêt à faire afficher votre bibliographie
+%% et vos références, enlevez les commandaires des commandes suivantes
+%% et donnez le nom de votre fichier .bib à la commande \bibliography{..}
+%% (consultez l'exemple au besoin).  Vous pouvez utiliser le style de votre
+%% choix.  Le fichier francaissc.bst est inclus avec le gabarit.  Vous pouvez
+%% utiliser ce style avec  \bibliographystyle{francaissc}
+% 
+\bibliographystyle{plain}		    % Le style de la bibliographie. Notons que les extensions ne sont pas données pour ces deux fichiers.
+\bibliography{references}		    % La base de données contenant des entrées bibliographiques. Seules celles référencées dans le texte seront ajoutées \`a la bibliographie.
+
+
+%
+% ----------  A N N E X E S  ----------
+%
+
+%%% Enlever le commentaire de \appendix pour faire vos annexes.
+%%% Les annexes sont ensuites faites comme un chapitre normal : \chapter{nom_de_l'annexe}.
+%\appendix
+%\chapter{Le titre}
+%
+%\section{Section un de l'annexe A}
+%
+%La premi\`ere annexe du document.
+%
+%Pour plus de renseignements, consultez le site \href{http://www.fesp.umontreal.ca}{web de la FESP}.
+%\begin{table}[htb]
+%	\renewcommand{\arraystretch}{1.25}
+%	\newcommand{\dotrule}[1]{\parbox[t]{#1}{\dotfill}}
+%	\centering
+%	\caption[Titre alternatif pour la table des mati\`eres]{Liste des parties}
+%	\label{tab:parties}
+%	\begin{tabular}{p{0.6\textwidth}@{\hspace{0.15\textwidth}}p{0.15\textwidth}}
+%		\hline\hline & \\[-3mm]
+%  		Les couvertures conformes 											& obligatoires			\\
+%		Les pages de garde 													& obligatoires			\\
+%		La page de titre 													& obligatoire			\\
+%		Le résumé en français et les mots clés français						& obligatoires			\\
+%		Le résumé en anglais et les mots clés anglais 						& obligatoires			\\
+%		Le résumé de vulgarisation											& facultatif			\\
+%		La table des mati\`eres, la liste des tableaux, la liste des figures 	& obligatoires			\\
+%		La liste des sigles, la liste des abréviations						& obligatoires			\\
+%		La dédicace															& facultative			\\
+%		Les remerciements 													& facultatifs			\\
+%		L'avant-propos 														& facultatif			\\
+%		Le corps de l'ouvrage												& obligatoire			\\
+%		L'index analytique													& facultatif			\\
+%		Les sources documentaires 											& obligatoires			\\
+%		Les appendices (annexes) 											& facultatifs			\\
+%		Le curriculum vit\ae{}												& facultatif			\\
+%		Les documents spéciaux 												& facultatifs			\\
+%		[3mm] \hline\hline
+%	\end{tabular}
+%\end{table}
+%Pour plus de renseignements, consultez le site \href{http://www.fesp.umontreal.ca}{web de la FESP}.
+%
+%\chapter{Le titre2}
+%\chapter{Le titre3}
+%\chapter{Le titre4}
+
+\end{document}
