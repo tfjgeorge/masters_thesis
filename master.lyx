@@ -46,8 +46,8 @@ figs-within-sections
 \use_package stackrel 1
 \use_package stmaryrd 1
 \use_package undertilde 1
-\cite_engine basic
-\cite_engine_type default
+\cite_engine natbib
+\cite_engine_type authoryear
 \biblio_style plain
 \use_bibtopic false
 \use_indices false
@@ -121,6 +121,14 @@ common industry tasks
 Empirical risk
 \end_layout
 
+\begin_layout Itemize
+estimate the true distribution using a dataset of examples
+\end_layout
+
+\begin_layout Itemize
+data augmentation
+\end_layout
+
 \begin_layout Subsection
 Regularization
 \end_layout
@@ -159,6 +167,10 @@ Convolutions
 
 \begin_layout Subsection
 Autoencoders
+\end_layout
+
+\begin_layout Subsection
+Residual networks
 \end_layout
 
 \begin_layout Section
@@ -201,8 +213,112 @@ gradient descent
 backpropagation
 \end_layout
 
+\begin_layout Standard
+Starting from a model, and supposing this model capable of solving a given
+ task, a main challenge of machine learning remains to learn from the data,
+ to find the correct parameters that will make the model useful.
+ Certain tasks have closed-form solutions, such as finding the correct weights
+ and biases for a linear model and a regression task.
+ This task can be formulated as finding weight matrix 
+\begin_inset Formula $W$
+\end_inset
+
+ and bias vector 
+\begin_inset Formula $b$
+\end_inset
+
+ corresponding to a dataset 
+\begin_inset Formula $\mathcal{D}$
+\end_inset
+
+ of pairs of vectors 
+\begin_inset Formula $x_{i}$
+\end_inset
+
+, 
+\begin_inset Formula $y_{i}$
+\end_inset
+
+ such that 
+\begin_inset Formula $R_{\mathcal{D}}=\sum_{i}\left\Vert Wx_{i}+b-y_{i}\right\Vert ^{2}$
+\end_inset
+
+ is minimized.
+ If we stack our training examples in matrices 
+\begin_inset Formula $X$
+\end_inset
+
+ and 
+\begin_inset Formula $Y$
+\end_inset
+
+ with each row representing an example and its target value, this reduces
+ to the following linear algebra problem:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+W,b & = & \text{argmin}_{W,b}\left\Vert XW^{T}+b-Y\right\Vert ^{2}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In contrary, for neural networks, as for other models, we can not derive
+ a closed-form solution [TODO] explication (plusieurs minima globaux).
+ [WHO] proposed to use gradient descent to solve such tasks.
+ Instead of finding the target solution directly, we will update our parameters
+ 
+\begin_inset Formula $\theta$
+\end_inset
+
+ by a small increment 
+\begin_inset Formula $\theta\leftarrow\theta+\Delta\theta$
+\end_inset
+
+ that decreases the value of the empirical risk.
+ It can be any arbitrary value, as long as it make the empirical risk decrease.
+ Such a value is given by the inverse of the derivative multiplied by a
+ small scalar value: 
+\begin_inset Formula $\Delta\theta=-\lambda\frac{\partial R}{\partial\theta}$
+\end_inset
+
+.
+ TODO theoretical convergence proofs for gradient descent: is guaranteed
+ to converge in 
+\begin_inset Formula $O\left(\frac{1}{t}\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+What also makes gradient descent suitable for neural networks, is that it
+ can conveniently be computed using forward and backward propagation of
+ computations that take advantage of the chain-rule for derivative, and
+ of the sequential structure of neural networks computations.
+\end_layout
+
+\begin_layout Standard
+[TODO figure fprop backprop]
+\end_layout
+
 \begin_layout Section
 Stochastic gradient descent
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset citation
+LatexCommand citet
+key "bottou2010large"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Itemize
@@ -217,6 +333,10 @@ computational considerations
 regularization effect of stochasticity ?
 \end_layout
 
+\begin_layout Itemize
+memory considerations (how much memory needed by mb gradient descent)
+\end_layout
+
 \begin_layout Section
 Hyperparameters and focus on the learning rate
 \end_layout
@@ -226,11 +346,61 @@ hyperparameters (difference with parameters)
 \end_layout
 
 \begin_layout Itemize
+HP tuning (grid search, random search 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "bergstra2012random"
+
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+biased
+\begin_inset Quotes erd
+\end_inset
+
+ random search)
+\end_layout
+
+\begin_layout Itemize
 learning rate using the hessian + mathematical results
+\end_layout
+
+\begin_layout Standard
+Amongst other hyperparameters, the learning rate of standard (stochastic)
+ gradient descent plays a particular role which we will show in the following.
+ We can rewrite the standard gradient descent result using a second order
+ Taylor expansion of the empirical risk:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+R\left(\theta+\Delta\theta\right) & = & R\left(\theta\right)+\left(\nabla R\right)_{\theta}\Delta\theta+\frac{1}{2}\Delta\theta^{T}\mathbf{H}\Delta\theta+o\left(\left\Vert \Delta\theta\right\Vert ^{3}\right)\\
+ & \approx & R\left(\theta\right)+\left(\nabla R\right)_{\theta}\Delta\theta+\frac{1}{2}\Delta\theta^{T}\mathbf{H}\Delta\theta
+\end{eqnarray*}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
 Limits of (stochastic) gradient descent
+\end_layout
+
+\begin_layout Itemize
+gradient magnitudes (exploding/vanishing gradient) between layers
+\end_layout
+
+\begin_layout Itemize
+gradient magnitures between examples ?
+\end_layout
+
+\begin_layout Itemize
+follow directions of steepest descent, instable in valleys
 \end_layout
 
 \begin_layout Section
@@ -239,6 +409,13 @@ A standard benchmark: Autoencoding written digits
 
 \begin_layout Itemize
 presentation mnist
+\begin_inset CommandInset citation
+LatexCommand cite
+key "lecun2010mnist"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Itemize
@@ -341,6 +518,7 @@ factorization of the hessian &
 
 \begin_layout Itemize
 measure of the induced change on the output of the function/on the loss
+ (jaco, gradient, and fisher)
 \end_layout
 
 \begin_layout Section
@@ -373,6 +551,21 @@ msprop
 
 \begin_layout Chapter*
 Conclusions
+\end_layout
+
+\begin_layout Standard
+best master's thesis ever
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+bibfiles "biblio"
+options "plain"
+
+\end_inset
+
+
 \end_layout
 
 \end_body
