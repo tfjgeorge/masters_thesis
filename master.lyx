@@ -14,7 +14,7 @@ figs-within-sections
 \maintain_unincluded_children false
 \language english
 \language_package default
-\inputencoding auto
+\inputencoding utf8
 \fontencoding global
 \font_roman "default" "default"
 \font_sans "default" "default"
@@ -46,8 +46,8 @@ figs-within-sections
 \use_package stackrel 1
 \use_package stmaryrd 1
 \use_package undertilde 1
-\cite_engine natbib
-\cite_engine_type authoryear
+\cite_engine basic
+\cite_engine_type default
 \biblio_style plain
 \use_bibtopic false
 \use_indices false
@@ -93,8 +93,21 @@ LatexCommand tableofcontents
 Neural networks
 \end_layout
 
+\begin_layout Standard
+In this chapter, we will progressively introduce concepts and techniques
+ that are used in artificial intelligence tasks which get more and more
+ complex.
+ In particular, we will introduce neural networks, that have proven a powerful
+ model and produced state of the art results in a variety of tasks.
+\end_layout
+
 \begin_layout Section
 Artificial intelligence
+\end_layout
+
+\begin_layout Standard
+As learning plays a key role in human intelligence, machine learning is
+ thought to be a key component in artificial intelligence.
 \end_layout
 
 \begin_layout Section
@@ -103,6 +116,16 @@ Machine learning
 
 \begin_layout Subsection
 Parametric functions and learning
+\end_layout
+
+\begin_layout Standard
+Generally speaking, machine learning consists in finding an unknown function
+ 
+\begin_inset Formula $f$
+\end_inset
+
+ from a family of functions, that will solve a certain task.
+ 
 \end_layout
 
 \begin_layout Itemize
@@ -129,6 +152,12 @@ estimate the true distribution using a dataset of examples
 data augmentation
 \end_layout
 
+\begin_layout Standard
+In practice, we often do not have a mean of getting an infinite number of
+ examples from the data distribution.
+ Instead of 
+\end_layout
+
 \begin_layout Subsection
 Regularization
 \end_layout
@@ -153,8 +182,177 @@ stack layers that produce new representations of the incoming data
 standard architecture : linear transformation / non-linearity elementwise
 \end_layout
 
+\begin_layout Standard
+Neural networks have empirically proven very powerful at solving complex
+ tasks.
+ Along with the availability of easy to use frameworks to build neural networks
+ and learn from data, has developed new interests from industry to integrate
+ artificial intelligence inspired techniques in more and more products.
+ The first commercial successes date back to 1998 ???? when AT&T developed
+ an automated system to read handwritten digits on bank checks, using convolutio
+nal neural networks.
+ Recent successes include advances in machine translation, image and voice
+ recognition, close-to-realistic image generation.
+ They have applications in online services integrated in smartphones, but
+ also enable the invention of new automated systems that will benefit more
+ traditional industries, (energy, agriculture, arts, ..)
+\end_layout
+
 \begin_layout Section
 Common types of neural networks
+\end_layout
+
+\begin_layout Subsection
+Multilayer perceptron
+\end_layout
+
+\begin_layout Standard
+We now define the simplest neural network structure called the perceptron
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "rosenblatt1961principles"
+
+\end_inset
+
+.
+ From an input data vector 
+\begin_inset Formula $x$
+\end_inset
+
+, it creates a prediction 
+\begin_inset Formula $y$
+\end_inset
+
+ using the relation 
+\begin_inset Formula $y\left(x\right)=f\left(\left\langle w,x\right\rangle +b\right)$
+\end_inset
+
+.
+ 
+\begin_inset Formula $w$
+\end_inset
+
+ is called the weight vector, and 
+\begin_inset Formula $b$
+\end_inset
+
+ is the bias.
+ 
+\begin_inset Formula $f$
+\end_inset
+
+ is function, and is sometimes called the nonlinearity as it allows the
+ function 
+\begin_inset Formula $y$
+\end_inset
+
+ to be different than just a linear function of its input 
+\begin_inset Formula $x$
+\end_inset
+
+.
+ From a trained perceptron, we take a decision for an example 
+\begin_inset Formula $x$
+\end_inset
+
+ by comparing the value of the corresponding 
+\begin_inset Formula $y$
+\end_inset
+
+ using a threshold value.
+ The perceptrons were implemented before the invention of modern computers,
+ as complex electronic circuits.
+ The weights were encoded in hardware potentiometers and trained using an
+ error-propagating process.
+ Remarkably, these complex pieces of machinery were capable of obtaining
+ good results for the task of recognizing simple shape images.
+\end_layout
+
+\begin_layout Standard
+These perceptrons were designed to approximately replicate the computations
+ made by a biological neuron.
+ Each neuron gets input data from several other neurons, consisting in voltage
+ spikes.
+ The rate at which these spikes occur can be intepreted as whether a neuron
+ is excited or not.
+ Each neuron has different sensibilities regarding how it will react to
+ an increase in spike rate from other neurons, this sensibility being mimicked
+ by the weights in artificial neural networks.
+\end_layout
+
+\begin_layout Standard
+This single perceptron is extended in a more complex model called the multilayer
+ perceptron.
+ It consists in alternatively stacking layers of linear transformation and
+ nonlinearity, using a vectorized generalization of the perceptron: 
+\begin_inset Formula $y\left(x\right)=f\left(\underbrace{Wx+b}_{\text{linear transformation}}\right)$
+\end_inset
+
+.
+ 
+\begin_inset Formula $W$
+\end_inset
+
+ is now a weight matrix, and 
+\begin_inset Formula $b$
+\end_inset
+
+ a bias vector.
+ 
+\begin_inset Formula $f$
+\end_inset
+
+ is an elementwise function.
+ We stack these transformations to get more complex functions.
+ An example for 2 layers gives a function 
+\begin_inset Formula $y\left(x\right)=f_{2}\left(W_{2}f_{1}\left(W_{1}x+b_{1}\right)+b_{2}\right)$
+\end_inset
+
+.
+ The intermediate values obtained at each layer 
+\begin_inset Formula $f_{1}\left(W_{1}x+b_{1}\right)$
+\end_inset
+
+ are called the hidden representations as they are new representations the
+ the same input data, but encoded in a different way.
+ A trained neural network will create representations that are better suited
+ for its task.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename figures/mlp.pdf
+	width 100text%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+A multilayer perceptron consists in stacking layers of a linear transformation
+ and a nonlinearity
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -322,7 +520,7 @@ key "bottou2010large"
 \end_layout
 
 \begin_layout Itemize
-gradient estimate
+gradient estimate whatsup
 \end_layout
 
 \begin_layout Itemize
@@ -388,7 +586,8 @@ R\left(\theta+\Delta\theta\right) & = & R\left(\theta\right)+\left(\nabla R\righ
 \end_layout
 
 \begin_layout Section
-Limits of (stochastic) gradient descent
+Limits of (stochastic) gradient descent and some directions to overcome
+ them
 \end_layout
 
 \begin_layout Itemize
@@ -401,6 +600,10 @@ gradient magnitures between examples ?
 
 \begin_layout Itemize
 follow directions of steepest descent, instable in valleys
+\end_layout
+
+\begin_layout Itemize
+initialization of weights
 \end_layout
 
 \begin_layout Section
@@ -467,11 +670,80 @@ cost landscape with valleys and plateaus
 \end_layout
 
 \begin_layout Itemize
-momentum
+momentum + nesterov
 \end_layout
 
 \begin_layout Section
 Batch normalization
+\end_layout
+
+\begin_layout Standard
+Batch normalization 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ioffe2015batch,ioffe2017batch"
+
+\end_inset
+
+ is a very popular way to make the learning procedure more stable in neural
+ networks.
+ It consists in a simple reparametrization that effectively normalize the
+ activations using statistics (mean, variance) computed from a batch of
+ examples, defined as follows:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\text{BN}\left(x\right) & = & \frac{x-\mu}{\sqrt{\sigma^{2}+\epsilon}}
+\end{eqnarray*}
+
+\end_inset
+
+with 
+\begin_inset Formula $\mu=\mathbb{E}\left[x\right]$
+\end_inset
+
+ and 
+\begin_inset Formula $\sigma^{2}=\mathbb{E}\left[\left(x-\mu\right)^{2}\right]$
+\end_inset
+
+ computed over a minibatch in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ioffe2015batch"
+
+\end_inset
+
+ or using a running average in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ioffe2017batch"
+
+\end_inset
+
+.
+ A 
+\begin_inset Quotes eld
+\end_inset
+
+batch-normalized
+\begin_inset Quotes erd
+\end_inset
+
+ layer is defined by:
+\begin_inset Formula 
+\[
+h_{n}(x)=f_{n}\left(\gamma_{n}\odot\text{BN}\left(h_{n-1}\right)+\beta_{n}\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Among its interesting properties is the fact that during the forward pass
 \end_layout
 
 \begin_layout Itemize
@@ -494,8 +766,94 @@ quadratic hypothesis
 Newton, gauss-newton
 \end_layout
 
+\begin_layout Itemize
+hessian free
+\end_layout
+
+\begin_layout Itemize
+diagonal versions
+\end_layout
+
 \begin_layout Section
-Gradient linearization
+Direct gradient update
+\end_layout
+
+\begin_layout Standard
+A major inconvenient of first order methods is that they update every individual
+ parameter without taking into account for other parameter updates.
+ As an illustration, take a neural network composed of only 2 layers 
+\begin_inset Formula $g\left(x\right)=f_{2}\left(W_{2}f_{1}\left(W_{1}x+b_{1}\right)+b_{2}\right)$
+\end_inset
+
+ and a loss function 
+\begin_inset Formula $l\left(g\left(x\right),y\right)$
+\end_inset
+
+.
+ Suppose that we have computed all gradients with respect to each parameters
+ 
+\begin_inset Formula $\frac{\partial l}{\partial W_{1}}$
+\end_inset
+
+, 
+\begin_inset Formula $\frac{\partial l}{\partial b_{1}}$
+\end_inset
+
+, 
+\begin_inset Formula $\frac{\partial l}{\partial W_{2}}$
+\end_inset
+
+ and 
+\begin_inset Formula $\frac{\partial l}{\partial b_{2}}$
+\end_inset
+
+.
+ If we were to use standard gradient descent, we would now update the value
+ of the parameters, all at once to obtain a better prediction function.
+ Now suppose that we only update the parameters of the layer 2, using the
+ standard update rule 
+\begin_inset Formula $W_{2}\leftarrow W_{2}-\lambda\frac{\partial l}{\partial W_{2}}$
+\end_inset
+
+ and 
+\begin_inset Formula $b_{2}\leftarrow b_{2}-\lambda\frac{\partial l}{\partial b_{2}}$
+\end_inset
+
+.
+ From this point, we have a different function 
+\begin_inset Formula $g\left(x\right)$
+\end_inset
+
+.
+ We could either update the parameters of layer 1 using the gradient already
+ computed, or find the new values for the gradients for layer 1.
+\end_layout
+
+\begin_layout Standard
+An interesting property of the gradient is that is it a quadratic function
+ of the parameters.
+ As an illustration, take a neural network composed of only 2 layers 
+\begin_inset Formula $g\left(x\right)=f_{2}\left(W_{2}f_{1}\left(W_{1}x+b_{1}\right)+b_{2}\right)$
+\end_inset
+
+ and a loss function 
+\begin_inset Formula $l\left(g\left(x\right),y\right)$
+\end_inset
+
+.
+ Using forward and backpropagation, we can construct an exact expression
+ for the gradient of a single example, with respect to each parameters:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\frac{\partial l}{\partial b_{2}} & = & \frac{\partial l}{\partial g}\mathbf{J}
+\end{eqnarray*}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Itemize
@@ -547,6 +905,10 @@ rmsprop
 
 \begin_layout Itemize
 msprop
+\end_layout
+
+\begin_layout Itemize
+centering trick (découle des méthodes àla second ordre)
 \end_layout
 
 \begin_layout Chapter*
