@@ -170,6 +170,14 @@ bias / variance trade off
 overfitting
 \end_layout
 
+\begin_layout Itemize
+patience
+\end_layout
+
+\begin_layout Itemize
+l2 regul
+\end_layout
+
 \begin_layout Section
 Neural networks
 \end_layout
@@ -397,6 +405,13 @@ Optimization of neural networks
 
 \begin_layout Section
 Gradient descent and backpropagation
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Gradient-descent-and"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Itemize
@@ -507,6 +522,13 @@ What also makes gradient descent suitable for neural networks, is that it
 
 \begin_layout Section
 Stochastic gradient descent
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Stochastic-gradient-descent"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -537,6 +559,51 @@ memory considerations (how much memory needed by mb gradient descent)
 
 \begin_layout Section
 Hyperparameters and focus on the learning rate
+\end_layout
+
+\begin_layout Standard
+In the preceding sections we have introduced the learning rate 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Gradient-descent-and"
+
+\end_inset
+
+ and the minibatch size 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Stochastic-gradient-descent"
+
+\end_inset
+
+.
+ These values are called hyperparameters, which is another kind of parametrizati
+on of our learning procedure.
+ Hyperparameters also include the structure of our model, such as the number
+ of hidden layers and hidden units, the number of training iterations, the
+ coefficients of the regularization terms.
+ We do not find the optimal value for the hyperparameters using gradient
+ descent, but instead we tune it by running several time the same experiment
+ with different hyperparameter values, and control 
+\end_layout
+
+\begin_layout Standard
+A difficulty in comparing optimization algorithms resides in the fact that
+ there performances can chance drastically for different values of the same
+ hyperparameters.
+ Optimization papers sometimes also mention heuristics that they experimentally
+ found provide with a sensible value for the value of some hyperparmeters.
+ But to overcome this difficulty and provide 
+\begin_inset Quotes eld
+\end_inset
+
+fair
+\begin_inset Quotes erd
+\end_inset
+
+ benchmarks, we usually tune the values of the hyperparameters by trying
+ several sets of values.
+ We select this values using a grid search, that we define
 \end_layout
 
 \begin_layout Itemize
@@ -604,6 +671,13 @@ follow directions of steepest descent, instable in valleys
 
 \begin_layout Itemize
 initialization of weights
+\begin_inset CommandInset label
+LatexCommand label
+name "initialization-of-weights"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -734,7 +808,7 @@ batch-normalized
  layer is defined by:
 \begin_inset Formula 
 \[
-h_{n}(x)=f_{n}\left(\gamma_{n}\odot\text{BN}\left(h_{n-1}\right)+\beta_{n}\right)
+h_{n}(x)=f_{n}\left(\gamma_{n}\odot\text{BN}\left(W_{n}h_{n-1}\right)+\beta_{n}\right)
 \]
 
 \end_inset
@@ -743,7 +817,75 @@ h_{n}(x)=f_{n}\left(\gamma_{n}\odot\text{BN}\left(h_{n-1}\right)+\beta_{n}\right
 \end_layout
 
 \begin_layout Standard
-Among its interesting properties is the fact that during the forward pass
+After reparametrization, we train the parameters 
+\begin_inset Formula $W$
+\end_inset
+
+, 
+\begin_inset Formula $\gamma$
+\end_inset
+
+ and 
+\begin_inset Formula $\beta$
+\end_inset
+
+ using a gradient based method such as stochastic gradient descent.
+ The new gradient 
+\begin_inset Quotes eld
+\end_inset
+
+goes through
+\begin_inset Quotes erd
+\end_inset
+
+ the BN operation (mean and square root of the variance) so both the forward
+ pass and the backward pass are modified.
+ 
+\end_layout
+
+\begin_layout Standard
+A first effect of this reparametrization, as pointed by the paper, is that
+ it reduces the covariate shift of each unit.
+ If we consider a single unit, we can observe an empirical distribution
+ of its activation over a dataset.
+ We have seen in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "initialization-of-weights"
+
+\end_inset
+
+ that carefully tuning the initial weights and biases so that each unit
+ has a desired distribution can improve drastically the efficiency or the
+ learning procedure.
+ This initial distribution changes throughout the learning, and this is
+ what is called the 
+\shape italic
+covariate shift
+\shape default
+.
+ Batch normalization forces the distribution of activations to have zero
+ mean and unit variance.
+\end_layout
+
+\begin_layout Standard
+For some experiments, 
+\shape italic
+mean-only 
+\shape default
+batch normalization can also be used to improve the learning procedure.
+ We will cover this question in more details in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "centering-trick"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+
 \end_layout
 
 \begin_layout Itemize
@@ -909,6 +1051,13 @@ msprop
 
 \begin_layout Itemize
 centering trick (découle des méthodes àla second ordre)
+\begin_inset CommandInset label
+LatexCommand label
+name "centering-trick"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Chapter*
