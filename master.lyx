@@ -782,7 +782,7 @@ with
 \begin_inset Formula $\sigma^{2}=\mathbb{E}\left[\left(x-\mu\right)^{2}\right]$
 \end_inset
 
- computed over a minibatch in 
+ the empirical mean and variance computed over a minibatch in 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "ioffe2015batch"
@@ -840,6 +840,23 @@ goes through
 
  the BN operation (mean and square root of the variance) so both the forward
  pass and the backward pass are modified.
+ We usually initialize the values of 
+\begin_inset Formula $\gamma$
+\end_inset
+
+ to be a vector of 
+\begin_inset Formula $1$
+\end_inset
+
+ and for 
+\begin_inset Formula $\beta$
+\end_inset
+
+ a vector of 
+\begin_inset Formula $0$
+\end_inset
+
+.
  
 \end_layout
 
@@ -882,14 +899,6 @@ reference "centering-trick"
 \end_inset
 
 .
-\end_layout
-
-\begin_layout Standard
-
-\end_layout
-
-\begin_layout Itemize
-covariate shift
 \end_layout
 
 \begin_layout Itemize
