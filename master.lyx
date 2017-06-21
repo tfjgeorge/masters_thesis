@@ -124,7 +124,11 @@ Generally speaking, machine learning consists in finding an unknown function
 \begin_inset Formula $f$
 \end_inset
 
- from a family of functions, that will solve a certain task.
+ from a family of functions 
+\begin_inset Formula $\mathcal{F}$
+\end_inset
+
+, that will solve a certain task.
  
 \end_layout
 
@@ -138,6 +142,18 @@ common probabilistic tasks
 
 \begin_layout Itemize
 common industry tasks
+\end_layout
+
+\begin_layout Standard
+Once we have chosen a ...
+ cost functino
+\begin_inset CommandInset label
+LatexCommand label
+name "cost-function"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -345,8 +361,8 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-A multilayer perceptron consists in stacking layers of a linear transformation
- and a nonlinearity
+A multilayer perceptron consists in alternatively stacking layers of a linear
+ transformation and a nonlinearity
 \end_layout
 
 \end_inset
@@ -381,6 +397,131 @@ Residual networks
 
 \begin_layout Section
 More elaborated cost functions
+\end_layout
+
+\begin_layout Standard
+We can often associate a task and its corresponding loss function: regression
+ with the quadratic error loss, and classification with the cross entropy
+ loss 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "cost-function"
+
+\end_inset
+
+.
+ Some more recent advances in neural networks make use of more complex cost
+ functions.
+\end_layout
+
+\begin_layout Standard
+Neural art 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "gatys2015neural"
+
+\end_inset
+
+ and its feed-forward extension 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ulyanov2016texture"
+
+\end_inset
+
+ tackle the task of generating artwork images from a real world picture,
+ that mimick the style of a given painting.
+ To this end, they create a cost function that measures how a generated
+ image resembles both the picture and the painting:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathcal{L}_{\text{total}}\left(p,a,x\right) & = & \alpha\mathcal{L}_{\text{content}}\left(p,x\right)+\beta\mathcal{L}_{\text{style}}\left(a,x\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $p$
+\end_inset
+
+ is the picture, 
+\begin_inset Formula $a$
+\end_inset
+
+ is the artwork that we want to extract the style, and 
+\begin_inset Formula $x$
+\end_inset
+
+ is any image.
+ By minimizing 
+\begin_inset Formula $\mathcal{L}_{\text{total}}\left(p,a,x\right)$
+\end_inset
+
+ with respect to 
+\begin_inset Formula $x$
+\end_inset
+
+ for given 
+\begin_inset Formula $p$
+\end_inset
+
+ and 
+\begin_inset Formula $a$
+\end_inset
+
+, we obtain the desired image in 
+\begin_inset Formula $x$
+\end_inset
+
+.
+ 
+\begin_inset Formula $\alpha$
+\end_inset
+
+ and 
+\begin_inset Formula $\beta$
+\end_inset
+
+ are scalar values that control the influence of each part of the loss.
+ In the original paper 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "gatys2015neural"
+
+\end_inset
+
+ we start from a randomly initialized 
+\begin_inset Formula $x$
+\end_inset
+
+ and we perform gradient descent on each pixel of 
+\begin_inset Formula $x$
+\end_inset
+
+.
+ In 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ulyanov2016texture"
+
+\end_inset
+
+ we use a convolutional neural network to generate 
+\begin_inset Formula $x$
+\end_inset
+
+, which takes the picture as input, and outputs the desired stylized image.
+ This network is trained using 
+\begin_inset Formula $\mathcal{L}_{\text{total}}$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Itemize
@@ -558,7 +699,7 @@ memory considerations (how much memory needed by mb gradient descent)
 \end_layout
 
 \begin_layout Section
-Hyperparameters and focus on the learning rate
+Hyperparameters
 \end_layout
 
 \begin_layout Standard
@@ -589,10 +730,10 @@ on of our learning procedure.
 
 \begin_layout Standard
 A difficulty in comparing optimization algorithms resides in the fact that
- there performances can chance drastically for different values of the same
+ there performances can change drastically for different values of the same
  hyperparameters.
- Optimization papers sometimes also mention heuristics that they experimentally
- found provide with a sensible value for the value of some hyperparmeters.
+ Optimization papers sometimes mention heuristics that they experimentally
+ found provide with a sensible value for some hyperparmeters.
  But to overcome this difficulty and provide 
 \begin_inset Quotes eld
 \end_inset
@@ -603,34 +744,152 @@ fair
 
  benchmarks, we usually tune the values of the hyperparameters by trying
  several sets of values.
- We select this values using a grid search, that we define
+ Hyperparameters tuning is a research field on its own, so we will just
+ introduce 3 methods and motivate our use of a technique we call biased
+ random search.
 \end_layout
 
-\begin_layout Itemize
-hyperparameters (difference with parameters)
+\begin_layout Standard
+The most simple hyperparamater tuning procedure, called 
+\series bold
+grid search
+\series default
+, consists in selecting values at fixed length intervals, or using a logarithmic
+ scale.
+ A simple example would be a training procedure involving only one hyperparamete
+r: the learning rate.
+ We can launch several experiments for all values in 
+\begin_inset Formula $\left\{ 10^{-3},10^{-2},10^{-1},1\right\} $
+\end_inset
+
+ for a fixed number of updates and select the value for which we obtained
+ the best value for our target criteria such as the validation loss.
+ When generalizing to several hyperparameters, we have to select all combination
+s of values, which make our search space grow exponentially, and similarly
+ for the number of experiments we will have to run.
 \end_layout
 
-\begin_layout Itemize
-HP tuning (grid search, random search 
+\begin_layout Standard
+A first extension to grid search replaces the fixed length intervals by
+ random samples in our search space.
+ It is called 
+\series bold
+random search
+\series default
+.
+ Its main advantage over grid search shows up when any hyperparameters has
+ no important effect on the learning algorithm 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "bergstra2012random"
 
 \end_inset
 
-, 
-\begin_inset Quotes eld
-\end_inset
-
-biased
-\begin_inset Quotes erd
-\end_inset
-
- random search)
+.
+ It will explore more different values for the other hyperparameters.
 \end_layout
 
-\begin_layout Itemize
-learning rate using the hessian + mathematical results
+\begin_layout Standard
+In the rest of this work, we will use an extension of random search that
+ we call 
+\series bold
+biased random search
+\series default
+.
+ During the hyperparameter tuning procedure, we create a model of our cost
+ landscape in the space of hyperparameters.
+ As the number of experiments grows, the cost landscape is refined.
+ We use this estimated cost landscape to bias our random search, so that
+ regions of the hyperparameter space that are expected to provide a better
+ result will have higher probability of being explored.
+ In practice, we use a simple 1-nearest neighbor regressor 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "altman1992introduction"
+
+\end_inset
+
+ to model the cost landscape.
+ Using the estimated value of the criteria 
+\begin_inset Formula $c_{estimate}$
+\end_inset
+
+, we decide to keep the sampled value with probability 
+\begin_inset Formula $p$
+\end_inset
+
+, or otherwise we reject the value and sample a new one, and so on until
+ we get a value that is not rejected, which will be our next experiment.
+ We can choose the value of 
+\begin_inset Formula $p$
+\end_inset
+
+ using different heuristics, in practice we use 
+\begin_inset Formula $p=\frac{c_{max}-c_{estimate}}{c_{max}-c_{min}}$
+\end_inset
+
+ (in this notation, the criteria needs to be minimized).
+ This value for 
+\begin_inset Formula $p$
+\end_inset
+
+ will almost surely reject values that are close to the worst experiments,
+ and almost surely accept values that are close to the best experiments.
+\end_layout
+
+\begin_layout Standard
+As an illustration, we ran all 3 methods on the task described in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:autoencoder-benchmark"
+
+\end_inset
+
+, using standard stochastic gradient descent with fixed minibatch size,
+ for a fixed number of parameter updates.
+ We tune 2 hyperparameters: the learning rate and the variance of the initial
+ random weights, and plot the result in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "hptune-comparison"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Comparison of hyperparameter tuning methods
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "hptune-comparison"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+The learning rate
 \end_layout
 
 \begin_layout Standard
@@ -652,6 +911,10 @@ R\left(\theta+\Delta\theta\right) & = & R\left(\theta\right)+\left(\nabla R\righ
 
 \end_layout
 
+\begin_layout Itemize
+learning rate using the hessian + mathematical results
+\end_layout
+
 \begin_layout Section
 Limits of (stochastic) gradient descent and some directions to overcome
  them
@@ -670,7 +933,21 @@ follow directions of steepest descent, instable in valleys
 \end_layout
 
 \begin_layout Itemize
-initialization of weights
+initialization of weights 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "glorot2010understanding"
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "he2015delving"
+
+\end_inset
+
+ 
 \begin_inset CommandInset label
 LatexCommand label
 name "initialization-of-weights"
@@ -682,6 +959,13 @@ name "initialization-of-weights"
 
 \begin_layout Section
 A standard benchmark: Autoencoding written digits
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:autoencoder-benchmark"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Itemize
@@ -862,7 +1146,11 @@ goes through
 
 \begin_layout Standard
 A first effect of this reparametrization, as pointed by the paper, is that
- it reduces the covariate shift of each unit.
+ it reduces the 
+\shape italic
+covariate shift
+\shape default
+ of each unit.
  If we consider a single unit, we can observe an empirical distribution
  of its activation over a dataset.
  We have seen in 
