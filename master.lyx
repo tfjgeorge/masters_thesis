@@ -5,6 +5,11 @@
 \save_transient_properties true
 \origin unavailable
 \textclass amsbook
+\begin_preamble
+\usepackage{amsmath}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\end_preamble
 \use_default_options true
 \begin_removed_modules
 theorems-ams
@@ -389,6 +394,13 @@ Convolutions
 
 \begin_layout Subsection
 Autoencoders
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Autoencoders"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -459,6 +471,31 @@ key "ulyanov2016texture"
 \end_inset
 
  is any image.
+ 
+\begin_inset Formula $\mathcal{L}_{\text{content}}$
+\end_inset
+
+ is a loss function that measures how close 
+\begin_inset Formula $x$
+\end_inset
+
+ is from 
+\begin_inset Formula $p$
+\end_inset
+
+ in terms of contents, and 
+\begin_inset Formula $\mathcal{L}_{\text{style}}$
+\end_inset
+
+ is a loss function that measures a distance from 
+\begin_inset Formula $a$
+\end_inset
+
+ to 
+\begin_inset Formula $x$
+\end_inset
+
+ in terms of artistic style.
  By minimizing 
 \begin_inset Formula $\mathcal{L}_{\text{total}}\left(p,a,x\right)$
 \end_inset
@@ -522,14 +559,24 @@ key "ulyanov2016texture"
 \end_inset
 
 .
-\end_layout
+ It has the main advantage of being very fast as generating new images once
+ it has be trained on a specific artwork.
+ We will explain how to create 
+\begin_inset Formula $\mathcal{L}_{\text{style}}$
+\end_inset
 
-\begin_layout Itemize
-quadratic, cross entropy
-\end_layout
+ and 
+\begin_inset Formula $\mathcal{L}_{\text{content}}$
+\end_inset
 
-\begin_layout Itemize
-neural art
+ in details in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "chap:ff-texture-gen"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Itemize
@@ -538,6 +585,13 @@ GANs
 
 \begin_layout Chapter
 An example task for neural networks: learning to generate texture images
+\begin_inset CommandInset label
+LatexCommand label
+name "chap:ff-texture-gen"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Chapter
@@ -659,6 +713,10 @@ What also makes gradient descent suitable for neural networks, is that it
 
 \begin_layout Standard
 [TODO figure fprop backprop]
+\end_layout
+
+\begin_layout Standard
+automatic differentiation tool
 \end_layout
 
 \begin_layout Section
@@ -970,13 +1028,6 @@ name "sec:autoencoder-benchmark"
 
 \begin_layout Itemize
 presentation mnist
-\begin_inset CommandInset citation
-LatexCommand cite
-key "lecun2010mnist"
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Itemize
@@ -1013,6 +1064,42 @@ quadratic loss
 \end_deeper
 \begin_layout Itemize
 HP plots
+\end_layout
+
+\begin_layout Standard
+We now describe the main benchmark that we will be using in the rest of
+ this document.
+ The dataset MNIST 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "lecun2010mnist"
+
+\end_inset
+
+ is composed of 60.000 
+\begin_inset Formula $28\times28$
+\end_inset
+
+ grayscale images of handwritten digits, and the corresponding value of
+ the digit that is represented in the image.
+ For this benchmark, we use an autoencoder 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Autoencoders"
+
+\end_inset
+
+ with layer sizes 
+\begin_inset Formula $\left\{ 784,1000,500,250,30,250,500,1000,784\right\} $
+\end_inset
+
+.
+ The autoencoder encodes the input image into a vector of size 
+\begin_inset Formula $30$
+\end_inset
+
+, and then decodes it to reconstruct the original image.
+ 
 \end_layout
 
 \begin_layout Chapter
@@ -1197,20 +1284,288 @@ effect on the forward pass, and the gradient
 Second order methods
 \end_layout
 
-\begin_layout Itemize
-quadratic hypothesis
+\begin_layout Subsection
+Newton steps
+\end_layout
+
+\begin_layout Standard
+Second order methods refers to all optimization methods that make use of
+ the second derivative or Hessian matrix of the function to be minimized.
+ It follows from the Taylor series decomposition of the function to be minimized
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+f\left(x+\Delta x\right) & = & f\left(x\right)+\left(\nabla f\right)_{x}^{T}\Delta x+\frac{1}{2}\Delta x^{T}\left(\nabla^{2}f\right)_{x}\Delta x+o\left(\left\Vert \Delta x\right\Vert _{2}^{2}\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\left(\nabla^{2}f\right)_{x}$
+\end_inset
+
+ is the Hessian matrix, computed in 
+\begin_inset Formula $x$
+\end_inset
+
+.
+ By ignoring higher order terms (
+\begin_inset Formula $o\left(\left\Vert \Delta x\right\Vert _{2}^{2}\right)=0$
+\end_inset
+
+) we have a quadratic approximation for 
+\begin_inset Formula $f$
+\end_inset
+
+.
+ Using this approximation in a minimization problem, we get a closed form
+ solution:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\Delta x^{*} & = & \text{argmin}_{\Delta x}f\left(x+\Delta x\right)\\
+ & \approx & \text{argmin}_{\Delta x}f\left(x\right)+\left(\nabla f\right)_{x}^{T}\Delta x+\frac{1}{2}\Delta x^{T}\left(\nabla^{2}f\right)_{x}\Delta x
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This expression is solved by taking the derivative with respect to 
+\begin_inset Formula $\Delta x$
+\end_inset
+
+, and setting it to zero in order to obtain:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\left(\nabla^{2}f\right)_{x}\Delta x & = & -\left(\nabla f\right)_{x}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+If we assume that 
+\begin_inset Formula $f$
+\end_inset
+
+ has a minimum in 
+\begin_inset Formula $x^{*}$
+\end_inset
+
+, then the Hessian will be positive definite in 
+\begin_inset Formula $x^{*}$
+\end_inset
+
+, and under the supplementary assumption that the Hessian is continuous,
+ it will also be positive definite in a neighborhood of 
+\begin_inset Formula $x^{*}$
+\end_inset
+
+.
+ In this case, it is invertible and we get the solution:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray}
+\Delta x & = & -\left(\nabla^{2}f\right)_{x}^{-1}\left(\nabla f\right)_{x}\label{eq:newton-step}
+\end{eqnarray}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This update 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:newton-step"
+
+\end_inset
+
+ is called the 
+\series bold
+Newton step
+\series default
+.
+ By making several iterations of Newton, we will converge to a minimum.
+\end_layout
+
+\begin_layout Standard
+The main difficulty of this algorithm is that it does not scale well when
+ applied to neural network optimization.
+ The limitations come from the following aspects:
+\end_layout
+
+\begin_layout Enumerate
+
+\shape italic
+Getting the value of the Hessian matrix
+\shape default
+: Using an automatic differentiation software, we can get an expression
+ for the Hessian, by differentiating the symbolic expression of the gradient.
+ But unlike the computation of the gradient, the graph produced to compute
+ the Hessian will have much more nodes.
+ We will explore this question in more details in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:gauss-newton"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+
+\shape italic
+Storing the Hessian matrix
+\shape default
+: The Hessian matrix is a square matrix with size 
+\begin_inset Formula $n_{\text{parameters}}\times n_{parameters}$
+\end_inset
+
+.
+ As the number of parameters grows, which is the case when building deep
+ networks, the memory required to store the Hessian will grow in 
+\begin_inset Formula $O\left(n^{2}\right)$
+\end_inset
+
+.
+ We will present an approximation of the Hessian that saves memory in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Block-diagonal-Hessian"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+
+\shape italic
+Inverting the Hessian matrix
+\shape default
+: 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "martens2010deep"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Gauss-Newton approximation of the Hessian
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:gauss-newton"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Itemize
-Newton, gauss-newton
+particular structure that it is the sum of hessian matrices for each example
 \end_layout
 
-\begin_layout Itemize
-hessian free
+\begin_layout Subsection
+Hessian free
 \end_layout
 
-\begin_layout Itemize
-diagonal versions
+\begin_layout Subsection
+Block diagonal Hessian 
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Block-diagonal-Hessian"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Apart from the issue of computing a value for the hessian matrix, a main
+ limit is that we need to invert it.
+ The hessian matrix has size 
+\begin_inset Formula $n_{\text{parameters}}\times n_{\text{parameters}}$
+\end_inset
+
+, and the procedure used for numerically inverting a square matrix requires
+ 
+\begin_inset Formula $O\left(n^{3}\right)$
+\end_inset
+
+ operations so it rapidly becomes unfeasible for deep networks.
+ A first approximation we make is by ignoring the interactions between the
+ parameters of different layers.
+ We make the hessian block diagonal, each block having the size of the number
+ of parameters of the corresponding layer.
+ An interesting property of block diagonal matrices is that we get the inverse
+ by inverting every smaller block separately:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\left(\nabla^{2}f\right)^{-1} & \approx & \left(\begin{array}{cccc}
+\mathbf{H}_{1} & 0 & \cdots & 0\\
+0 & \mathbf{H}_{2} &  & \vdots\\
+\vdots &  & \ddots & 0\\
+0 & \cdots & 0 & \mathbf{H}_{n}
+\end{array}\right)^{-1}=\left(\begin{array}{cccc}
+\mathbf{H}_{1}^{-1} & 0 & \cdots & 0\\
+0 & \mathbf{H}_{2}^{-1} &  & \vdots\\
+\vdots &  & \ddots & 0\\
+0 & \cdots & 0 & \mathbf{H}_{n}^{-1}
+\end{array}\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+It also makes the implementation easier, as we can treat each block 
+\begin_inset Quotes eld
+\end_inset
+
+locally
+\begin_inset Quotes erd
+\end_inset
+
+ in the network, and use its inverse to update the gradient direction for
+ the corresponding block using 
+\begin_inset Formula $\theta_{i}\leftarrow\theta_{i}-\lambda\mathbf{H}_{i}^{-1}\frac{\partial C}{\partial\theta_{i}}$
+\end_inset
+
+.
+ We do not need to store a big 
+\begin_inset Formula $n_{\text{parameters}}\times n_{\text{parameters}}$
+\end_inset
+
+ matrix.
 \end_layout
 
 \begin_layout Section
