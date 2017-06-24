@@ -1618,8 +1618,15 @@ In practice,
 \begin_inset Formula $G_{f}\left(x_{i},\theta\right)$
 \end_inset
 
- present a much simpler expression for common loss functions, as the second
- derivative of the loss simplifies into:
+ present a much more convenient expression for common loss functions, as
+ the second derivative of the loss simplifies (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "gn-loss"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Standard
@@ -1629,6 +1636,104 @@ sideways false
 status open
 
 \begin_layout Plain Layout
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="2">
+<features tabularvalignment="middle">
+<column alignment="right" valignment="top" width="0pt">
+<column alignment="center" valignment="top" width="0pt">
+<row>
+<cell alignment="right" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Loss function
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $G_{f}\left(x_{i},\theta\right)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+quadratic error
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\mathbf{J}\left(x_{i},\theta\right)\mathbf{J}\left(x_{i},\theta\right)^{T}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+cross entropy for binary decision
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\mathbf{J}\left(x_{i},\theta\right)\text{diag}\left(\frac{y_{i}}{\left(f(x_{i},\theta)\right)^{2}}+\frac{1-y_{i}}{\left(1-f(x_{i},\theta)\right)^{2}}\right)\mathbf{J}\left(x_{i},\theta\right)^{T}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+cross entropy for multiclass classification
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
 
 \end_layout
 
@@ -1636,7 +1741,25 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Expressions for the Gauss-Newton approximation of the Hessian
+\begin_inset CommandInset label
+LatexCommand label
+name "gn-loss"
+
+\end_inset
+
+Expressions for the Gauss-Newton approximation of the Hessian, for a single
+ example 
+\begin_inset Formula $x_{i}$
+\end_inset
+
+.
+ For the cross entropy, all operations (division, squarred value) are elementwis
+e, and the 
+\begin_inset Formula $\text{diag}$
+\end_inset
+
+ function transforms a vector into a diagonal matrix with the vector values
+ on its diagonal.
 \end_layout
 
 \end_inset
@@ -1653,8 +1776,32 @@ Expressions for the Gauss-Newton approximation of the Hessian
 
 \end_layout
 
-\begin_layout Itemize
-particular structure that it is the sum of hessian matrices for each example
+\begin_layout Standard
+We finally give an expression for the Gauss-Newton approximation of the
+ Hessian for the empirical risk:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+G_{f}\left(\theta\right) & = & \frac{1}{n}\sum_{i}\mathbf{J}\left(x_{i},\theta\right)D\left(f\left(x_{i},\theta\right),y_{i}\right)\mathbf{J}\left(x_{i},\theta\right)^{T}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We will show in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:2ndorder-newpers"
+
+\end_inset
+
+ that this matrix can be factorized to design optimization algorithms adapted
+ to the particular structure of neural networks.
 \end_layout
 
 \begin_layout Subsection
@@ -1748,6 +1895,10 @@ Direct gradient update
 \end_layout
 
 \begin_layout Standard
+à réécrire complètement
+\end_layout
+
+\begin_layout Standard
 A major inconvenient of first order methods is that they update every individual
  parameter without taking into account for other parameter updates.
  As an illustration, take a neural network composed of only 2 layers 
@@ -1837,6 +1988,104 @@ expressions for common loss functions
 
 \begin_layout Section
 Second order: a new perspective
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:2ndorder-newpers"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In this section, we will show a convenient factorization of the Gauss-Newton
+ approximation of the Hessian, that was first applied to the Fisher Information
+ Matrix in the litterature 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "martens2015optimizing"
+
+\end_inset
+
+.
+ To this end, we will use an operation called the Kronecker product that
+ permits giving simple expressions for the GN matrix.
+ For 2 matrices 
+\begin_inset Formula $A$
+\end_inset
+
+ of size 
+\begin_inset Formula $m\times n$
+\end_inset
+
+ and 
+\begin_inset Formula $B$
+\end_inset
+
+ of size 
+\begin_inset Formula $p\times q$
+\end_inset
+
+ it produces a new matrix 
+\begin_inset Formula $A\otimes B$
+\end_inset
+
+ of size 
+\begin_inset Formula $mp\times nq$
+\end_inset
+
+ defined by:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+A\otimes B & = & \left(\begin{array}{ccc}
+a_{11}B & \cdots & a_{1n}B\\
+\vdots & \ddots & \vdots\\
+a_{m1}B & \cdots & a_{mn}B
+\end{array}\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Its most interesting property in the context of neural networks is its relations
+hip with the 
+\begin_inset Formula $vec$
+\end_inset
+
+ operation, that 
+\begin_inset Quotes eld
+\end_inset
+
+flattens
+\begin_inset Quotes erd
+\end_inset
+
+ a matrix into a vector.
+ It is of great use for 2nd order, because the weight matrices can be vectorized
+ using 
+\begin_inset Formula $vec$
+\end_inset
+
+, to give matrix expressions for the Hessian, which otherwise could not
+ be written.
+ We will make use of the property:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+vec\left(AXB\right) & = & \left(B^{T}\otimes A\right)vec\left(X\right)
+\end{eqnarray*}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Itemize
