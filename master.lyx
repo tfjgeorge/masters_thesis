@@ -1464,14 +1464,31 @@ reference "subsec:Block-diagonal-Hessian"
 \shape italic
 Inverting the Hessian matrix
 \shape default
-: 
+: Inverting the Hessian matrix is also costly as it grows in 
+\begin_inset Formula $O\left(n^{3}\right)$
+\end_inset
+
+ with the size of the matrix.
+ We present an algorithm that make use of second order information but without
+ the need to invert the Hessian matrix known as 
+\shape italic
+Hessian Free
+\shape default
+ 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "martens2010deep"
 
 \end_inset
 
+ in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Hessian-free"
 
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
@@ -1485,12 +1502,170 @@ name "subsec:gauss-newton"
 
 \end_layout
 
+\begin_layout Standard
+In the case of neural network optimization, the Hessian matrix we need to
+ evaluate is the second derivative of the empirical risk, with respect to
+ the parameters.
+ A first remark that we can make, is that it is also composed of a sum of
+ second order derivatives, to be computed at each example of the dataset:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathbf{H} & = & \frac{\partial^{2}R}{\partial\theta^{2}}\\
+ & = & \frac{\partial^{2}}{\partial\theta^{2}}\left\{ \frac{1}{n}\sum_{i}l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} \\
+ & = & \frac{1}{n}\sum_{i}\frac{\partial^{2}}{\partial\theta^{2}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} 
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+By making use of the chain rule we can also give an expression for the second
+ derivative of the loss, for a single example.
+ We start with the first derivative:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\frac{\partial}{\partial\theta}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\}  & = & \left(\frac{\partial}{\partial f}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} \right)^{T}\mathbf{J}\left(x_{i},\theta\right)^{T}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\mathbf{J}$
+\end_inset
+
+ is the jacobian of the output of the network 
+\begin_inset Formula $f$
+\end_inset
+
+ with respect to the parameters 
+\begin_inset Formula $\theta$
+\end_inset
+
+.
+ In this notation we made the dependance in 
+\begin_inset Formula $\theta$
+\end_inset
+
+ of both parts of the product explicit.
+ Note that both parts also take different values for each examples 
+\begin_inset Formula $x_{i}$
+\end_inset
+
+.
+ We now derive this expression to obtain the Hessian:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\frac{\partial^{2}}{\partial\theta^{2}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\}  & = & \underbrace{\mathbf{J}\left(x_{i},\theta\right)\frac{\partial^{2}}{\partial f^{2}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} \mathbf{J}\left(x_{i},\theta\right)^{T}}_{G_{f}\left(x_{i},\theta\right)}+\sum_{j}\left(\nabla^{2}f_{j}\left(x_{i},\theta\right)\right)\frac{\partial}{\partial f_{j}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} 
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $G_{f}\left(x_{i},\theta\right)$
+\end_inset
+
+ is called the Gauss-Newton approximation of the Hessian.
+ The remainder is proportional to 
+\begin_inset Formula $\frac{\partial}{\partial f_{j}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} $
+\end_inset
+
+.
+ As we get closer to the the optimum, this part will go toward 
+\begin_inset Formula $0$
+\end_inset
+
+ as it is a first derivative, so the approximation will get more precise.
+ At a minmum for 
+\begin_inset Formula $l\left(f\left(x_{i},\theta\right),y_{i}\right)$
+\end_inset
+
+, we will have 
+\begin_inset Formula $\frac{\partial^{2}}{\partial\theta^{2}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} =G_{f}\left(x_{i},\theta\right)$
+\end_inset
+
+ so it is a reasonable approximation to use in practice.
+ Note that a minimum for the empirical risk 
+\begin_inset Formula $R\left(\theta\right)$
+\end_inset
+
+ will not necessarily be a minimum for each example 
+\begin_inset Formula $l\left(f\left(x_{i},\theta\right),y_{i}\right)$
+\end_inset
+
+, especially if the capacity of the neural network is not sufficient to
+ model the data distribution.
+\end_layout
+
+\begin_layout Standard
+In practice, 
+\begin_inset Formula $G_{f}\left(x_{i},\theta\right)$
+\end_inset
+
+ present a much simpler expression for common loss functions, as the second
+ derivative of the loss simplifies into:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Expressions for the Gauss-Newton approximation of the Hessian
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Itemize
 particular structure that it is the sum of hessian matrices for each example
 \end_layout
 
 \begin_layout Subsection
 Hessian free
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Hessian-free"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
