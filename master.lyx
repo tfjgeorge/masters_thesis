@@ -1532,7 +1532,7 @@ By making use of the chain rule we can also give an expression for the second
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\frac{\partial}{\partial\theta}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\}  & = & \left(\frac{\partial}{\partial f}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} \right)^{T}\mathbf{J}\left(x_{i},\theta\right)^{T}
+\frac{\partial}{\partial\theta}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\}  & = & \mathbf{J}\left(x_{i},\theta\right)^{T}\left(\frac{\partial}{\partial f}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} \right)
 \end{eqnarray*}
 
 \end_inset
@@ -1569,7 +1569,7 @@ By making use of the chain rule we can also give an expression for the second
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\frac{\partial^{2}}{\partial\theta^{2}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\}  & = & \underbrace{\mathbf{J}\left(x_{i},\theta\right)\frac{\partial^{2}}{\partial f^{2}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} \mathbf{J}\left(x_{i},\theta\right)^{T}}_{G_{f}\left(x_{i},\theta\right)}+\sum_{j}\left(\nabla^{2}f_{j}\left(x_{i},\theta\right)\right)\frac{\partial}{\partial f_{j}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} 
+\frac{\partial^{2}}{\partial\theta^{2}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\}  & = & \underbrace{\mathbf{J}\left(x_{i},\theta\right)^{T}\frac{\partial^{2}}{\partial f^{2}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} \mathbf{J}\left(x_{i},\theta\right)}_{G_{f}\left(x_{i},\theta\right)}+\sum_{j}\left(\nabla^{2}f_{j}\left(x_{i},\theta\right)\right)\frac{\partial}{\partial f_{j}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} 
 \end{eqnarray*}
 
 \end_inset
@@ -1678,7 +1678,7 @@ quadratic error
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\mathbf{J}\left(x_{i},\theta\right)\mathbf{J}\left(x_{i},\theta\right)^{T}$
+\begin_inset Formula $\mathbf{J}\left(x_{i},\theta\right)^{T}\mathbf{J}\left(x_{i},\theta\right)$
 \end_inset
 
 
@@ -1701,7 +1701,7 @@ cross entropy for binary decision
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\mathbf{J}\left(x_{i},\theta\right)\text{diag}\left(\frac{y_{i}}{\left(f(x_{i},\theta)\right)^{2}}+\frac{1-y_{i}}{\left(1-f(x_{i},\theta)\right)^{2}}\right)\mathbf{J}\left(x_{i},\theta\right)^{T}$
+\begin_inset Formula $\mathbf{J}\left(x_{i},\theta\right)^{T}\text{diag}\left(\frac{y_{i}}{\left(f(x_{i},\theta)\right)^{2}}+\frac{1-y_{i}}{\left(1-f(x_{i},\theta)\right)^{2}}\right)\mathbf{J}\left(x_{i},\theta\right)$
 \end_inset
 
 
@@ -1784,7 +1784,7 @@ We finally give an expression for the Gauss-Newton approximation of the
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-G_{f}\left(\theta\right) & = & \frac{1}{n}\sum_{i}\mathbf{J}\left(x_{i},\theta\right)D\left(f\left(x_{i},\theta\right),y_{i}\right)\mathbf{J}\left(x_{i},\theta\right)^{T}
+G_{f}\left(\theta\right) & = & \frac{1}{n}\sum_{i}\mathbf{J}\left(x_{i},\theta\right)^{T}D\left(f\left(x_{i},\theta\right),y_{i}\right)\mathbf{J}\left(x_{i},\theta\right)
 \end{eqnarray*}
 
 \end_inset
@@ -2088,8 +2088,195 @@ vec\left(AXB\right) & = & \left(B^{T}\otimes A\right)vec\left(X\right)
 
 \end_layout
 
-\begin_layout Itemize
-factorization of the hessian & 
+\begin_layout Standard
+Getting back to the expression for the Gauss-Newton matrix derived in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:gauss-newton"
+
+\end_inset
+
+, we now focus on a single layer defined by the linear transformation 
+\begin_inset Formula $a=Wh+b$
+\end_inset
+
+ and the nonlinearity 
+\begin_inset Formula $h'=f\left(a\right)$
+\end_inset
+
+.
+ We start from the jacobian of the output of the network, with respect to
+ the output of the linear transformation 
+\begin_inset Formula $a$
+\end_inset
+
+, denoted by 
+\begin_inset Formula $\mathbf{J}_{a}$
+\end_inset
+
+.
+ From this jacobian computed by backpropagation, we can get the jacobian
+ with respect to the parameters of the layer by making use of the chain
+ rule 
+\begin_inset Formula $\mathbf{J}_{\theta}=\mathbf{J}_{a}\mathbf{J}_{\theta}^{a}$
+\end_inset
+
+.
+ We use the notation 
+\begin_inset Formula $\mathbf{J}_{\theta}^{a}$
+\end_inset
+
+ for the jacobian of 
+\begin_inset Formula $a$
+\end_inset
+
+ with respect to 
+\begin_inset Formula $\theta$
+\end_inset
+
+.
+ In order to get an expression for this jacobian, we now make use of the
+ 
+\begin_inset Formula $vec$
+\end_inset
+
+ operator to transform 
+\begin_inset Formula $W$
+\end_inset
+
+ into a vector:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+a & = & vec\left(a\right)\\
+ & = & vec\left(Wh\right)+b\\
+ & = & \left(h^{T}\otimes\mathbf{I}\right)vec\left(W\right)+b
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\mathbf{I}$
+\end_inset
+
+ is the identity, of the same size than 
+\begin_inset Formula $a$
+\end_inset
+
+, that is the output size of the layer.
+ We can now give an expression for 
+\begin_inset Formula $\mathbf{J}_{vec\left(W\right)}^{a}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathbf{J}_{b}^{a}$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathbf{J}_{b}^{a} & = & \mathbf{I}\\
+\mathbf{J}_{vec\left(W\right)}^{a} & = & h^{T}\otimes\mathbf{I}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Or, if we stack 
+\begin_inset Formula $vec\left(W\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $b$
+\end_inset
+
+ in a vector 
+\begin_inset Formula $\theta$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathbf{J}_{\theta}^{a} & = & \left(\begin{array}{cc}
+h^{T} & 1\end{array}\right)\otimes\mathbf{I}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+And finally by the chain rule:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray}
+\mathbf{J}_{\theta} & = & \left(\begin{array}{cc}
+h^{T} & 1\end{array}\right)\otimes\mathbf{J}_{a}\label{eq:jaco_factorization}
+\end{eqnarray}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This jacobian is a first order measure of how much the output of the network
+ will change if we move the values of the parameters of this layer, for
+ a single example.
+ Let us now recall the expression of the GN matrix 
+\begin_inset Formula $G_{f}=\frac{1}{n}\sum_{i}\mathbf{J}_{\theta}\left(x_{i}\right)^{T}D\left(x_{i}\right)\mathbf{J}_{\theta}\left(x_{i}\right)$
+\end_inset
+
+ from 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:gauss-newton"
+
+\end_inset
+
+.
+ We can rewrite this expression using the factorization 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:jaco_factorization"
+
+\end_inset
+
+:
+\begin_inset Formula 
+\begin{eqnarray*}
+G_{f} & = & \frac{1}{n}\sum_{i}\left[\left(\begin{array}{cc}
+h_{i}^{T} & 1\end{array}\right)\otimes\mathbf{J}_{a_{i}}\right]^{T}D\left(x_{i}\right)\left[\left(\begin{array}{cc}
+h_{i}^{T} & 1\end{array}\right)\otimes\mathbf{J}_{a_{i}}\right]\\
+ & = & \frac{1}{n}\sum_{i}\left(\begin{array}{cc}
+h_{i}^{T} & 1\end{array}\right)^{T}\left(\begin{array}{cc}
+h_{i}^{T} & 1\end{array}\right)\otimes\left(\mathbf{J}_{a_{i}}^{T}D\left(x_{i}\right)\mathbf{J}_{a_{i}}\right)\\
+ & = & \frac{1}{n}\sum_{i}\left(\begin{array}{cc}
+h_{i}h_{i}^{T} & h_{i}\\
+h_{i}^{T} & 1
+\end{array}\right)\otimes\left(\mathbf{J}_{a_{i}}^{T}D\left(x_{i}\right)\mathbf{J}_{a_{i}}\right)
+\end{eqnarray*}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Itemize
