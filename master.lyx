@@ -2296,17 +2296,148 @@ h_{i}^{T} & 1
 
 \end_layout
 
-\begin_layout Itemize
-measure of the induced change on the output of the function/on the loss
- (jaco, gradient, and fisher)
+\begin_layout Standard
+This factorization is interesting because it separates the GN matrix into
+ a contribution from the backpropagated jacobian, and a part that only uses
+ the forward statistics.
+ Further approximations were exploited in KFAC and Natural Neural Networks
+ to build efficient optimization algorithms.
+ We will present and discuss these approximations in the next sections.
 \end_layout
 
 \begin_layout Section
 Methods using the FIM
 \end_layout
 
-\begin_layout Standard
+\begin_layout Subsection
+Fisher Information Matrix
+\end_layout
 
+\begin_layout Standard
+The Fisher information matrix (FIM) is a tool well used in statistics.
+ In the context of machine learning, and in particular deep learning, we
+ use its inverse as a preconditioner for the gradient descent algorithm,
+ similarly to the Newton algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:newton-step"
+
+\end_inset
+
+.
+ In this section, we show how the FIM can be derived from the KL divergence
+ and how we get a better 
+\begin_inset Quotes eld
+\end_inset
+
+natural
+\begin_inset Quotes erd
+\end_inset
+
+ gradient using this information.
+ Let us first recall the definition of the KL divergence for 2 distributions
+ 
+\begin_inset Formula $p$
+\end_inset
+
+ and 
+\begin_inset Formula $q$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\text{KL}\left(p\parallel q\right) & = & \mathbb{E}_{p}\left[\log\left(\frac{p}{q}\right)\right]
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+It is a non-negative quantity that looks like a measure of how much 
+\begin_inset Formula $q$
+\end_inset
+
+ differs from 
+\begin_inset Formula $p$
+\end_inset
+
+.
+ In particular, 
+\begin_inset Formula $\text{KL}\left(p\parallel q\right)=0$
+\end_inset
+
+ when 
+\begin_inset Formula $p=q$
+\end_inset
+
+.
+ Note that it is not symmetric, so it can not directly be used as a metric.
+\end_layout
+
+\begin_layout Standard
+The idea of the natural gradient is to use the KL divergence as a regularizer
+ when doing gradient descent.
+ We will denote by 
+\begin_inset Formula $p_{\theta}$
+\end_inset
+
+ a parametric model and 
+\begin_inset Formula $\Delta\theta$
+\end_inset
+
+ a change in its parameter values.
+ 
+\begin_inset Formula $\text{KL}\left(p_{\theta}\parallel p_{\theta+\Delta\theta}\right)$
+\end_inset
+
+ is used as our regularizer, so that each change 
+\begin_inset Formula $\Delta\theta$
+\end_inset
+
+ gives the same change in the distribution space.
+ Instead of using the full expression for 
+\begin_inset Formula $\text{KL}\left(p_{\theta}\parallel p_{\theta+\Delta\theta}\right)$
+\end_inset
+
+ we will use its second order Taylor series around 
+\begin_inset Formula $\theta$
+\end_inset
+
+ (for full derivation see for instance 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "pascanu2013revisiting"
+
+\end_inset
+
+):
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\text{KL}\left(p_{\theta}\Vert p_{\theta+\Delta\theta}\right) & = & \Delta\theta^{T}\mathbf{F}\Delta\theta+o(\left\Vert \Delta\theta\right\Vert _{2}^{2})
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This expression exhibits the FIM which can now be used directly as a regularizer.
+ Interestingly, even if the KL divergence is not symmetric, its second order
+ approximation is, as we also have 
+\begin_inset Formula $\text{KL}\left(p_{\theta+\Delta\theta}\Vert p_{\theta}\right)=\Delta\theta^{T}\mathbf{F}\Delta\theta+o(\left\Vert \Delta\theta\right\Vert _{2}^{2})$
+\end_inset
+
+ (notice that we swapped the terms in the KL).
 \end_layout
 
 \begin_layout Itemize
