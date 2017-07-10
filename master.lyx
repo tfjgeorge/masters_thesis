@@ -271,7 +271,7 @@ key "rosenblatt1961principles"
 \begin_inset Formula $f$
 \end_inset
 
- is function, and is sometimes called the nonlinearity as it allows the
+ is a function, and is sometimes called the nonlinearity as it allows the
  function 
 \begin_inset Formula $y$
 \end_inset
@@ -1586,7 +1586,8 @@ By making use of the chain rule we can also give an expression for the second
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\frac{\partial^{2}}{\partial\theta^{2}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\}  & = & \underbrace{\mathbf{J}\left(x_{i},\theta\right)^{T}\frac{\partial^{2}}{\partial f^{2}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} \mathbf{J}\left(x_{i},\theta\right)}_{G_{f}\left(x_{i},\theta\right)}+\sum_{j}\left(\nabla^{2}f_{j}\left(x_{i},\theta\right)\right)\frac{\partial}{\partial f_{j}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} 
+\frac{\partial^{2}}{\partial\theta^{2}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\}  & = & \underbrace{\mathbf{J}\left(x_{i},\theta\right)^{T}\frac{\partial^{2}}{\partial f^{2}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} \mathbf{J}\left(x_{i},\theta\right)}_{G_{f}\left(x_{i},\theta\right)}\\
+ &  & +\sum_{j}\left(\nabla^{2}f_{j}\left(x_{i},\theta\right)\right)\frac{\partial}{\partial f_{j}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} 
 \end{eqnarray*}
 
 \end_inset
@@ -2437,19 +2438,668 @@ This expression exhibits the FIM which can now be used directly as a regularizer
 \begin_inset Formula $\text{KL}\left(p_{\theta+\Delta\theta}\Vert p_{\theta}\right)=\Delta\theta^{T}\mathbf{F}\Delta\theta+o(\left\Vert \Delta\theta\right\Vert _{2}^{2})$
 \end_inset
 
- (notice that we swapped the terms in the KL).
+ (note that we swapped the terms in the KL).
 \end_layout
 
-\begin_layout Itemize
-kfac
+\begin_layout Subsection
+(Natural) gradient descent
 \end_layout
 
-\begin_layout Itemize
-nnn
+\begin_layout Standard
+The usual gradient descent algorithm can be formulated as the minimization
+ of the following expression:
 \end_layout
 
-\begin_layout Itemize
-overcoming catastrophic forgetting
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\Delta\theta & = & \text{argmin}_{\Delta\theta}\left\{ \Delta\theta^{T}\nabla\mathcal{L}+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert ^{2}\right\} 
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We use the notation 
+\begin_inset Formula $\mathcal{L}$
+\end_inset
+
+ for the expectation of the loss function over the distribution of the data.
+ This expression can be easily solved giving the expression 
+\begin_inset Formula $\Delta\theta=-\frac{1}{\lambda}\nabla\mathcal{L}$
+\end_inset
+
+.
+ The parameter 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+ is the inverse of the learning rate, and controls how much each parameter
+ can change.
+ We will now add a new regularizer using the FIM, and transform the minimization
+ problem into:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\Delta\theta & = & \text{argmin}_{\Delta\theta}\left\{ \Delta\theta^{T}\nabla\mathcal{L}+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert ^{2}+\frac{\lambda}{2}\Delta\theta^{T}\mathbf{F}\Delta\theta\right\} 
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We now constrain our gradient step to be small in term of change of parameter
+ values, and also to be small in term of how much the resulting distribution
+ changes.
+ This expression can be solved to give 
+\begin_inset Formula $\Delta\theta=\frac{1}{\lambda}\left(\mathbf{F}+\epsilon\mathbf{I}\right)^{-1}\nabla\mathcal{L}$
+\end_inset
+
+.
+ This expression also gives an insight for the role of 
+\begin_inset Formula $\lambda$
+\end_inset
+
+ and 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+, which control 2 different but related quantities expressed by our constraints.
+ This new update is called the natural gradient.
+\end_layout
+
+\begin_layout Subsection
+Factorizing the FIM for neural networks
+\end_layout
+
+\begin_layout Subsubsection
+An expression for the FIM using jacobians
+\end_layout
+
+\begin_layout Standard
+Interestingly, for the usual distributions expressed by neural networks,
+ the FIM takes the following simple form as shown by 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "pascanu2013revisiting"
+
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathbf{F} & = & \mathbb{E}_{x\sim q}\left[\boldsymbol{J}_{\boldsymbol{y}\left(x\right)}^{T}D\left(\boldsymbol{y}\left(x\right)\right)\boldsymbol{J}_{\boldsymbol{y}\left(x\right)}\right]
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The values for 
+\begin_inset Formula $x$
+\end_inset
+
+ are drawn from the data generating distribution 
+\begin_inset Formula $q$
+\end_inset
+
+.
+ The notation 
+\begin_inset Formula $\boldsymbol{J}_{\boldsymbol{y}\left(x\right)}$
+\end_inset
+
+ is used for the jacobian of the output of the network (i.e.
+ the probability expressed at a given 
+\begin_inset Formula $x$
+\end_inset
+
+ : 
+\begin_inset Formula $p\left(y\mid x\right)$
+\end_inset
+
+), with respect to the parameters.
+ In other words, it measures how much the output of the network will change
+ for a given 
+\begin_inset Formula $x$
+\end_inset
+
+ if we change the parameters.
+ 
+\begin_inset Formula $D$
+\end_inset
+
+ is a diagonal matrix with non negative diagonal terms, and depends of the
+ cost function used.
+ For the quadratic loss it is the identity.
+\end_layout
+
+\begin_layout Subsubsection
+Approximations to the FIM
+\end_layout
+
+\begin_layout Standard
+The FIM is difficult to compute because of its size (
+\begin_inset Formula $n_{parameters}\times n_{parameters}$
+\end_inset
+
+) and because in general we do not have an expression for 
+\begin_inset Formula $q$
+\end_inset
+
+ but only samples from a training dataset.
+\end_layout
+
+\begin_layout Standard
+A first approximation that we can make is by ignoring the interactions between
+ layers.
+ In this case the FIM takes the form of a block diagonal matrix, where each
+ block is a square matrix which has the size of the parameters of a layer.
+ For a neural network with 
+\begin_inset Formula $n_{layers}$
+\end_inset
+
+ layers this reduces the FIM into 
+\begin_inset Formula $n_{layers}$
+\end_inset
+
+ smaller matrices.
+ We will denote by 
+\begin_inset Formula $\mathbf{F}_{i}$
+\end_inset
+
+ the block corresponding to layer 
+\begin_inset Formula $i$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+A second common approximation we make in practice is to use the empirical
+ FIM for a training dataset of 
+\begin_inset Formula $n$
+\end_inset
+
+ examples 
+\begin_inset Formula $x_{i}$
+\end_inset
+
+: 
+\begin_inset Formula $\mathbf{F}=\frac{1}{n}\sum_{i}\boldsymbol{J}_{\boldsymbol{y}\left(x_{i}\right)}^{T}D\left(\boldsymbol{y}\left(x_{i}\right)\right)\boldsymbol{J}_{\boldsymbol{y}\left(x_{i}\right)}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+Factorization of the 
+\begin_inset Formula $\mathbf{F}_{i}$
+\end_inset
+
+s using the Kronecker product
+\end_layout
+
+\begin_layout Standard
+In the rest of this note, we will restrict our analysis to a multilayer
+ perceptron.
+ Each layer is parametrized using a weight matrix 
+\begin_inset Formula $W$
+\end_inset
+
+ of size 
+\begin_inset Formula $\left(\text{out}\times\text{in}\right)$
+\end_inset
+
+ and a bias vector 
+\begin_inset Formula $b$
+\end_inset
+
+ of size 
+\begin_inset Formula $\left(\text{out}\right)$
+\end_inset
+
+.
+ A layer consists in a linear transformation and a non-linearity 
+\begin_inset Formula $f$
+\end_inset
+
+ to give the hidden representation of the next layer:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+h_{l+1}=f_{l}\left(a_{l}\right) & \text{with} & a_{l}=W_{l}h_{l}+b_{l}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We will focus on a single layer, and drop the subscript 
+\begin_inset Formula $l$
+\end_inset
+
+.
+ In the following, we will also focus on a single example in the expectation
+ for the FIM.
+ Each individual example has its own jacobian with respect to the parameter.
+ In other words, this jacobian measures how the output of the network changes
+ for this example, if you move the parameter values.
+\end_layout
+
+\begin_layout Standard
+The jacobians for parameters 
+\begin_inset Formula $W$
+\end_inset
+
+ and 
+\begin_inset Formula $b$
+\end_inset
+
+ are obtained using the chain rule for derivation: 
+\begin_inset Formula $\boldsymbol{J}_{\boldsymbol{y}}^{W}=\boldsymbol{J}_{\boldsymbol{y}}^{a}\boldsymbol{J}_{a}^{W}$
+\end_inset
+
+ and 
+\begin_inset Formula $\boldsymbol{J}_{\boldsymbol{y}}^{b}=\boldsymbol{J}_{\boldsymbol{y}}^{a}\boldsymbol{J}_{a}^{b}$
+\end_inset
+
+.
+ The jacobian for the bias simplifies as 
+\begin_inset Formula $\boldsymbol{J}_{a}^{b}=\mathbf{I}$
+\end_inset
+
+.
+ For the weight matrix, it is a little bit more tricky.
+ As 
+\begin_inset Formula $W$
+\end_inset
+
+ is a matrix and not a vector, we can not express a jacobian matrix directly.
+ We will have to make use of the Kronecker product and the 
+\begin_inset Formula $\text{vec}$
+\end_inset
+
+ operator.
+ We start from the linear relation 
+\begin_inset Formula $a=Wh+b$
+\end_inset
+
+ and remark that 
+\begin_inset Formula $a=\text{vec}\left(a\right)$
+\end_inset
+
+ since 
+\begin_inset Formula $a$
+\end_inset
+
+ is a vector.
+ We can now make use of the formula 
+\begin_inset Formula $\text{vec}\left(AXB\right)=\left(B^{T}\otimes A\right)\text{vec}\left(X\right)$
+\end_inset
+
+ to obtain:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+a & = & \left(h^{T}\otimes\mathbf{I}_{out}\right)\text{vec}\left(W\right)\\
+\boldsymbol{J}_{a}^{\text{vec}\left(W\right)} & = & \left(h^{T}\otimes\mathbf{I}_{out}\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Putting everything together we get the jacobians:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\boldsymbol{J}_{\boldsymbol{y}}^{\text{vec}\left(W\right)} & = & \boldsymbol{J}_{\boldsymbol{y}}^{a}\left(h^{T}\otimes\mathbf{I}_{out}\right)\\
+ & = & h^{T}\otimes\boldsymbol{J}_{\boldsymbol{y}}^{a}\\
+\boldsymbol{J}_{\boldsymbol{y}}^{b} & = & \boldsymbol{J}_{\boldsymbol{y}}^{a}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Now imagine that we stack all parameters 
+\begin_inset Formula $W$
+\end_inset
+
+ and 
+\begin_inset Formula $b$
+\end_inset
+
+ in a vector 
+\begin_inset Formula $\theta=\left(\text{vec}\left(W\right)_{1}\cdots\text{vec}\left(W\right)_{in\times out}b_{1}\cdots b_{out}\right)$
+\end_inset
+
+.
+ We get the full jacobian by stacking the jacobians:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\boldsymbol{J}_{\boldsymbol{y}}^{\theta} & = & \left(\begin{array}{cc}
+h^{T} & 1\end{array}\right)\otimes\boldsymbol{J}_{\boldsymbol{y}}^{a}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+From this expression we can finally express the FIM in a factorized form:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray}
+\mathbf{F} & = & \mathbb{E}\left[\left\{ \left(\begin{array}{c}
+h\\
+1
+\end{array}\right)\otimes\left(\boldsymbol{J}_{\boldsymbol{y}}^{a}\right)^{T}\right\} D\left(\boldsymbol{y}\right)\left\{ \left(\begin{array}{cc}
+h^{T} & 1\end{array}\right)\otimes\boldsymbol{J}_{\boldsymbol{y}}^{a}\right\} \right]\nonumber \\
+ & = & \mathbb{E}\left[\left(\begin{array}{cc}
+hh^{T} & h\\
+h^{T} & 1
+\end{array}\right)\otimes\left(\left(\boldsymbol{J}_{\boldsymbol{y}}^{a}\right)^{T}D\left(\boldsymbol{y}\right)\boldsymbol{J}_{\boldsymbol{y}}^{a}\right)\right]\label{eq:factoredfim}
+\end{eqnarray}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In this expression, remember that all 3 variables 
+\begin_inset Formula $h$
+\end_inset
+
+, 
+\begin_inset Formula $a$
+\end_inset
+
+ and 
+\begin_inset Formula $\boldsymbol{y}$
+\end_inset
+
+ have a different value for each individual example.
+ The FIM is the sum of the contributions of each example.
+ The use of the Kronecker product permits splitting the contribution of
+ each example in a term that involves the input of the layer 
+\begin_inset Formula $\left(\begin{array}{cc}
+hh^{T} & h\\
+h^{T} & 1
+\end{array}\right)$
+\end_inset
+
+ and a term that involves the jacobian received on the output of the linear
+ transformation 
+\begin_inset Formula $\left(\boldsymbol{J}_{\boldsymbol{y}}^{a}\right)^{T}D\left(\boldsymbol{y}\right)\boldsymbol{J}_{\boldsymbol{y}}^{a}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+KFAC
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset citation
+LatexCommand cite
+key "martens2015optimizing"
+
+\end_inset
+
+ use a simplification of the FIM that drastically reduce the computation
+ required for inverting it.
+ Remember that even if we consider a block diagonal approximation of the
+ FIM, each block still has size 
+\begin_inset Formula $n_{parameters}\times n_{parameters}$
+\end_inset
+
+.
+ We need to invert this block, and the operation of inverting a square matrix
+ is 
+\begin_inset Formula $O\left(n_{parameters}^{3}\right)$
+\end_inset
+
+.
+ They propose the following approximation:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathbf{F} & \approx & \mathbb{E}\left[\left(\begin{array}{cc}
+hh^{T} & h\\
+h^{T} & 1
+\end{array}\right)\right]\otimes\mathbb{E}\left[\left(\boldsymbol{J}_{\boldsymbol{y}}^{a}\right)^{T}D\left(\boldsymbol{y}\right)\boldsymbol{J}_{\boldsymbol{y}}^{a}\right]
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The Kronecker product has the nice property that for 2 invertible square
+ matrices 
+\begin_inset Formula $A$
+\end_inset
+
+ and 
+\begin_inset Formula $B$
+\end_inset
+
+, 
+\begin_inset Formula $\left(A\otimes B\right)^{-1}=A^{-1}\otimes B^{-1}$
+\end_inset
+
+.
+ It follows that inverting the FIM now requires inverting 2 smaller matrices.
+ However the approximation they use is questionable, and they show some
+ interesting experimental results.
+\end_layout
+
+\begin_layout Subsection
+Natural Neural Networks
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset citation
+LatexCommand cite
+key "desjardins2015natural"
+
+\end_inset
+
+ exploit the same factorization 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:factoredfim"
+
+\end_inset
+
+ but only consider the term involving the input of the linear transformation
+ (
+\begin_inset Formula $h$
+\end_inset
+
+).
+ They propose a reparametrization that will make 
+\begin_inset Formula $\mathbb{E}\left[\left(\begin{array}{cc}
+hh^{T} & h\\
+h^{T} & 1
+\end{array}\right)\right]$
+\end_inset
+
+ equal the identity.
+ To this view, they change the original linear transformation 
+\begin_inset Formula $a=Wh+b$
+\end_inset
+
+ to become:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+a & = & VU\left(h-\mu\right)+d
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $V$
+\end_inset
+
+ is the new weight matrix and 
+\begin_inset Formula $d$
+\end_inset
+
+ are the new biases.
+ 
+\begin_inset Formula $\mu=\mathbb{E}\left[h\right]$
+\end_inset
+
+ is the mean value for 
+\begin_inset Formula $h$
+\end_inset
+
+ and 
+\begin_inset Formula $U$
+\end_inset
+
+ is the square root of the inverse covariance of 
+\begin_inset Formula $h$
+\end_inset
+
+, defined by 
+\begin_inset Formula $U^{2}=\left(\mathbb{E}\left[\left(h-\mu\right)\left(h-\mu\right)^{T}\right]\right)^{-1}$
+\end_inset
+
+, denoted by 
+\begin_inset Formula $U=\left(\mathbb{E}\left[\left(h-\mu\right)\left(h-\mu\right)^{T}\right]\right)^{-\frac{1}{2}}$
+\end_inset
+
+.
+ 
+\begin_inset Formula $U$
+\end_inset
+
+ and 
+\begin_inset Formula $\mu$
+\end_inset
+
+ are not trained using gradient descent but instead they are estimated using
+ data from the training set.
+\end_layout
+
+\begin_layout Standard
+Our new parameters 
+\begin_inset Formula $V$
+\end_inset
+
+ and 
+\begin_inset Formula $d$
+\end_inset
+
+ are trained using gradient descent, which will now have the desired property.
+ We will denote by 
+\begin_inset Formula $h_{e}=U\left(h-\mu\right)$
+\end_inset
+
+ our new 
+\begin_inset Quotes eld
+\end_inset
+
+effective
+\begin_inset Quotes erd
+\end_inset
+
+ input to the linear transformation induced by the weight matrix 
+\begin_inset Formula $V$
+\end_inset
+
+.
+ Let us first remark that 
+\begin_inset Formula $\mathbb{E}\left[h_{e}\right]=U\left(\mathbb{E}\left[h\right]-\mu\right)=U\left(\mu-\mu\right)=0$
+\end_inset
+
+, so the new input is centered on average.
+ A second remark is that 
+\begin_inset Formula $\mathbb{E}\left[h_{e}h_{e}^{T}\right]=U\mathbb{E}\left[\left(h-\mu\right)\left(h-\mu\right)^{T}\right]U^{T}=\mathbf{I}$
+\end_inset
+
+.
+ By construction 
+\begin_inset Formula $U$
+\end_inset
+
+ cancels out the covariance.
+ Wrapping everything together we thus have the desired property that:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathbb{E}\left[\left(\begin{array}{cc}
+h_{e}h_{e}^{T} & h_{e}\\
+h_{e}^{T} & 1
+\end{array}\right)\right] & = & \left(\begin{array}{cc}
+\mathbb{E}\left[h_{e}h_{e}^{T}\right] & \mathbb{E}\left[h_{e}\right]\\
+\mathbb{E}\left[h_{e}^{T}\right] & 1
+\end{array}\right)\\
+ & = & \left(\begin{array}{cc}
+\mathbf{I} & 0\\
+0 & 1
+\end{array}\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The FIM for our new reparametrization thus has a better form, and they also
+ show experimentally that this method is very efficient, and that by amortizing
+ the cost of inverting the covariance matrix over several parameter updates,
+ it can be faster that standard SGD.
+\end_layout
+
+\begin_layout Subsection
+Overcoming catastrophic forgetting
 \end_layout
 
 \begin_layout Section
