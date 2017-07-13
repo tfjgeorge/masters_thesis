@@ -601,17 +601,6 @@ tor, which is also a trained network that tries to classify whether its
 \end_layout
 
 \begin_layout Chapter
-An example task for neural networks: learning to generate texture images
-\begin_inset CommandInset label
-LatexCommand label
-name "chap:ff-texture-gen"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Chapter
 Optimization of neural networks
 \end_layout
 
@@ -736,6 +725,48 @@ What also makes gradient descent suitable for neural networks, is that it
 automatic differentiation tool
 \end_layout
 
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename figures/backprop.pdf
+	width 100text%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Forward (in black) and backward (in red) propagation of the intermediate
+ results of the process of computing the output of the network and the gradient
+ corresponding to this output and the desired "true" output.
+ The green arrows represent the computation of the gradients with respect
+ to the parameters, given the gradients with respect to the pre-activations.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 Stochastic gradient descent
 \begin_inset CommandInset label
@@ -755,6 +786,27 @@ key "bottou2010large"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+While backpropagation is an efficient way of computing the exact gradient
+ of the empirical risk with respect to the parameters, in practice we are
+ not required to use its exact value, but rather we can use an estimate
+ of the gradient, as long as this estimate will make our objective decrease.
+ It is worth mentioning at this point that even the true gradient of the
+ empirical risk is different of the real gradient we would like to follow,
+ which is the gradient of the true risk.
+\end_layout
+
+\begin_layout Standard
+A good estimate is obtained by computing the gradient using a smaller subset
+ of our dataset, called a mini-batch.
+ Replacing the gradient descent update with this estimate is called 
+\series bold
+stochastic gradient descent
+\series default
+.
+ 
 \end_layout
 
 \begin_layout Itemize
@@ -931,6 +983,7 @@ reference "hptune-comparison"
 \end_inset
 
 .
+ These plots show the interaction between 2 hyperparameters.
 \end_layout
 
 \begin_layout Standard
@@ -1044,42 +1097,6 @@ name "sec:autoencoder-benchmark"
 \end_layout
 
 \begin_layout Itemize
-presentation mnist
-\end_layout
-
-\begin_layout Itemize
-task, history (hinton)
-\end_layout
-
-\begin_layout Itemize
-limits of the architecture
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-sigmoids
-\end_layout
-
-\begin_layout Itemize
-multi layer perceptron instead of conv
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-limits of the benchmark
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-specific task
-\end_layout
-
-\begin_layout Itemize
-quadratic loss
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
 HP plots
 \end_layout
 
@@ -1116,7 +1133,48 @@ reference "subsec:Autoencoders"
 \end_inset
 
 , and then decodes it to reconstruct the original image.
+ We use the quadratic error 
+\begin_inset Formula $l\left(f\left(x\right),y\right)=\left\Vert f\left(x\right)-y\right\Vert _{2}^{2}$
+\end_inset
+
+.
+ The benchmark consists in minimizing the empirical risk over the train
+ set after a fixed time on the same architecture.
+\end_layout
+
+\begin_layout Standard
+This benchmark has a long history in the neural network optimization litterature
  
+\begin_inset CommandInset citation
+LatexCommand cite
+key "hinton2006reducing,martens2010deep,martens2015optimizing,desjardins2015natural"
+
+\end_inset
+
+.
+ To assess the performance of an algorithm, we can use 2 metrics: the empirical
+ risk after a given number of iterations of the algorithm, and the empirical
+ risk after a fixed elapsed time for a given computer.
+ In real world tasks, the latter is more useful.
+ It gives a better understanding of the trade-off between a more complex
+ update that takes longer to compute and gives a better improvement, and
+ a fast update that gives a small improvement, but that can be iterated
+ several times in the meantime.
+\end_layout
+
+\begin_layout Standard
+The limits of the benchmark are many.
+ In particular the fact that the state of the art papers in computer vision
+ do not use MLPs and sigmoid activations but rather variants of mixed convolutio
+nal networks and residual connections, and variants of ReLU activations.
+ Another limit is in the use of the quadratic loss.
+ Nonetheless, we still use this benchmark as it is used by several other
+ papers which allows for a fair comparison, and because it is reasonably
+ deep (8 layers) and wide (the biggest weight matrix has size 
+\begin_inset Formula $1000\times784$
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Chapter
@@ -1332,6 +1390,15 @@ f\left(x+\Delta x\right) & = & f\left(x\right)+\left(\nabla f\right)_{x}^{T}\Del
 \end_inset
 
 .
+ We use the little-o notation 
+\begin_inset Formula $o$
+\end_inset
+
+ that represents an unknown function with the only property that 
+\begin_inset Formula $\lim_{x\rightarrow0}\frac{o\left(x\right)}{x}=0$
+\end_inset
+
+.
  By ignoring higher order terms (
 \begin_inset Formula $o\left(\left\Vert \Delta x\right\Vert _{2}^{2}\right)=0$
 \end_inset
@@ -1509,6 +1576,85 @@ reference "subsec:Hessian-free"
 \end_layout
 
 \begin_layout Subsection
+Validity of Newton for non quadratic functions and Tikhonov regularization
+\end_layout
+
+\begin_layout Standard
+In the previous section, we considered that our function was approximated
+ by its second order Taylor series decomposition.
+ While this is true in a neighborhood of 
+\begin_inset Formula $x$
+\end_inset
+
+, the approximation becomes less precise as we move away from 
+\begin_inset Formula $x$
+\end_inset
+
+.
+ In particular this is the case when the Newton step provide big updates,
+ that is when the Hessian has at least one small eigenvalue.
+ The corresponding direction pointed by this eigenvalue will have a low
+ curvature using the quadratic approximation, so the minimum following this
+ direction will be far away.
+ But the actual function that we are minimizing is not a quadratic, and
+ the terms hidden in 
+\begin_inset Formula $o\left(\left\Vert \Delta x\right\Vert _{2}^{2}\right)$
+\end_inset
+
+ will become preponderant for bigger values of 
+\begin_inset Formula $\Delta x$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+To counter this undesirable effect, we simply add a regularization term
+ that penalizes bigger values of 
+\begin_inset Formula $\Delta x$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\Delta x^{*} & = & \text{argmin}_{\Delta x}f\left(x+\Delta x\right)\\
+ & \approx & \text{argmin}_{\Delta x}f\left(x\right)+\left(\nabla f\right)_{x}^{T}\Delta x+\frac{1}{2}\Delta x^{T}\left(\nabla^{2}f\right)_{x}\Delta x+\frac{\epsilon}{2}\left\Vert \Delta x\right\Vert _{2}^{2}\\
+ & = & \text{argmin}_{\Delta x}f\left(x\right)+\left(\nabla f\right)_{x}^{T}\Delta x+\frac{1}{2}\Delta x^{T}\left(\left(\nabla^{2}f\right)_{x}+\epsilon\mathbf{I}\right)\Delta x
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This gives the Tikhonov regularized version of the Newton step:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\Delta x & = & -\left(\left(\nabla^{2}f\right)_{x}+\epsilon\mathbf{I}\right)^{-1}\left(\nabla f\right)_{x}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This new hyperparameter 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+ controls the size of the steps, and thus plays a very similar role than
+ the learning rate.
+\end_layout
+
+\begin_layout Subsection
 Gauss-Newton approximation of the Hessian
 \begin_inset CommandInset label
 LatexCommand label
@@ -1580,7 +1726,7 @@ By making use of the chain rule we can also give an expression for the second
 \end_inset
 
 .
- We now derive this expression to obtain the Hessian:
+ We now derive this expression once more to obtain the Hessian:
 \end_layout
 
 \begin_layout Standard
@@ -1610,7 +1756,7 @@ By making use of the chain rule we can also give an expression for the second
 \end_inset
 
  as it is a first derivative, so the approximation will get more precise.
- At a minmum for 
+ At a minimum for 
 \begin_inset Formula $l\left(f\left(x_{i},\theta\right),y_{i}\right)$
 \end_inset
 
@@ -1913,18 +2059,19 @@ Direct gradient update
 \end_layout
 
 \begin_layout Standard
-à réécrire complètement
+In this section, we present a new technique that makes use of updated gradient
+ directions to account for interactions between layers.
 \end_layout
 
 \begin_layout Standard
 A major inconvenient of first order methods is that they update every individual
  parameter without taking into account for other parameter updates.
  As an illustration, take a neural network composed of only 2 layers 
-\begin_inset Formula $g\left(x\right)=f_{2}\left(W_{2}f_{1}\left(W_{1}x+b_{1}\right)+b_{2}\right)$
+\begin_inset Formula $f\left(x\right)=f_{2}\left(W_{2}f_{1}\left(W_{1}x+b_{1}\right)+b_{2}\right)$
 \end_inset
 
  and a loss function 
-\begin_inset Formula $l\left(g\left(x\right),y\right)$
+\begin_inset Formula $l\left(f\left(x\right),y\right)$
 \end_inset
 
 .
@@ -1946,10 +2093,10 @@ A major inconvenient of first order methods is that they update every individual
 \end_inset
 
 .
- If we were to use standard gradient descent, we would now update the value
- of the parameters, all at once to obtain a better prediction function.
- Now suppose that we only update the parameters of the layer 2, using the
- standard update rule 
+ If we were using standard gradient descent, we would update the value of
+ the parameters, all at once to obtain a better prediction function.
+ Now suppose that we only update the parameters of layer 2, using the standard
+ update rule 
 \begin_inset Formula $W_{2}\leftarrow W_{2}-\lambda\frac{\partial l}{\partial W_{2}}$
 \end_inset
 
@@ -1959,34 +2106,26 @@ A major inconvenient of first order methods is that they update every individual
 
 .
  From this point, we have a different function 
-\begin_inset Formula $g\left(x\right)$
+\begin_inset Formula $f\left(x\right)$
 \end_inset
 
 .
  We could either update the parameters of layer 1 using the gradient already
- computed, or find the new values for the gradients for layer 1.
-\end_layout
-
-\begin_layout Standard
-An interesting property of the gradient is that is it a quadratic function
- of the parameters.
- As an illustration, take a neural network composed of only 2 layers 
-\begin_inset Formula $g\left(x\right)=f_{2}\left(W_{2}f_{1}\left(W_{1}x+b_{1}\right)+b_{2}\right)$
-\end_inset
-
- and a loss function 
-\begin_inset Formula $l\left(g\left(x\right),y\right)$
+ computed, or find the new values for the gradients for layer 1 using the
+ updated 
+\begin_inset Formula $f$
 \end_inset
 
 .
- Using forward and backpropagation, we can construct an exact expression
- for the gradient of a single example, with respect to each parameters:
+ We will do the latter, by using the property that the gradient for the
+ parameters of layer 1 is a function of the parameters of layer 2, which
+ can be written:
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\frac{\partial l}{\partial b_{2}} & = & \frac{\partial l}{\partial g}\mathbf{J}
+\frac{\partial l}{\partial W_{1}}\left(W_{2},b_{2}\right) & \text{ and } & \frac{\partial l}{\partial b_{1}}\left(W_{2},b_{2}\right)
 \end{eqnarray*}
 
 \end_inset
@@ -1994,14 +2133,19 @@ An interesting property of the gradient is that is it a quadratic function
 
 \end_layout
 
-\begin_layout Itemize
-motivation: do not update all parameters at once but instead layer by layer,
- updating the gradient to account for modification of the parameters before
- updating other layers
+\begin_layout Standard
+In particular, using a first order Taylor decomposition:
 \end_layout
 
-\begin_layout Itemize
-expressions for common loss functions
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\frac{\partial l}{\partial a_{1}}\left(W_{2}+\Delta W_{2},b_{2}+\Delta b_{2}\right) & = & \frac{\partial l}{\partial a_{1}}\left(W_{2},b_{2}\right)
+\end{eqnarray*}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -2256,7 +2400,7 @@ h^{T} & 1\end{array}\right)\otimes\mathbf{J}_{a}\label{eq:jaco_factorization}
 
 \begin_layout Standard
 This jacobian is a first order measure of how much the output of the network
- will change if we move the values of the parameters of this layer, for
+ will change if we change the values of the parameters of this layer, for
  a single example.
  Let us now recall the expression of the GN matrix 
 \begin_inset Formula $G_{f}=\frac{1}{n}\sum_{i}\mathbf{J}_{\theta}\left(x_{i}\right)^{T}D\left(x_{i}\right)\mathbf{J}_{\theta}\left(x_{i}\right)$
@@ -2270,6 +2414,14 @@ reference "subsec:gauss-newton"
 \end_inset
 
 .
+ We use the block diagonal approximation presented in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Block-diagonal-Hessian"
+
+\end_inset
+
+ and we focus on a single layer.
  We can rewrite this expression using the factorization 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -2301,9 +2453,24 @@ h_{i}^{T} & 1
 This factorization is interesting because it separates the GN matrix into
  a contribution from the backpropagated jacobian, and a part that only uses
  the forward statistics.
- Further approximations were exploited in KFAC and Natural Neural Networks
+ While these 2 contributions are clearly separated for a single example,
+ it becomes less clear as we sum up for several examples.
+ As we will show in the next section, similar approximations were exploited
+ in KFAC 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "martens2015optimizing"
+
+\end_inset
+
+ and Natural Neural Networks 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "desjardins2015natural"
+
+\end_inset
+
  to build efficient optimization algorithms.
- We will present and discuss these approximations in the next sections.
 \end_layout
 
 \begin_layout Section
@@ -3142,6 +3309,22 @@ options "plain"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Chapter
+\start_of_appendix
+An example task for neural networks: learning to generate texture images
+\begin_inset CommandInset label
+LatexCommand label
+name "chap:ff-texture-gen"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+zam
 \end_layout
 
 \end_body
