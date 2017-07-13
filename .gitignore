@@ -1,2 +1,10 @@
 *~
 master.tex
+*.eps
+*.aux
+*.bbl
+*.blg
+*.lof
+*.log
+*.lot
+*.toc
