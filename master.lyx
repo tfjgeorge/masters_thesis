@@ -111,8 +111,90 @@ Artificial intelligence
 \end_layout
 
 \begin_layout Standard
-As learning plays a key role in human intelligence, machine learning is
- thought to be a key component in artificial intelligence.
+Intelligence is a difficult concept to define.
+ We will use the following definition: the ability to make sensible decisions
+ in a given situation, possibly making use of a memory of past events that
+ share similarities with the current situation.
+ The most powerful individual intelligent agent that we can experience nowadays
+ is certainly the human being.
+ Human beings are constantly making decisions given their perception of
+ the world that is provided by their 5 senses, using knowledge that they
+ have studied or experienced in their life.
+ But there is no 
+\shape italic
+a priori
+\shape default
+ reason to think that intelligence could not be present in other systems,
+ and in particular artificial intelligence is a scientific field that aims
+ at implementing intelligence in non-living machines.
+\end_layout
+
+\begin_layout Standard
+How our society of humans can benefit from artificial intelligence is still
+ an open question, out of the scope of the present document.
+ Regardless, given the recent popularity of artificial intelligence among
+ public research laboratories and in the industry, and the recent successes
+ at solving complex tasks, we can say without taking risks that artificial
+ intelligence will continue to play a big role in shaping the future of
+ our society.
+\end_layout
+
+\begin_layout Standard
+From a more practical perspective, implementing an artificial intelligent
+ machine requires designing a system that takes data that represent the
+ current situation, data that represents the memory of the machine, and
+ output a decision using this data.
+\end_layout
+
+\begin_layout Standard
+To put things into context, we will now describe an example task.
+ We want to design a program that takes a picture of an animal and a sound
+ as input, and outputs whether it thinks the animal present in the picture
+ makes the provided sound.
+ In a computer, a picture is often encoded as a tensor of pixels, the sound
+ as a timeseries of samples of the sound wave, and the final decision can
+ be a single scalar values, which will be close to 0 is the animal is very
+ unlikely to make the noise, or to 1 if the animal is very likely to make
+ the noise.
+ The complex machinery inbetween is the intelligent part.
+\end_layout
+
+\begin_layout Standard
+Manually designing this intelligent part is an overwhelming task.
+ Even provided that the input image is quite a small image of 
+\begin_inset Formula $32\times32$
+\end_inset
+
+ RGB pixels and the sound lasts 
+\begin_inset Formula $1s$
+\end_inset
+
+ recorded at a sample rate of 20kHz we have a total of 
+\begin_inset Formula $32\times32\times3+20\,000=23\,072$
+\end_inset
+
+ scalars.
+ If we restrict each of these numbers to have 
+\begin_inset Formula $256$
+\end_inset
+
+ possible values, it leaves us with 
+\begin_inset Formula $256\times23\,072\approx6\cdot10^{6}$
+\end_inset
+
+ possible combinations.
+\end_layout
+
+\begin_layout Standard
+Instead, the most successful attempts at solving such tasks use a procedure
+ called 
+\series bold
+machine learning
+\series default
+: instead of manually defining our intelligent program, we define a generic
+ model, and we use a dataset of annotated examples of picture, sound, and
+ the corresponding answer, and we leave the computer extract informations
+ from the dataset to tune the model so as to obtain the desired program.
 \end_layout
 
 \begin_layout Section
@@ -806,7 +888,10 @@ A good estimate is obtained by computing the gradient using a smaller subset
 stochastic gradient descent
 \series default
 .
- 
+\end_layout
+
+\begin_layout Standard
+Concurrently, the use of GPUs 
 \end_layout
 
 \begin_layout Itemize
@@ -3267,6 +3352,123 @@ The FIM for our new reparametrization thus has a better form, and they also
 
 \begin_layout Subsection
 Overcoming catastrophic forgetting
+\end_layout
+
+\begin_layout Section
+Focus on the covariance part of the decomposition
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\frac{1}{n}\sum_{i}\left(\begin{array}{cc}
+h_{i}h_{i}^{T} & h_{i}\\
+h_{i}^{T} & 1
+\end{array}\right)\otimes\left(\mathbf{J}_{a_{i}}^{T}D\left(x_{i}\right)\mathbf{J}_{a_{i}}\right) & = & \frac{1}{n}\sum_{i}\left(\begin{array}{cc}
+h_{i}h_{i}^{T} & h_{i}\\
+h_{i}^{T} & 1
+\end{array}\right)\otimes\alpha_{i}\mathbf{I}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+inverse:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\left(\begin{array}{cc}
+\frac{1}{n}\sum_{i}h_{i}h_{i}^{T} & \frac{1}{n}\sum_{i}h_{i}\\
+\frac{1}{n}\sum_{i}h_{i}^{T} & 1
+\end{array}\right)^{-1} & = & \left(\begin{array}{cc}
+\left(\frac{1}{n}\sum_{i}h_{i}h_{i}^{T}-\frac{1}{n}\sum_{i}h_{i}\frac{1}{n}\sum_{i}h_{i}^{T}\right)^{-1} & -\left(\frac{1}{n}\sum_{i}h_{i}h_{i}^{T}-\frac{1}{n}\sum_{i}h_{i}\frac{1}{n}\sum_{i}h_{i}^{T}\right)^{-1}\frac{1}{n}\sum_{i}h_{i}\\
+-\frac{1}{n}\sum_{i}h_{i}^{T}\left(\frac{1}{n}\sum_{i}h_{i}h_{i}^{T}-\frac{1}{n}\sum_{i}h_{i}\frac{1}{n}\sum_{i}h_{i}^{T}\right)^{-1} & \left(1-\frac{1}{n}\sum_{i}h_{i}^{T}\frac{1}{n}\sum_{i}h_{i}\right)^{-1}
+\end{array}\right)\\
+ & = & \left(\begin{array}{cc}
+\left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1} & -\left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1}\frac{1}{n}\sum_{i}h_{i}\\
+-\frac{1}{n}\sum_{i}h_{i}^{T}\left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1} & \left(1-\frac{1}{n}\sum_{i}h_{i}^{T}\frac{1}{n}\sum_{i}h_{i}\right)^{-1}
+\end{array}\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+gradient:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\frac{1}{n}\sum_{j}\left(\begin{array}{c}
+h_{j}\\
+1
+\end{array}\right)\otimes\left(\mathbf{J}^{a_{j}}\right)^{T}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+update:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\frac{1}{n}\sum_{j}\left(\begin{array}{cc}
+\left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1} & -\left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1}\frac{1}{n}\sum_{i}h_{i}\\
+-\frac{1}{n}\sum_{i}h_{i}^{T}\left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1} & 1+\frac{1}{n}\sum_{i}h_{i}^{T}\left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1}\frac{1}{n}\sum_{i}h_{i}
+\end{array}\right)\left(\begin{array}{c}
+h_{j}\\
+1
+\end{array}\right)\otimes\mathbf{J}^{a_{j}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+update for 
+\begin_inset Formula $b$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\Delta b & = & -\frac{1}{n}\sum_{i}h_{i}^{T}\left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1}\frac{1}{n}\sum_{j}h_{j}\otimes\mathbf{J}^{a_{j}}+\left(1+\frac{1}{n}\sum_{i}h_{i}^{T}\left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1}\frac{1}{n}\sum_{i}h_{i}\right)\otimes\frac{1}{n}\sum_{j}\mathbf{J}^{a_{j}}\\
+ & = & -\frac{1}{n}\sum_{i}h_{i}^{T}\left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1}\frac{1}{n}\sum_{j}\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)\otimes\mathbf{J}^{a_{j}}+\frac{1}{n}\sum_{j}\mathbf{J}^{a_{j}}
+\end{eqnarray*}
+
+\end_inset
+
+TBC
+\end_layout
+
+\begin_layout Standard
+update for 
+\begin_inset Formula $W$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\Delta W & = & \left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1}\frac{1}{n}\sum_{j}h_{j}\otimes\mathbf{J}^{a_{j}}-\left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1}\frac{1}{n}\sum_{i}h_{i}\otimes\frac{1}{n}\sum_{j}\mathbf{J}^{a_{j}}\\
+ & = & \left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1}\frac{1}{n}\sum_{j}\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)\otimes\mathbf{J}^{a_{j}}
+\end{eqnarray*}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
