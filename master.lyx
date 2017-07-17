@@ -9,6 +9,9 @@
 \usepackage{amsmath}
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
+\usepackage{dsfont}
+\newcommand{\mathbbOld}{\mathbb}
+\renewcommand{\mathbb}{\mathds}
 \end_preamble
 \use_default_options true
 \begin_removed_modules
@@ -216,7 +219,195 @@ Generally speaking, machine learning consists in finding an unknown function
 \end_inset
 
 , that will solve a certain task.
+ We typically restrict our search to a smaller family of functions, which
+ consists in parametrized functions 
+\begin_inset Formula $\mathcal{F}_{\theta}$
+\end_inset
+
+.
+ We will denote by 
+\begin_inset Formula $f_{\theta}$
+\end_inset
+
+ such a function, parametrized by a vector of parameters 
+\begin_inset Formula $\theta$
+\end_inset
+
+.
+ Adapting the value of the parameters will change the output of the function
  
+\begin_inset Formula $f_{\theta}$
+\end_inset
+
+.
+ The challenge of machine learning is to find a correct parametrization
+ so that our desired functions can be approached by an instance of 
+\begin_inset Formula $\mathcal{F}_{\theta}$
+\end_inset
+
+, and to learn the parameters of this target function.
+\end_layout
+
+\begin_layout Standard
+To this end, we chose a loss function 
+\begin_inset Formula $l$
+\end_inset
+
+ adapted to the task we aim at solving, that measures how wrong is a given
+ function at solving the task for a data point.
+ The remaining part is the data generating distribution 
+\begin_inset Formula $p$
+\end_inset
+
+ which allows to sample datapoints 
+\begin_inset Formula $x\sim p$
+\end_inset
+
+.
+ A measure of the performance of a function 
+\begin_inset Formula $f_{\theta}$
+\end_inset
+
+ for the given task is given by the risk:
+\begin_inset CommandInset label
+LatexCommand label
+name "cost-function"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathcal{R}\left(\theta,p\right) & = & \mathbb{E}_{x\sim p}\left[l\left(f_{\theta}\left(x\right)\right)\right]
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\mathcal{R}$
+\end_inset
+
+ is a scalar value.
+ If this value is high, then 
+\begin_inset Formula $f_{\theta}$
+\end_inset
+
+ is bad at solving the desired task.
+ In the opposite, the best function can be found by adjusting 
+\begin_inset Formula $\theta$
+\end_inset
+
+ so as to reach the smallest value of 
+\begin_inset Formula $\mathcal{R}$
+\end_inset
+
+.
+ The best value for the parameter vector 
+\begin_inset Formula $\theta^{*}$
+\end_inset
+
+ is given by:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\theta^{*} & = & \text{argmin}_{\theta}\mathcal{R}\left(\theta,p\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We now present two common tasks and their corresponding loss functions.
+ We will restrict to the less general setting of 
+\shape italic
+supervised
+\shape default
+ learning, where each data point is composed of an input 
+\begin_inset Formula $x$
+\end_inset
+
+ and a target 
+\begin_inset Formula $y$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+In
+\series bold
+ regression
+\series default
+, the input vector 
+\begin_inset Formula $x$
+\end_inset
+
+ is mapped to a numerical value 
+\begin_inset Formula $y$
+\end_inset
+
+.
+ To assess the performance of 
+\begin_inset Formula $f_{\theta}$
+\end_inset
+
+, we use the loss function 
+\begin_inset Formula $l\left(f_{\theta}\left(x\right),y\right)=\left\Vert f_{\theta}\left(x\right)-y\right\Vert _{2}^{2}$
+\end_inset
+
+, called the quadratic error.
+ It reaches its minimum 
+\begin_inset Formula $0$
+\end_inset
+
+ when 
+\begin_inset Formula $f_{\theta}\left(x\right)=y$
+\end_inset
+
+.
+ For example we can design a model that predicts the price of a real estate,
+ given some features such as the size of the house, the number of bedrooms
+ and whether it possesses a fireplace.
+\end_layout
+
+\begin_layout Standard
+In supervised 
+\series bold
+classification
+\series default
+, we classify each data point 
+\begin_inset Formula $x$
+\end_inset
+
+ into a category 
+\begin_inset Formula $y$
+\end_inset
+
+.
+ A natural loss that comes up is the misclassification indicator function
+ 
+\begin_inset Formula $\mathbb{1}\left(f_{\theta}\left(x\right),y\right)=\begin{cases}
+0 & \text{if }f_{\theta}\left(x\right)=y\\
+1 & \text{otherwise}
+\end{cases}$
+\end_inset
+
+.
+ It counts the examples that are misclassified.
+ This function present the disadvantage of not being differentiable (it
+ is not even continuous), and we will see in future sections that differentiabil
+ity is a valuable property for learning.
+ Instead, we usually 
 \end_layout
 
 \begin_layout Itemize
@@ -234,17 +425,39 @@ common industry tasks
 \begin_layout Standard
 Once we have chosen a ...
  cost functino
-\begin_inset CommandInset label
-LatexCommand label
-name "cost-function"
+\end_layout
+
+\begin_layout Subsection
+Empirical risk
+\end_layout
+
+\begin_layout Standard
+In practice, we often do not have access to a data generating function,
+ but instead we have a limited number of samples from it.
+ This dataset of examples gives us an estimate of the true risk, by replacing
+ the expectation with a finite sum:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{alignat*}{2}
+\mathcal{R}\left(\theta,p\right) & \approx R\left(\theta,\mathcal{D}\right) & = & \frac{1}{n}\sum_{x\in\mathcal{D}}l\left(f_{\theta}\left(x\right)\right)
+\end{alignat*}
 
 \end_inset
 
 
 \end_layout
 
-\begin_layout Subsection
-Empirical risk
+\begin_layout Standard
+\begin_inset Formula $n$
+\end_inset
+
+ is the total number of examples in 
+\begin_inset Formula $\mathcal{D}$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Itemize
