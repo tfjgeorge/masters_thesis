@@ -406,25 +406,35 @@ classification
  It counts the examples that are misclassified.
  This function present the disadvantage of not being differentiable (it
  is not even continuous), and we will see in future sections that differentiabil
-ity is a valuable property for learning.
- Instead, we usually 
-\end_layout
+ity is a valuable property for machine learning.
+ Instead, we usually make our function 
+\begin_inset Formula $f_{\theta}$
+\end_inset
 
-\begin_layout Itemize
-task : given input datum, give an answer
-\end_layout
+ output a vector of the number of categories, which represents the probability
+ of being a member of each category (a scalar between 
+\begin_inset Formula $0$
+\end_inset
 
-\begin_layout Itemize
-common probabilistic tasks 
-\end_layout
+ and 
+\begin_inset Formula $1$
+\end_inset
 
-\begin_layout Itemize
-common industry tasks
-\end_layout
+).
+ We use the loss called 
+\shape italic
+cross entropy 
+\begin_inset Formula $l\left(f_{\theta}\left(x\right),y\right)=-\log\left(\left(f_{\theta}\left(x\right)\right)_{y}\right)$
+\end_inset
 
-\begin_layout Standard
-Once we have chosen a ...
- cost functino
+
+\shape default
+.
+ This will push the probability of the correct category toward 
+\begin_inset Formula $1$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
@@ -432,17 +442,25 @@ Empirical risk
 \end_layout
 
 \begin_layout Standard
-In practice, we often do not have access to a data generating function,
- but instead we have a limited number of samples from it.
+In practice, we often do not have access to a data generating function 
+\begin_inset Formula $p$
+\end_inset
+
+, but instead we have a limited number of samples from it.
  This dataset of examples gives us an estimate of the true risk, by replacing
- the expectation with a finite sum:
+ the expectation with a finite sum, called the empirical risk 
+\begin_inset Formula $R$
+\end_inset
+
+:
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
-\begin{alignat*}{2}
-\mathcal{R}\left(\theta,p\right) & \approx R\left(\theta,\mathcal{D}\right) & = & \frac{1}{n}\sum_{x\in\mathcal{D}}l\left(f_{\theta}\left(x\right)\right)
-\end{alignat*}
+\begin{align*}
+\begin{array}{ccccc}
+\mathcal{R}\left(\theta,p\right) & \approx & R\left(\theta,\mathcal{D}\right) & = & \frac{1}{n}\sum_{x\in\mathcal{D}}l\left(f_{\theta}\left(x\right)\right)\end{array}
+\end{align*}
 
 \end_inset
 
@@ -458,6 +476,7 @@ In practice, we often do not have access to a data generating function,
 \end_inset
 
 .
+ 
 \end_layout
 
 \begin_layout Itemize
@@ -466,12 +485,6 @@ estimate the true distribution using a dataset of examples
 
 \begin_layout Itemize
 data augmentation
-\end_layout
-
-\begin_layout Standard
-In practice, we often do not have a mean of getting an infinite number of
- examples from the data distribution.
- Instead of 
 \end_layout
 
 \begin_layout Subsection
