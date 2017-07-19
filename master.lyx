@@ -476,23 +476,18 @@ In practice, we often do not have access to a data generating function
 \end_inset
 
 .
- 
 \end_layout
 
-\begin_layout Itemize
-estimate the true distribution using a dataset of examples
-\end_layout
+\begin_layout Standard
 
-\begin_layout Itemize
-data augmentation
-\end_layout
-
-\begin_layout Subsection
-Regularization
 \end_layout
 
 \begin_layout Itemize
 bias / variance trade off
+\end_layout
+
+\begin_layout Subsection
+Regularization
 \end_layout
 
 \begin_layout Itemize
@@ -505,6 +500,10 @@ patience
 
 \begin_layout Itemize
 l2 regul
+\end_layout
+
+\begin_layout Itemize
+data augmentation
 \end_layout
 
 \begin_layout Section
