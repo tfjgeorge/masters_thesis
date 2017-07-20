@@ -438,7 +438,7 @@ cross entropy
 \end_layout
 
 \begin_layout Subsection
-Empirical risk
+Empirical risk and bias/variance tradeoff
 \end_layout
 
 \begin_layout Standard
@@ -479,15 +479,68 @@ In practice, we often do not have access to a data generating function
 \end_layout
 
 \begin_layout Standard
+For random values of the parameters 
+\begin_inset Formula $\theta$
+\end_inset
 
+, the empirical risk and the true risk will have similar values.
+ But this is not the case when the parameters have been tuned so that the
+ empirical risk is minimum.
+ In the extreme case, consider a model that has memorized all examples of
+ the training set by heart.
+ In order to make a prediction for a new example, this example will seek
+ the closest example in 
+\begin_inset Formula $\mathcal{D}$
+\end_inset
+
+, in term of the euclidean distance, and output the exact same answer than
+ this closest example.
+ This model is called a 1-nearest neighbour regressor or classifier regarding
+ the considered task.
+ In this case the empirical risk is 
+\begin_inset Formula $0$
+\end_inset
+
+.
 \end_layout
 
-\begin_layout Itemize
-bias / variance trade off
+\begin_layout Standard
+A model with too much expressivity, or 
+\shape italic
+variance
+\shape default
+, will be able to learn all examples in the training set by heart without
+ having the ability to generalize on new examples, which is called overfitting.
+ A model with not enough expressivity will not be able to perform well even
+ on the training set, but in the meantime it will have a similar performance
+ on the true data generating distribution.
+ We say that there is a 
+\shape italic
+bias
+\shape default
+ toward a family of model.
+ The bias variance trade-off consists in selecting a model that has sufficient
+ expressivity to have a good performance on the train set, while not having
+ too much expressivity so that it will not overfit, and still have good
+ performance on the true data generating distribution.
 \end_layout
 
 \begin_layout Subsection
 Regularization
+\end_layout
+
+\begin_layout Standard
+A way of combatting overfitting is to 
+\end_layout
+
+\begin_layout Standard
+Data augmentation is another mean of combatting overfitting.
+ We can use the knowledge that we have of our dataset to create new examples.
+ For example for a classification task of images, we know from our experience
+ of the world that rotating or translating an image will not change its
+ content.
+ We can thus artificially augment our training set by including rotated
+ and translated versions of the same images.
 \end_layout
 
 \begin_layout Itemize
