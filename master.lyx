@@ -975,6 +975,65 @@ name "sec:Gradient-descent-and"
 
 \end_layout
 
+\begin_layout Standard
+Once we have chosen a model, and supposing that this model capable of solving
+ a given task, the main challenge is now to learn the parameters of the
+ model from the data.
+ Some simple models have closed form solutions, this is for example the
+ case for a linear model and a regression task.
+ For more complex models such as neural networks, we can not derive a simple
+ formula for getting the values of all parameters given a dataset.
+ In this case, we start from an initialized network and iterate updates
+ for our parameters until we get the expected results.
+ To this end, we must find an efficient way of getting an update 
+\begin_inset Formula $\Delta\theta$
+\end_inset
+
+ of our parameters 
+\begin_inset Formula $\theta$
+\end_inset
+
+.
+ Considering that we aim at finding the minimum of the empirical risk, such
+ an update is given by the steepest direction of descent of the empirical
+ risk, given by minus the gradient of the empirical risk, with respect to
+ the parameters, denoted by 
+\begin_inset Formula $\nabla_{\theta}R$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\nabla_{\theta}R & = & \frac{1}{n}\sum_{i}\nabla_{\theta}l\left(f_{\theta}\left(x_{i}\right),y_{i}\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Once we have a direction, we must choose how far to move in this direction.
+ Several line search algorithms have been developed, but they require evaluating
+ our objective several times, which can be costly for deep networks or big
+ datasets.
+ We will stick to a simple fixed learning rate, so that each iteration becomes:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\theta & \leftarrow & -\lambda\nabla_{\theta}R
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Itemize
 no closed form solution
 \end_layout
@@ -1111,6 +1170,13 @@ Forward (in black) and backward (in red) propagation of the intermediate
  corresponding to this output and the desired "true" output.
  The green arrows represent the computation of the gradients with respect
  to the parameters, given the gradients with respect to the pre-activations.
+\begin_inset CommandInset label
+LatexCommand label
+name "fprop-bprop"
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -1153,7 +1219,7 @@ While backpropagation is an efficient way of computing the exact gradient
  of the empirical risk with respect to the parameters, in practice we are
  not required to use its exact value, but rather we can use an estimate
  of the gradient, as long as this estimate will make our objective decrease.
- It is worth mentioning at this point that even the true gradient of the
+ It is worth recalling at this point that even the true gradient of the
  empirical risk is different of the real gradient we would like to follow,
  which is the gradient of the true risk.
 \end_layout
@@ -1165,27 +1231,21 @@ A good estimate is obtained by computing the gradient using a smaller subset
 \series bold
 stochastic gradient descent
 \series default
-.
-\end_layout
+ (SGD).
+ The main benefit of using SGD instead of full gradient descent is that
+ we can reduce the memory required to compute the gradient.
+ The memory required to backpropagate the intermediate gradients (red arrows
+ in figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fprop-bprop"
 
-\begin_layout Standard
-Concurrently, the use of GPUs 
-\end_layout
+\end_inset
 
-\begin_layout Itemize
-gradient estimate whatsup
-\end_layout
-
-\begin_layout Itemize
-computational considerations
-\end_layout
-
-\begin_layout Itemize
-regularization effect of stochasticity ?
-\end_layout
-
-\begin_layout Itemize
-memory considerations (how much memory needed by mb gradient descent)
+) is proportional to the size of the minibatch.
+ As datasets become bigger and bigger, while GPUs used for accelerating
+ the computations have limited memory, adjusting the batch size is a good
+ way of making an experiment fit on a selected computer.
 \end_layout
 
 \begin_layout Section

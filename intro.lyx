@@ -1,0 +1,108 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+This thesis presents my work during my master at MILA under the supervision
+ of Pascal Vincent.
+\end_layout
+
+\begin_layout Standard
+This work is mostly focused on optimization in artificial neural networks.
+ My main contributions are a deeper understanding of the very particular
+ structure of the Fisher Information matrix and the Hessian matrix when
+ used in the setting of neural networks.
+ It gives new insights on some methods that have proven to be very good
+ empirically such as batch normalization or RMSProp, but without a formal
+ understanding of why they perform so well.
+\end_layout
+
+\begin_layout Standard
+The first part sets up the basic framework of machine learning and introduces
+ neural networks.
+\end_layout
+
+\begin_layout Standard
+In the second part, we introduce the usual methods of optimization that
+ have enabled the recent successes in machine learning and in particular
+ vision from 2012.
+\end_layout
+
+\begin_layout Standard
+The third part showcases the results of my research.
+ It is mostly a dive in into the mathematical expressions behind second
+ order methods, the definition of algorithms that make use of some approximation
+s of these expressions, and the implementation and benchmarking of these
+ algorithms.
+\end_layout
+
+\end_body
+\end_document
