@@ -975,6 +975,10 @@ name "sec:Gradient-descent-and"
 
 \end_layout
 
+\begin_layout Subsection
+Learning using gradient descent
+\end_layout
+
 \begin_layout Standard
 Once we have chosen a model, and supposing that this model capable of solving
  a given task, the main challenge is now to learn the parameters of the
@@ -1034,65 +1038,52 @@ Once we have a direction, we must choose how far to move in this direction.
 
 \end_layout
 
-\begin_layout Itemize
-no closed form solution
+\begin_layout Standard
+Of course the scalar parameters 
+\begin_inset Formula $\lambda$
+\end_inset
+
+ plays a very important role.
+ If we choose a value that is too small then it will take several steps
+ to reach the same point, so it will take longer.
+ If the value is too big then we can go too far, to a point in the space
+ of parameters where the gradient has changed so the direction that we are
+ following is no longer a descent direction.
+ For a practical example think of a valley.
+ We start from a side of the valley and follow the steepest descent direction.
+ If we go too far we will pass the bottom of the valley and start going
+ up again.
 \end_layout
 
-\begin_layout Itemize
-gradient descent
-\end_layout
-
-\begin_layout Itemize
-backpropagation
+\begin_layout Subsection
+Computing the gradients using backpropagation
 \end_layout
 
 \begin_layout Standard
-Starting from a model, and supposing this model capable of solving a given
- task, a main challenge of machine learning remains to learn from the data,
- to find the correct parameters that will make the model useful.
- Certain tasks have closed-form solutions, such as finding the correct weights
- and biases for a linear model and a regression task.
- This task can be formulated as finding weight matrix 
-\begin_inset Formula $W$
+It might be difficult to get an exact expression for the gradient of a complex
+ function, such as a neural network.
+ What enabled the success of neural networks was a smart use of the chain
+ rule for splitting the computation of the gradient, into a sequence of
+ linear algebra operations, that is described in figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fprop-bprop"
+
 \end_inset
 
- and bias vector 
-\begin_inset Formula $b$
+.
+ For example we can decompose the gradient going through a layer 
+\begin_inset Formula $h_{l+1}=f_{l}\left(W_{l}h_{l}+b_{l}\right)$
 \end_inset
 
- corresponding to a dataset 
-\begin_inset Formula $\mathcal{D}$
-\end_inset
-
- of pairs of vectors 
-\begin_inset Formula $x_{i}$
-\end_inset
-
-, 
-\begin_inset Formula $y_{i}$
-\end_inset
-
- such that 
-\begin_inset Formula $R_{\mathcal{D}}=\sum_{i}\left\Vert Wx_{i}+b-y_{i}\right\Vert ^{2}$
-\end_inset
-
- is minimized.
- If we stack our training examples in matrices 
-\begin_inset Formula $X$
-\end_inset
-
- and 
-\begin_inset Formula $Y$
-\end_inset
-
- with each row representing an example and its target value, this reduces
- to the following linear algebra problem:
+ using the expression:
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-W,b & = & \text{argmin}_{W,b}\left\Vert XW^{T}+b-Y\right\Vert ^{2}
+\nabla_{h_{l}}l & = & \left(\mathbf{J}_{a_{l}}^{h_{l}}\right)^{T}\nabla_{a_{l}}l\\
+ & = & \left(\mathbf{J}_{a_{l}}^{h_{l}}\right)^{T}\left(\mathbf{J}_{h_{l+1}}^{a_{l}}\right)^{T}\nabla_{h_{l+1}}l
 \end{eqnarray*}
 
 \end_inset
@@ -1101,47 +1092,79 @@ W,b & = & \text{argmin}_{W,b}\left\Vert XW^{T}+b-Y\right\Vert ^{2}
 \end_layout
 
 \begin_layout Standard
-In contrary, for neural networks, as for other models, we can not derive
- a closed-form solution [TODO] explication (plusieurs minima globaux).
- [WHO] proposed to use gradient descent to solve such tasks.
- Instead of finding the target solution directly, we will update our parameters
- 
-\begin_inset Formula $\theta$
+We denote by 
+\begin_inset Formula $\mathbf{J}_{f}^{x}$
 \end_inset
 
- by a small increment 
-\begin_inset Formula $\theta\leftarrow\theta+\Delta\theta$
+ the jacobian of the vector function 
+\begin_inset Formula $f$
 \end_inset
 
- that decreases the value of the empirical risk.
- It can be any arbitrary value, as long as it make the empirical risk decrease.
- Such a value is given by the inverse of the derivative multiplied by a
- small scalar value: 
-\begin_inset Formula $\Delta\theta=-\lambda\frac{\partial R}{\partial\theta}$
+ with respect to 
+\begin_inset Formula $x$
 \end_inset
 
 .
- TODO theoretical convergence proofs for gradient descent: is guaranteed
- to converge in 
-\begin_inset Formula $O\left(\frac{1}{t}\right)$
+ It is the matrix composed of the partial derivatives 
+\begin_inset Formula $\left(\mathbf{J}_{f}^{x}\right)_{ij}=\frac{\partial f_{i}}{\partial x_{j}}$
+\end_inset
+
+, so it has dimension 
+\begin_inset Formula $n_{f}\times n_{x}$
 \end_inset
 
 .
+ In the particular case of neural networks we have simple expressions for
+ the jacobians of the backpropagated signal (red arrows in figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fprop-bprop"
+
+\end_inset
+
+):
 \end_layout
 
 \begin_layout Standard
-What also makes gradient descent suitable for neural networks, is that it
- can conveniently be computed using forward and backward propagation of
- computations that take advantage of the chain-rule for derivative, and
- of the sequential structure of neural networks computations.
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathbf{J}_{a_{l}}^{h_{l}} & = & W_{l}\\
+\mathbf{J}_{h_{l+1}}^{a_{l}} & = & \text{diag}\left(f_{l}'\left(a_{l}\right)\right)
+\end{eqnarray*}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-[TODO figure fprop backprop]
+where 
+\begin_inset Formula $\text{diag}$
+\end_inset
+
+ is the operation that takes a vector and transforms it to a diagonal matrix
+ with the values of the vector as diagonal terms.
+ We also have expressions for the jacobians of the activations with respect
+ to the parameters (green arrows in figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fprop-bprop"
+
+\end_inset
+
+):
 \end_layout
 
 \begin_layout Standard
-automatic differentiation tool
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathbf{J}_{a_{l}}^{W_{l}} & = & \nabla_{a_{l}}l\left(h_{l}\right)^{T}\\
+\mathbf{J}_{a_{l}}^{b_{l}} & = & \nabla_{a_{l}}l
+\end{eqnarray*}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -1191,6 +1214,32 @@ name "fprop-bprop"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsection
+Automatic differentiation tools
+\end_layout
+
+\begin_layout Standard
+A key component in training neural networks is the library that we use to
+ implement our models.
+ The difficulty of implementing backpropagation in all kinds of neural networks
+ inspired models, is solved using an automatic differentiation tool, such
+ as Theano 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "bastien2012theano"
+
+\end_inset
+
+.
+ Using such a tools we can define a model and a scalar cost function, then
+ call a method 
+\family typewriter
+grad
+\family default
+ that takes care of the computation required to get the gradients with respect
+ to the parameters.
 \end_layout
 
 \begin_layout Section
