@@ -1144,7 +1144,11 @@ where
 
  is the operation that takes a vector and transforms it to a diagonal matrix
  with the values of the vector as diagonal terms.
- We also have expressions for the jacobians of the activations with respect
+ These jacobians can be thought of the gradient flow between layers.
+\end_layout
+
+\begin_layout Standard
+We also have expressions for the jacobians of the activations with respect
  to the parameters (green arrows in figure 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -1520,34 +1524,94 @@ Limits of (stochastic) gradient descent and some directions to overcome
  them
 \end_layout
 
-\begin_layout Itemize
-gradient magnitudes (exploding/vanishing gradient) between layers
+\begin_layout Standard
+We can think of the task of training a neural network as the one of finding
+ the minimum of a scalar field in 
+\begin_inset Formula $n$
+\end_inset
+
+ dimensions, 
+\begin_inset Formula $n$
+\end_inset
+
+ being the number of parameters.
+ Each gradient descent step is a small shift in this field.
+ Every gradient update has approximately the same magnitude, controlled
+ by the learning rate.
+ We must ensure that this path in the field of the empirical risk is feasible.
+ We now present reasons that can make this field have a pathological structure,
+ and directions to avoid these difficulties.
+\end_layout
+
+\begin_layout Subsection
+Gradient magnitudes
+\end_layout
+
+\begin_layout Standard
+A common issue for deep networks or recurrents networks is how to control
+ the magnitude of the gradient flow for many layers.
+ If the jacobians 
+\begin_inset Formula $\left(\mathbf{J}_{a_{l}}^{h_{l}}\right)^{T}\left(\mathbf{J}_{h_{l+1}}^{a_{l}}\right)^{T}$
+\end_inset
+
+ have a spectral norm that is too big, then the gradient will become bigger
+ and bigger for lower layers.
+ This can happen if the weight matrices have singular values that are too
+ big compared to 
+\begin_inset Formula $1$
+\end_inset
+
+, or if the derivatives of the activation functions take big values.
+ In this case, we are in a situation of exploding gradients.
+ A
 \end_layout
 
 \begin_layout Itemize
-gradient magnitures between examples ?
+gradient magnitudes (exploding/vanishing gradient) between layers
 \end_layout
 
 \begin_layout Itemize
 follow directions of steepest descent, instable in valleys
 \end_layout
 
-\begin_layout Itemize
-initialization of weights 
+\begin_layout Subsection
+Initialization
+\end_layout
+
+\begin_layout Standard
+Initialization of the weight matrices is of crucial importance.
+ In terms of our empirical risk field in the space of parameters, it controls
+ how far we start from a minimum.
+ A good initialization scheme must at least make sure that there is enough
+ signal flowing in forward and backward direction, that is: the weights
+ must be chosen not too small, otherwise the forward signal will be smaller
+ and smaller, and in the meantime the weights must not be too big, so as
+ to avoid exploding gradients in the backward pass, and saturating functions
+ in the forward pass.
+\end_layout
+
+\begin_layout Standard
+The most common initialization scheme at the time of writing are Glorot
+ initialization 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "glorot2010understanding"
 
 \end_inset
 
-
+ and He initialization 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "he2015delving"
 
 \end_inset
 
- 
+.
+ Glorot is a tradeoff between 
+\end_layout
+
+\begin_layout Itemize
+initialization of weights 
 \begin_inset CommandInset label
 LatexCommand label
 name "initialization-of-weights"
@@ -1555,6 +1619,22 @@ name "initialization-of-weights"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsection
+Gradient smoothing methods
+\end_layout
+
+\begin_layout Standard
+A family of optimization algorithms 
+\end_layout
+
+\begin_layout Itemize
+cost landscape with valleys and plateaus
+\end_layout
+
+\begin_layout Itemize
+momentum + nesterov
 \end_layout
 
 \begin_layout Section
@@ -1651,18 +1731,6 @@ nal networks and residual connections, and variants of ReLU activations.
 
 \begin_layout Chapter
 Advanced optimization
-\end_layout
-
-\begin_layout Section
-Gradient smoothing methods
-\end_layout
-
-\begin_layout Itemize
-cost landscape with valleys and plateaus
-\end_layout
-
-\begin_layout Itemize
-momentum + nesterov
 \end_layout
 
 \begin_layout Section
