@@ -1576,6 +1576,13 @@ follow directions of steepest descent, instable in valleys
 
 \begin_layout Subsection
 Initialization
+\begin_inset CommandInset label
+LatexCommand label
+name "initialization-of-weights"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -1607,18 +1614,36 @@ key "he2015delving"
 \end_inset
 
 .
- Glorot is a tradeoff between 
-\end_layout
+ Glorot takes care of maintaining a training signal during the forward pass,
+ and the backward pass, by sampling random weights from an uniform distribution
+ with variance 
+\begin_inset Formula $\frac{\alpha}{n_{in}+n_{out}}$
+\end_inset
 
-\begin_layout Itemize
-initialization of weights 
-\begin_inset CommandInset label
-LatexCommand label
-name "initialization-of-weights"
+, while He argues that only the forward pass matters so the weights should
+ be initialized from a distribution with variance 
+\begin_inset Formula $\frac{\\alpha}{n_{in}}$
+\end_inset
+
+.
+ In both cases, 
+\begin_inset Formula $\alpha$
+\end_inset
+
+ depends on the activation function, and the papers propose default values
+ for sigmoid and ReLU 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "glorot2011deep"
 
 \end_inset
 
+.
+ In our experiments, we treated 
+\begin_inset Formula $\alpha$
+\end_inset
 
+ as a hyperparameter, and tuned it using a biased random search.
 \end_layout
 
 \begin_layout Subsection
