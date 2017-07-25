@@ -103,8 +103,7 @@ Neural networks
 
 \begin_layout Standard
 In this chapter, we will progressively introduce concepts and techniques
- that are used in artificial intelligence tasks which get more and more
- complex.
+ that are used in artificial intelligence tasks.
  In particular, we will introduce neural networks, that have proven a powerful
  model and produced state of the art results in a variety of tasks.
 \end_layout
@@ -118,8 +117,8 @@ Intelligence is a difficult concept to define.
  We will use the following definition: the ability to make sensible decisions
  in a given situation, possibly making use of a memory of past events that
  share similarities with the current situation.
- The most powerful individual intelligent agent that we can experience nowadays
- is certainly the human being.
+ The most intelligent individual agent that we are aware of nowadays is
+ certainly the human being, amongst other animals.
  Human beings are constantly making decisions given their perception of
  the world that is provided by their 5 senses, using knowledge that they
  have studied or experienced in their life.
@@ -154,16 +153,16 @@ To put things into context, we will now describe an example task.
  We want to design a program that takes a picture of an animal and a sound
  as input, and outputs whether it thinks the animal present in the picture
  makes the provided sound.
- In a computer, a picture is often encoded as a tensor of pixels, the sound
- as a timeseries of samples of the sound wave, and the final decision can
- be a single scalar values, which will be close to 0 is the animal is very
- unlikely to make the noise, or to 1 if the animal is very likely to make
- the noise.
+ In a computer, a picture is often encoded as a mathematical tensor of scalar
+ values or pixels, the sound as a timeseries of samples of the sound wave,
+ and the final decision can be a single scalar values, which will be close
+ to 0 is the animal is very unlikely to make the noise, or to 1 if the animal
+ is very likely to make the noise.
  The complex machinery inbetween is the intelligent part.
 \end_layout
 
 \begin_layout Standard
-Manually designing this intelligent part is an overwhelming task.
+Manually designing a program for such a task is an overwhelming task.
  Even provided that the input image is quite a small image of 
 \begin_inset Formula $32\times32$
 \end_inset
@@ -182,10 +181,14 @@ Manually designing this intelligent part is an overwhelming task.
 \end_inset
 
  possible values, it leaves us with 
-\begin_inset Formula $256\times23\,072\approx6\cdot10^{6}$
+\begin_inset Formula $256^{23\,072}\approx10^{55\,000}$
 \end_inset
 
  possible combinations.
+ Even if we only keep the combinations that are plausible, there is too
+ many to create a naive program.
+ Even with carefully engineered feature extractors based on image and sound
+ processing techniques, the remaining work of is still challenging.
 \end_layout
 
 \begin_layout Standard
@@ -194,9 +197,9 @@ Instead, the most successful attempts at solving such tasks use a procedure
 \series bold
 machine learning
 \series default
-: instead of manually defining our intelligent program, we define a generic
- model, and we use a dataset of annotated examples of picture, sound, and
- the corresponding answer, and we leave the computer extract informations
+: instead of manually defining our program, we define a generic model, and
+ we use a dataset of annotated examples of picture, sound, and the corresponding
+ answer, and we leave to the computer the task of extracting information
  from the dataset to tune the model so as to obtain the desired program.
 \end_layout
 
@@ -240,8 +243,8 @@ Generally speaking, machine learning consists in finding an unknown function
 \end_inset
 
 .
- The challenge of machine learning is to find a correct parametrization
- so that our desired functions can be approached by an instance of 
+ The challenges of machine learning are to find a correct parametrization
+ so that our desired function can be approached by a member of 
 \begin_inset Formula $\mathcal{F}_{\theta}$
 \end_inset
 
@@ -249,21 +252,27 @@ Generally speaking, machine learning consists in finding an unknown function
 \end_layout
 
 \begin_layout Standard
-To this end, we chose a loss function 
+To this end, we need a measure of the performance of a given function at
+ solving our task.
+ We chose a loss function 
 \begin_inset Formula $l$
 \end_inset
 
- adapted to the task we aim at solving, that measures how wrong is a given
- function at solving the task for a data point.
- The remaining part is the data generating distribution 
-\begin_inset Formula $p$
-\end_inset
-
- which allows to sample datapoints 
-\begin_inset Formula $x\sim p$
+, adapted to this task.
+ The better our function, the lower the value of 
+\begin_inset Formula $l$
 \end_inset
 
 .
+ The remaining ingredient is a data generating distribution 
+\begin_inset Formula $p$
+\end_inset
+
+ from which we sample datapoints 
+\begin_inset Formula $x\sim p$
+\end_inset
+
+ that are our examples.
  A measure of the performance of a function 
 \begin_inset Formula $f_{\theta}$
 \end_inset
@@ -324,6 +333,14 @@ name "cost-function"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+Finding this value 
+\begin_inset Formula $\theta^{*}$
+\end_inset
+
+ is the task of learning from the data.
 \end_layout
 
 \begin_layout Standard
@@ -396,10 +413,7 @@ classification
 .
  A natural loss that comes up is the misclassification indicator function
  
-\begin_inset Formula $\mathbb{1}\left(f_{\theta}\left(x\right),y\right)=\begin{cases}
-0 & \text{if }f_{\theta}\left(x\right)=y\\
-1 & \text{otherwise}
-\end{cases}$
+\begin_inset Formula $\mathbf{1}\left(f_{\theta}\left(x\right),y\right)=\left\{ 0\text{ if }f_{\theta}\left(x\right)=y\text{ or }1\text{ otherwise}\right\} $
 \end_inset
 
 .
@@ -411,8 +425,8 @@ ity is a valuable property for machine learning.
 \begin_inset Formula $f_{\theta}$
 \end_inset
 
- output a vector of the number of categories, which represents the probability
- of being a member of each category (a scalar between 
+ output a vector of the number of categories, which represents computed
+ probabilites of being a member of each category (a scalar between 
 \begin_inset Formula $0$
 \end_inset
 
@@ -435,14 +449,24 @@ cross entropy
 \end_inset
 
 .
+ An example classification task is proposed by the ImageNet project 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "deng2009imagenet"
+
+\end_inset
+
+ where the task is to classify images to detect what they represent such
+ as an animal, or a car and so on.
 \end_layout
 
 \begin_layout Subsection
-Empirical risk and bias/variance tradeoff
+Empirical risk and bias-variance tradeoff
 \end_layout
 
 \begin_layout Standard
-In practice, we often do not have access to a data generating function 
+In practice, often, we do not have access to a data generating function
+ 
 \begin_inset Formula $p$
 \end_inset
 
@@ -488,8 +512,8 @@ For random values of the parameters
  empirical risk is minimum.
  In the extreme case, consider a model that has memorized all examples of
  the training set by heart.
- In order to make a prediction for a new example, this example will seek
- the closest example in 
+ In order to make a prediction for a new example, this model will seek the
+ closest example in 
 \begin_inset Formula $\mathcal{D}$
 \end_inset
 
@@ -501,7 +525,7 @@ For random values of the parameters
 \begin_inset Formula $0$
 \end_inset
 
-.
+, but we have no guarantee that the model generalizes on new examples.
 \end_layout
 
 \begin_layout Standard
@@ -510,16 +534,25 @@ A model with too much expressivity, or
 variance
 \shape default
 , will be able to learn all examples in the training set by heart without
- having the ability to generalize on new examples, which is called overfitting.
+ having the ability to generalize on new examples, which is called 
+\shape italic
+overfitting
+\shape default
+.
  A model with not enough expressivity will not be able to perform well even
- on the training set, but in the meantime it will have a similar performance
- on the true data generating distribution.
+ on the training set, which is called 
+\shape italic
+underfitting
+\shape default
+.
+ In the meantime it will have a similar performance on the true data generating
+ distribution.
  We say that there is a 
 \shape italic
 bias
 \shape default
  toward a family of model.
- The bias variance trade-off consists in selecting a model that has sufficient
+ The bias-variance tradeoff consists in selecting a model that has sufficient
  expressivity to have a good performance on the train set, while not having
  too much expressivity so that it will not overfit, and still have good
  performance on the true data generating distribution.
@@ -530,7 +563,11 @@ Regularization
 \end_layout
 
 \begin_layout Standard
-A way of combatting overfitting is to 
+A way of combatting overfitting is to use regularization.
+ It is a way of constraining the parameters of a function using priors.
+ For example L2 regularization penalizes the squared norm of the parameter
+ vector.
+ It constrains all values to stay small.
 \end_layout
 
 \begin_layout Standard
@@ -543,43 +580,26 @@ Data augmentation is another mean of combatting overfitting.
  and translated versions of the same images.
 \end_layout
 
-\begin_layout Itemize
-overfitting
-\end_layout
-
-\begin_layout Itemize
-patience
-\end_layout
-
-\begin_layout Itemize
-l2 regul
-\end_layout
-
-\begin_layout Itemize
-data augmentation
-\end_layout
-
 \begin_layout Section
 Neural networks
 \end_layout
 
-\begin_layout Itemize
-stack layers that produce new representations of the incoming data
-\end_layout
-
-\begin_layout Itemize
-standard architecture : linear transformation / non-linearity elementwise
-\end_layout
-
 \begin_layout Standard
-Neural networks have empirically proven very powerful at solving complex
- tasks.
+Neural networks are a family of parametrized models.
+ They have empirically proven very powerful at solving complex tasks.
  Along with the availability of easy to use frameworks to build neural networks
  and learn from data, has developed new interests from industry to integrate
  artificial intelligence inspired techniques in more and more products.
- The first commercial successes date back to 1998 ???? when AT&T developed
+ The first commercial successes date back to the 90s when AT&T developed
  an automated system to read handwritten digits on bank checks, using convolutio
-nal neural networks.
+nal neural networks 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "lecun1998gradient"
+
+\end_inset
+
+.
  Recent successes include advances in machine translation, image and voice
  recognition, close-to-realistic image generation.
  They have applications in online services integrated in smartphones, but
@@ -631,8 +651,8 @@ key "rosenblatt1961principles"
 \begin_inset Formula $f$
 \end_inset
 
- is a function, and is sometimes called the nonlinearity as it allows the
- function 
+ is a function, and is sometimes called the nonlinearity or activation function
+ as it allows the function 
 \begin_inset Formula $y$
 \end_inset
 
@@ -650,7 +670,7 @@ key "rosenblatt1961principles"
 \end_inset
 
  using a threshold value.
- The perceptrons were implemented before the invention of modern computers,
+ Perceptrons were implemented before the invention of modern computers,
  as complex electronic circuits.
  The weights were encoded in hardware potentiometers and trained using an
  error-propagating process.
@@ -673,9 +693,16 @@ These perceptrons were designed to approximately replicate the computations
 \begin_layout Standard
 This single perceptron is extended in a more complex model called the multilayer
  perceptron.
- It consists in alternatively stacking layers of linear transformation and
- nonlinearity, using a vectorized generalization of the perceptron: 
-\begin_inset Formula $y\left(x\right)=f\left(\underbrace{Wx+b}_{\text{linear transformation}}\right)$
+ It consists in alternatively stacking layers of linear transformation 
+\begin_inset Formula $a=Wx+b$
+\end_inset
+
+ and nonlinearities 
+\begin_inset Formula $y=f\left(a\right)$
+\end_inset
+
+, using a vectorized generalization of the perceptron: 
+\begin_inset Formula $y\left(x\right)=f\left(Wx+b\right)$
 \end_inset
 
 .
@@ -703,7 +730,7 @@ This single perceptron is extended in a more complex model called the multilayer
 \begin_inset Formula $f_{1}\left(W_{1}x+b_{1}\right)$
 \end_inset
 
- are called the hidden representations as they are new representations the
+ are called the hidden representations as they are new representations of
  the same input data, but encoded in a different way.
  A trained neural network will create representations that are better suited
  for its task.
@@ -745,11 +772,7 @@ A multilayer perceptron consists in alternatively stacking layers of a linear
 \end_layout
 
 \begin_layout Subsection
-Recurrent neural networks
-\end_layout
-
-\begin_layout Subsection
-Convolutions
+Convolutional networks
 \end_layout
 
 \begin_layout Subsection
@@ -761,6 +784,25 @@ name "subsec:Autoencoders"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+Autoencoders 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "hinton2006reducing,vincent2008extracting"
+
+\end_inset
+
+ are neural networks that are composed of an encoder part a decoder.
+ The encoder takes the input and encodes whatever it finds relevant for
+ decoding it.
+ The decoder takes the encoded input an tries to reconstruct the output.
+ The encoded representation is often a layer with less neurons than the
+ size of the input.
+ The autoencoder is trained end-to-end, without manually taking care of
+ the encoded representation.
+ This representation is automatically created by learning from the data.
 \end_layout
 
 \begin_layout Subsection
@@ -787,7 +829,11 @@ reference "cost-function"
 \end_layout
 
 \begin_layout Standard
+
+\series bold
 Neural art 
+\series default
+
 \begin_inset CommandInset citation
 LatexCommand cite
 key "gatys2015neural"
@@ -941,7 +987,11 @@ reference "chap:ff-texture-gen"
 
 \begin_layout Standard
 Another family of cost functions that becomes more and more popular is that
- of the discriminators in Generative Adversarial Networks 
+ of the discriminators in 
+\series bold
+Generative Adversarial Networks 
+\series default
+
 \begin_inset CommandInset citation
 LatexCommand cite
 key "goodfellow2014generative"
@@ -951,9 +1001,11 @@ key "goodfellow2014generative"
 , that can be thought of as learned cost functions.
  In this setup, 2 networks are trained one against each other : the generator
  part takes random noise and generate a sample that tries to fool the discrimina
-tor, which is also a trained network that tries to classify whether its
- input is from a given data distribution, or if it is generated by the generator.
- Training these network is very unstable, and is the object of many research
+tor.
+ The discriminator also isalso a trained network that tries to classify
+ whether its input is from a given data distribution, or if it was generated
+ by the generator.
+ Training these networks is very unstable, and is the object of many research
  at the time of this writing.
  But provided that we successfully trained both parts, we get a generator
  that is able to generate new samples of complex data, such as realistic
@@ -1622,7 +1674,7 @@ key "he2015delving"
 
 , while He argues that only the forward pass matters so the weights should
  be initialized from a distribution with variance 
-\begin_inset Formula $\frac{\\alpha}{n_{in}}$
+\begin_inset Formula $\frac{\alpha}{n_{in}}$
 \end_inset
 
 .
