@@ -3891,15 +3891,23 @@ Focus on the covariance part of the decomposition
 \end_layout
 
 \begin_layout Standard
+We now 
+\end_layout
+
+\begin_layout Standard
+We suppose that such an upper bound exists, we can now write.
+\end_layout
+
+\begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
 \frac{1}{n}\sum_{i}\left(\begin{array}{cc}
 h_{i}h_{i}^{T} & h_{i}\\
 h_{i}^{T} & 1
-\end{array}\right)\otimes\left(\mathbf{J}_{a_{i}}^{T}D\left(x_{i}\right)\mathbf{J}_{a_{i}}\right) & = & \frac{1}{n}\sum_{i}\left(\begin{array}{cc}
+\end{array}\right)\otimes\left(\mathbf{J}_{a_{i}}^{T}D\left(x_{i}\right)\mathbf{J}_{a_{i}}\right) & \leq & \frac{1}{n}\sum_{i}\left(\begin{array}{cc}
 h_{i}h_{i}^{T} & h_{i}\\
 h_{i}^{T} & 1
-\end{array}\right)\otimes\alpha_{i}\mathbf{I}
+\end{array}\right)\otimes\alpha\mathbf{I}
 \end{eqnarray*}
 
 \end_inset
@@ -3908,7 +3916,28 @@ h_{i}^{T} & 1
 \end_layout
 
 \begin_layout Standard
+Not true.
+ Ie non diagonal terms are 
+\begin_inset Formula $0$
+\end_inset
+
+ so < than in reality.
+\end_layout
+
+\begin_layout Standard
+whatever
+\end_layout
+
+\begin_layout Standard
 inverse:
+\end_layout
+
+\begin_layout Standard
+we denote by 
+\begin_inset Formula $C=\frac{1}{n}\sum_{i}h_{i}h_{i}^{T}-\frac{1}{n}\sum_{i}h_{i}\frac{1}{n}\sum_{i}h_{i}^{T}=\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}$
+\end_inset
+
+the covariance matrix.
 \end_layout
 
 \begin_layout Standard
@@ -3918,12 +3947,8 @@ inverse:
 \frac{1}{n}\sum_{i}h_{i}h_{i}^{T} & \frac{1}{n}\sum_{i}h_{i}\\
 \frac{1}{n}\sum_{i}h_{i}^{T} & 1
 \end{array}\right)^{-1} & = & \left(\begin{array}{cc}
-\left(\frac{1}{n}\sum_{i}h_{i}h_{i}^{T}-\frac{1}{n}\sum_{i}h_{i}\frac{1}{n}\sum_{i}h_{i}^{T}\right)^{-1} & -\left(\frac{1}{n}\sum_{i}h_{i}h_{i}^{T}-\frac{1}{n}\sum_{i}h_{i}\frac{1}{n}\sum_{i}h_{i}^{T}\right)^{-1}\frac{1}{n}\sum_{i}h_{i}\\
--\frac{1}{n}\sum_{i}h_{i}^{T}\left(\frac{1}{n}\sum_{i}h_{i}h_{i}^{T}-\frac{1}{n}\sum_{i}h_{i}\frac{1}{n}\sum_{i}h_{i}^{T}\right)^{-1} & \left(1-\frac{1}{n}\sum_{i}h_{i}^{T}\frac{1}{n}\sum_{i}h_{i}\right)^{-1}
-\end{array}\right)\\
- & = & \left(\begin{array}{cc}
-\left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1} & -\left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1}\frac{1}{n}\sum_{i}h_{i}\\
--\frac{1}{n}\sum_{i}h_{i}^{T}\left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1} & \left(1-\frac{1}{n}\sum_{i}h_{i}^{T}\frac{1}{n}\sum_{i}h_{i}\right)^{-1}
+C^{-1} & -C^{-1}\frac{1}{n}\sum_{i}h_{i}\\
+-\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1} & 1+\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}\frac{1}{n}\sum_{i}h_{i}
 \end{array}\right)
 \end{eqnarray*}
 
@@ -3940,7 +3965,7 @@ gradient:
 \begin_inset Formula $\frac{1}{n}\sum_{j}\left(\begin{array}{c}
 h_{j}\\
 1
-\end{array}\right)\otimes\left(\mathbf{J}^{a_{j}}\right)^{T}$
+\end{array}\right)\otimes\nabla_{a_{j}}l$
 \end_inset
 
 
@@ -3952,12 +3977,32 @@ update:
 
 \begin_layout Standard
 \begin_inset Formula $\frac{1}{n}\sum_{j}\left(\begin{array}{cc}
-\left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1} & -\left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1}\frac{1}{n}\sum_{i}h_{i}\\
--\frac{1}{n}\sum_{i}h_{i}^{T}\left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1} & 1+\frac{1}{n}\sum_{i}h_{i}^{T}\left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1}\frac{1}{n}\sum_{i}h_{i}
+C^{-1} & -C^{-1}\frac{1}{n}\sum_{i}h_{i}\\
+-\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1} & 1+\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}\frac{1}{n}\sum_{i}h_{i}
 \end{array}\right)\left(\begin{array}{c}
 h_{j}\\
 1
-\end{array}\right)\otimes\mathbf{J}^{a_{j}}$
+\end{array}\right)\otimes\nabla_{a_{j}}l$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+update for 
+\begin_inset Formula $W$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\Delta\text{vec}\left(W\right) & = & C^{-1}\frac{1}{n}\sum_{j}h_{j}\otimes\nabla_{a_{j}}l-C^{-1}\frac{1}{n}\sum_{i}h_{i}\otimes\frac{1}{n}\sum_{j}\nabla_{a_{j}}l\\
+ & = & C^{-1}\frac{1}{n}\sum_{j}\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)\otimes\nabla_{a_{j}}l
+\end{eqnarray*}
+
 \end_inset
 
 
@@ -3974,28 +4019,9 @@ update for
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\Delta b & = & -\frac{1}{n}\sum_{i}h_{i}^{T}\left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1}\frac{1}{n}\sum_{j}h_{j}\otimes\mathbf{J}^{a_{j}}+\left(1+\frac{1}{n}\sum_{i}h_{i}^{T}\left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1}\frac{1}{n}\sum_{i}h_{i}\right)\otimes\frac{1}{n}\sum_{j}\mathbf{J}^{a_{j}}\\
- & = & -\frac{1}{n}\sum_{i}h_{i}^{T}\left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1}\frac{1}{n}\sum_{j}\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)\otimes\mathbf{J}^{a_{j}}+\frac{1}{n}\sum_{j}\mathbf{J}^{a_{j}}
-\end{eqnarray*}
-
-\end_inset
-
-TBC
-\end_layout
-
-\begin_layout Standard
-update for 
-\begin_inset Formula $W$
-\end_inset
-
-:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-\Delta W & = & \left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1}\frac{1}{n}\sum_{j}h_{j}\otimes\mathbf{J}^{a_{j}}-\left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1}\frac{1}{n}\sum_{i}h_{i}\otimes\frac{1}{n}\sum_{j}\mathbf{J}^{a_{j}}\\
- & = & \left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1}\frac{1}{n}\sum_{j}\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)\otimes\mathbf{J}^{a_{j}}
+\Delta b & = & -\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}\frac{1}{n}\sum_{j}h_{j}\otimes\nabla_{a_{j}}l+\left(1+\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}\frac{1}{n}\sum_{i}h_{i}\right)\otimes\frac{1}{n}\sum_{j}\nabla_{a_{j}}l\\
+ & = & \frac{1}{n}\sum_{j}\nabla_{a_{j}}-\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}\frac{1}{n}\sum_{j}\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)\otimes\nabla_{a_{j}}l\\
+ & = & \frac{1}{n}\sum_{j}\nabla_{a_{j}}-\frac{1}{n}\sum_{i}h_{i}^{T}\Delta\text{vec}\left(W\right)
 \end{eqnarray*}
 
 \end_inset
@@ -4015,11 +4041,78 @@ rmsprop
 msprop
 \end_layout
 
-\begin_layout Itemize
-centering trick (découle des méthodes àla second ordre)
-\begin_inset CommandInset label
-LatexCommand label
-name "centering-trick"
+\begin_layout Subsection
+centering trick
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\frac{1}{n}\sum_{i}\left(\begin{array}{cc}
+h_{i}h_{i}^{T} & h_{i}\\
+h_{i}^{T} & 1
+\end{array}\right)\otimes\alpha_{i}\mathbf{I} & = & \frac{1}{n}\sum_{i}\left(\begin{array}{cc}
+\mathbf{I} & h_{i}\\
+h_{i} & 1
+\end{array}\right)\otimes\alpha_{i}\mathbf{I}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\frac{1}{n}\sum_{i}\left(\begin{array}{cc}
+\mathbf{I} & h_{i}\\
+h_{i} & 1
+\end{array}\right) & = & \left(\begin{array}{cc}
+\mathbf{I} & \frac{1}{n}\sum_{i}h_{i}\\
+\frac{1}{n}\sum_{i}h_{i}^{T} & 1
+\end{array}\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+inverse
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\left(\begin{array}{cc}
+\mathbf{I} & \frac{1}{n}\sum_{i}h_{i}\\
+\frac{1}{n}\sum_{i}h_{i}^{T} & 1
+\end{array}\right)^{-1} & = & \left(\begin{array}{cc}
+\left(\mathbf{I}-\frac{1}{n}\sum_{i}h_{i}\frac{1}{n}\sum_{i}h_{i}^{T}\right)^{-1} & \frac{1}{n}\sum_{i}h_{i}\\
+\frac{1}{n}\sum_{i}h_{i} & 1
+\end{array}\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+update for 
+\begin_inset Formula $b$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\Delta b & = & -\frac{1}{n}\sum_{i}h_{i}^{T}\left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1}\frac{1}{n}\sum_{j}h_{j}\otimes\mathbf{J}^{a_{j}}+\left(1+\frac{1}{n}\sum_{i}h_{i}^{T}\left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1}\frac{1}{n}\sum_{i}h_{i}\right)\otimes\frac{1}{n}\sum_{j}\mathbf{J}^{a_{j}}
+\end{eqnarray*}
 
 \end_inset
 
