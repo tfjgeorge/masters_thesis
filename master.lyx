@@ -1082,7 +1082,7 @@ Once we have a direction, we must choose how far to move in this direction.
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\theta & \leftarrow & -\lambda\nabla_{\theta}R
+\theta & \leftarrow & \theta-\lambda\nabla_{\theta}R
 \end{eqnarray*}
 
 \end_inset
@@ -1811,7 +1811,15 @@ Advanced optimization of neural networks
 \end_layout
 
 \begin_layout Standard
-Generic optimization techniques vs model consideration.
+Gradient descent is a black box technique that can be applied to any kind
+ of optimization problem.
+ But we are interested in optimizing a very specific function, which is
+ a sum of stacked transformations and a loss function.
+ In this section, we introduce the well known second order methods known
+ as Newton's method and Natural gradient.
+ We then derive the updates of this methods adapted to neural networks,
+ and show how second order methods can be approximated in order to be applied
+ to real scale tasks.
 \end_layout
 
 \begin_layout Section
@@ -1981,7 +1989,7 @@ reference "subsec:gauss-newton"
 \shape italic
 Storing the Hessian matrix
 \shape default
-: The Hessian matrix is a square matrix with size 
+: The Hessian matrix is a square matrix of size 
 \begin_inset Formula $n_{\text{parameters}}\times n_{parameters}$
 \end_inset
 
@@ -2114,19 +2122,17 @@ This new hyperparameter
 \end_layout
 
 \begin_layout Standard
-TODO 3 roles :
-\end_layout
+In addition to this, we can also mention that it stabilizes the inversion
+ when the condition number of 
+\begin_inset Formula $\left(\nabla^{2}f\right)_{x}$
+\end_inset
 
-\begin_layout Itemize
-as cited above
-\end_layout
+ is too big, and that it can account for the estimation error when we estimate
+ 
+\begin_inset Formula $\left(\nabla^{2}f\right)_{x}$
+\end_inset
 
-\begin_layout Itemize
-account for estimation error
-\end_layout
-
-\begin_layout Itemize
-so that the matrix is invertible
+ using a minibatch of examples instead of using the true risk.
 \end_layout
 
 \begin_layout Subsection
@@ -2538,7 +2544,7 @@ Fisher Information Matrix
 \end_layout
 
 \begin_layout Standard
-The Fisher information matrix (FIM) is a tool well used in statistics.
+The Fisher information matrix (FIM) is well used in statistics.
  In the context of machine learning, and in particular deep learning, we
  use its inverse as a preconditioner for the gradient descent algorithm,
  similarly to the Newton algorithm 
@@ -2734,7 +2740,14 @@ We now constrain our gradient step to be small in term of change of parameter
 \end_inset
 
 , which control 2 different but related quantities expressed by our constraints.
- This new update is called the natural gradient.
+ This new update is called the natural gradient 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "amari1998natural"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
@@ -2808,11 +2821,13 @@ The values for
 \end_layout
 
 \begin_layout Standard
-Note that in this expression, 
+Note the ressemblance with the Gauss Newton matrix.
+ But as opposed to Gauss Newton, in this expression, 
 \begin_inset Formula $D$
 \end_inset
 
- does not depend on a given target.
+ does not depend on the true target, and is just a function of the output
+ of the network.
 \end_layout
 
 \begin_layout Subsubsection
@@ -2829,9 +2844,10 @@ The FIM is difficult to compute because of its size (
 \end_inset
 
  but only samples from a training dataset.
+ As for Newton, we can make the two following approximations:
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
 A first approximation that we can make is by ignoring the interactions between
  layers.
  In this case the FIM takes the form of a block diagonal matrix, where each
@@ -2856,7 +2872,7 @@ A first approximation that we can make is by ignoring the interactions between
 .
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
 A second common approximation we make in practice is to use the empirical
  FIM for a training dataset of 
 \begin_inset Formula $n$
@@ -3103,100 +3119,6 @@ Overcoming catastrophic forgetting
 \end_layout
 
 \begin_layout Section
-Direct gradient update
-\end_layout
-
-\begin_layout Standard
-In this section, we present a new technique that makes use of updated gradient
- directions to account for interactions between layers.
-\end_layout
-
-\begin_layout Standard
-A major inconvenient of first order methods is that they update every individual
- parameter without taking into account for other parameter updates.
- As an illustration, take a neural network composed of only 2 layers 
-\begin_inset Formula $f\left(x\right)=f_{2}\left(W_{2}f_{1}\left(W_{1}x+b_{1}\right)+b_{2}\right)$
-\end_inset
-
- and a loss function 
-\begin_inset Formula $l\left(f\left(x\right),y\right)$
-\end_inset
-
-.
- Suppose that we have computed all gradients with respect to each parameters
- 
-\begin_inset Formula $\frac{\partial l}{\partial W_{1}}$
-\end_inset
-
-, 
-\begin_inset Formula $\frac{\partial l}{\partial b_{1}}$
-\end_inset
-
-, 
-\begin_inset Formula $\frac{\partial l}{\partial W_{2}}$
-\end_inset
-
- and 
-\begin_inset Formula $\frac{\partial l}{\partial b_{2}}$
-\end_inset
-
-.
- If we were using standard gradient descent, we would update the value of
- the parameters, all at once to obtain a better prediction function.
- Now suppose that we only update the parameters of layer 2, using the standard
- update rule 
-\begin_inset Formula $W_{2}\leftarrow W_{2}-\lambda\frac{\partial l}{\partial W_{2}}$
-\end_inset
-
- and 
-\begin_inset Formula $b_{2}\leftarrow b_{2}-\lambda\frac{\partial l}{\partial b_{2}}$
-\end_inset
-
-.
- From this point, we have a different function 
-\begin_inset Formula $f\left(x\right)$
-\end_inset
-
-.
- We could either update the parameters of layer 1 using the gradient already
- computed, or find the new values for the gradients for layer 1 using the
- updated 
-\begin_inset Formula $f$
-\end_inset
-
-.
- We will do the latter, by using the property that the gradient for the
- parameters of layer 1 is a function of the parameters of layer 2, which
- can be written:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-\frac{\partial l}{\partial W_{1}}\left(W_{2},b_{2}\right) & \text{ and } & \frac{\partial l}{\partial b_{1}}\left(W_{2},b_{2}\right)
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-In particular, using a first order Taylor decomposition:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-\frac{\partial l}{\partial a_{1}}\left(W_{2}+\Delta W_{2},b_{2}+\Delta b_{2}\right) & = & \frac{\partial l}{\partial a_{1}}\left(W_{2},b_{2}\right)
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
 Second order: a new perspective
 \begin_inset CommandInset label
 LatexCommand label
@@ -3205,6 +3127,22 @@ name "sec:2ndorder-newpers"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+We have just shown expressions for the GN matrix and the FIM.
+ They both share a very similar structure composed of a sum of the jacobians
+ of the output of the network, and a diagonal matrix.
+ In the case of the quadratic error they even strictly have the same expression.
+\end_layout
+
+\begin_layout Standard
+The expressions obtained so far are generic in the sense that they could
+ be applied to any model and any empirical risk composed of a sum of terms.
+ We will now exploit the very particular structure of neural networks, to
+ obtain a better understanding of how to apply these techniques for real
+ tasks.
+ 
 \end_layout
 
 \begin_layout Subsection
@@ -3526,15 +3464,46 @@ key "desjardins2015natural"
 \end_layout
 
 \begin_layout Subsection
+Decomposition into 2 smaller matrices
+\end_layout
+
+\begin_layout Standard
+In second order algorithms, inverting the Hessian matrix is often the limiting
+ factor as its computational cost is 
+\begin_inset Formula $O\left(n^{3}\right)$
+\end_inset
+
+.
+ The Kronecker product as the pleasing property that it turns the inversion
+ of a big matrix into inverting 2 smaller matrices since 
+\begin_inset Formula $\left(A\otimes B\right)^{-1}=A^{-1}\otimes B^{-1}$
+\end_inset
+
+.
+ In our case, if such a decomposition existed we would reduce the computational
+ cost from 
+\begin_inset Formula $O\left(n_{in}^{3}n_{out}^{3}\right)$
+\end_inset
+
+ to 
+\begin_inset Formula $O\left(n_{in}^{3}\right)+O\left(n_{out}^{3}\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Unfortunately, we can not write the GN matrix nor the FIM using 2 matrices
+ because it is a sum of Kronecker products, so we aim at finding approximate
+ factorizations that will have the required form.
+\end_layout
+
+\begin_layout Subsection
 Focus on the covariance part of the decomposition
 \end_layout
 
 \begin_layout Standard
-We now 
-\end_layout
-
-\begin_layout Standard
-We suppose that such an upper bound exists, we can now write.
+We now suppose that we can use the following approximation:
 \end_layout
 
 \begin_layout Standard
@@ -3543,10 +3512,10 @@ We suppose that such an upper bound exists, we can now write.
 \frac{1}{n}\sum_{i}\left(\begin{array}{cc}
 h_{i}h_{i}^{T} & h_{i}\\
 h_{i}^{T} & 1
-\end{array}\right)\otimes\left(\mathbf{J}_{a_{i}}^{T}D\left(x_{i}\right)\mathbf{J}_{a_{i}}\right) & \leq & \frac{1}{n}\sum_{i}\left(\begin{array}{cc}
+\end{array}\right)\otimes\left(\mathbf{J}_{a_{i}}^{T}D\left(x_{i}\right)\mathbf{J}_{a_{i}}\right) & = & \frac{1}{n}\sum_{i}\left(\begin{array}{cc}
 h_{i}h_{i}^{T} & h_{i}\\
 h_{i}^{T} & 1
-\end{array}\right)\otimes\alpha\mathbf{I}
+\end{array}\right)\otimes\alpha\mathbf{I}=\mathbf{F}_{in}
 \end{eqnarray*}
 
 \end_inset
@@ -3555,28 +3524,48 @@ h_{i}^{T} & 1
 \end_layout
 
 \begin_layout Standard
-Not true.
- Ie non diagonal terms are 
-\begin_inset Formula $0$
+Here the does not depend on 
+\begin_inset Formula $i$
 \end_inset
 
- so < than in reality.
+.
+ TODO
 \end_layout
 
 \begin_layout Standard
-whatever
-\end_layout
-
-\begin_layout Standard
-inverse:
-\end_layout
-
-\begin_layout Standard
-we denote by 
-\begin_inset Formula $C=\frac{1}{n}\sum_{i}h_{i}h_{i}^{T}-\frac{1}{n}\sum_{i}h_{i}\frac{1}{n}\sum_{i}h_{i}^{T}=\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}$
+The left part 
+\begin_inset Formula $A=\frac{1}{n}\sum_{i}\left(\begin{array}{cc}
+h_{i}h_{i}^{T} & h_{i}\\
+h_{i}^{T} & 1
+\end{array}\right)$
 \end_inset
 
-the covariance matrix.
+ correponds to some statistics on the input of the considered layer.
+ It has the size 
+\begin_inset Formula $\left(n_{in}+1\right)\times\left(n_{in}+1\right)$
+\end_inset
+
+ with the line/column corresponding to the bias.
+ We will now derive the update that corresponds to using this matrix 
+\begin_inset Formula $\mathbf{F}_{in}$
+\end_inset
+
+ as a preconditioner:
+\end_layout
+
+\begin_layout Standard
+We need to invert 
+\begin_inset Formula $A$
+\end_inset
+
+.
+ This matrix can be inverted blockwise.
+ We denote by 
+\begin_inset Formula $C=\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{j}h_{j}\right)\left(h_{i}-\frac{1}{n}\sum_{j}h_{j}\right)^{T}$
+\end_inset
+
+the covariance matrix of the input vector of the linear layer.
+ We get the inverse:
 \end_layout
 
 \begin_layout Standard
@@ -3597,11 +3586,13 @@ C^{-1} & -C^{-1}\frac{1}{n}\sum_{i}h_{i}\\
 \end_layout
 
 \begin_layout Standard
-gradient:
+Applying this preconditioner to a gradient update we can get a new update
+ for the weight matrix and the bias.
+ Let us first recall the gradient for a minibatch of examples:
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\frac{1}{n}\sum_{j}\left(\begin{array}{c}
+\begin_inset Formula $\frac{\partial}{}\frac{1}{n}\sum_{j}\left(\begin{array}{c}
 h_{j}\\
 1
 \end{array}\right)\otimes\nabla_{a_{j}}l$
@@ -3639,7 +3630,40 @@ update for
 \begin_inset Formula 
 \begin{eqnarray*}
 \Delta\text{vec}\left(W\right) & = & C^{-1}\frac{1}{n}\sum_{j}h_{j}\otimes\nabla_{a_{j}}l-C^{-1}\frac{1}{n}\sum_{i}h_{i}\otimes\frac{1}{n}\sum_{j}\nabla_{a_{j}}l\\
+ & = & C^{-1}\frac{1}{n}\sum_{j}h_{j}\otimes\nabla_{a_{j}}l-C^{-1}\frac{1}{n}\sum_{j}\frac{1}{n}\sum_{i}h_{i}\otimes\nabla_{a_{j}}l\\
+ & = & C^{-1}\frac{1}{n}\sum_{j}\left(h_{j}\otimes\nabla_{a_{j}}l-\frac{1}{n}\sum_{i}h_{i}\otimes\nabla_{a_{j}}l\right)\\
  & = & C^{-1}\frac{1}{n}\sum_{j}\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)\otimes\nabla_{a_{j}}l
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+mais on peut aussi retourner en:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\Delta\text{vec}\left(W\right) & = & C^{-1}\frac{1}{n}\sum_{j}h_{j}\otimes\left(\nabla_{a_{j}}l-\frac{1}{n}\sum_{i}\nabla_{a_{i}}l\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+ou encore:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\frac{1}{n}\sum_{j}\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)\otimes\left(\nabla_{a_{j}}l-\frac{1}{n}\sum_{i}\nabla_{a_{i}}l\right) & = & \frac{1}{n}\left(\sum_{j}h_{j}\otimes\nabla_{a_{j}}l+\frac{1}{n}\sum_{i}h_{i}\otimes\sum_{i}\nabla_{a_{i}}l-\sum_{j}h_{j}\otimes\frac{1}{n}\sum_{i}\nabla_{a_{i}}l-\frac{1}{n}\sum_{i}h_{i}\otimes\sum_{j}\nabla_{a_{j}}l\right)\\
+ & = & \frac{1}{n}\left(\sum_{j}h_{j}\otimes\nabla_{a_{j}}l-\frac{1}{n}\sum_{i}h_{i}\otimes\sum_{j}\nabla_{a_{j}}l\right)
 \end{eqnarray*}
 
 \end_inset
@@ -3901,6 +3925,104 @@ The FIM for our new reparametrization thus has a better form, and they also
  show experimentally that this method is very efficient, and that by amortizing
  the cost of inverting the covariance matrix over several parameter updates,
  it can be faster that standard SGD.
+\end_layout
+
+\begin_layout Section
+Direct gradient update
+\end_layout
+
+\begin_layout Standard
+In this section, we present a new technique that makes use of updated gradient
+ directions to account for interactions between layers.
+\end_layout
+
+\begin_layout Standard
+A major inconvenient of first order methods is that they update every individual
+ parameter without taking into account for other parameter updates.
+ As an illustration, take a neural network composed of only 2 layers 
+\begin_inset Formula $f\left(x\right)=f_{2}\left(W_{2}f_{1}\left(W_{1}x+b_{1}\right)+b_{2}\right)$
+\end_inset
+
+ and a loss function 
+\begin_inset Formula $l\left(f\left(x\right),y\right)$
+\end_inset
+
+.
+ Suppose that we have computed all gradients with respect to each parameters
+ 
+\begin_inset Formula $\frac{\partial l}{\partial W_{1}}$
+\end_inset
+
+, 
+\begin_inset Formula $\frac{\partial l}{\partial b_{1}}$
+\end_inset
+
+, 
+\begin_inset Formula $\frac{\partial l}{\partial W_{2}}$
+\end_inset
+
+ and 
+\begin_inset Formula $\frac{\partial l}{\partial b_{2}}$
+\end_inset
+
+.
+ If we were using standard gradient descent, we would update the value of
+ the parameters, all at once to obtain a better prediction function.
+ Now suppose that we only update the parameters of layer 2, using the standard
+ update rule 
+\begin_inset Formula $W_{2}\leftarrow W_{2}-\lambda\frac{\partial l}{\partial W_{2}}$
+\end_inset
+
+ and 
+\begin_inset Formula $b_{2}\leftarrow b_{2}-\lambda\frac{\partial l}{\partial b_{2}}$
+\end_inset
+
+.
+ From this point, we have a different function 
+\begin_inset Formula $f\left(x\right)$
+\end_inset
+
+.
+ We could either update the parameters of layer 1 using the gradient already
+ computed, or find the new values for the gradients for layer 1 using the
+ updated 
+\begin_inset Formula $f$
+\end_inset
+
+.
+ We will do the latter, by using the property that the gradient for the
+ parameters of layer 1 is a function of the parameters of layer 2, which
+ can be written:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\frac{\partial l}{\partial W_{1}}\left(W_{2},b_{2}\right) & \text{ and } & \frac{\partial l}{\partial b_{1}}\left(W_{2},b_{2}\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In particular, using a first order Taylor decomposition:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\frac{\partial l}{\partial a_{1}}\left(W_{2}+\Delta W_{2},b_{2}+\Delta b_{2}\right) & = & \frac{\partial l}{\partial a_{1}}\left(W_{2},b_{2}\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+New algorithms and discussion
 \end_layout
 
 \begin_layout Section
