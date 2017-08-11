@@ -3529,7 +3529,7 @@ Here the does not depend on
 \end_inset
 
 .
- TODO
+ TODO explain what this means
 \end_layout
 
 \begin_layout Standard
@@ -3588,38 +3588,64 @@ C^{-1} & -C^{-1}\frac{1}{n}\sum_{i}h_{i}\\
 \begin_layout Standard
 Applying this preconditioner to a gradient update we can get a new update
  for the weight matrix and the bias.
- Let us first recall the gradient for a minibatch of examples:
+ Let us first recall the gradient for a minibatch of examples.
+ In order to be able to use it with our preconditioner we put the parameters
+ into a vector 
+\begin_inset Formula $\theta=\left(\begin{array}{c}
+\text{vec}\left(W\right)\\
+b
+\end{array}\right)$
+\end_inset
+
+:
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\frac{\partial}{}\frac{1}{n}\sum_{j}\left(\begin{array}{c}
+\begin_inset Formula 
+\begin{eqnarray*}
+\frac{\partial R}{\partial\theta} & = & \frac{1}{n}\sum_{j}\left(\begin{array}{c}
 h_{j}\\
 1
-\end{array}\right)\otimes\nabla_{a_{j}}l$
+\end{array}\right)\otimes\nabla_{a_{j}}l
+\end{eqnarray*}
+
 \end_inset
 
 
 \end_layout
 
 \begin_layout Standard
-update:
+The corresponding update is:
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\frac{1}{n}\sum_{j}\left(\begin{array}{cc}
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathbf{F}_{in}^{-1}\frac{\partial R}{\partial\theta} & = & \frac{1}{n}\sum_{j}\left(\begin{array}{cc}
 C^{-1} & -C^{-1}\frac{1}{n}\sum_{i}h_{i}\\
 -\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1} & 1+\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}\frac{1}{n}\sum_{i}h_{i}
 \end{array}\right)\left(\begin{array}{c}
 h_{j}\\
 1
-\end{array}\right)\otimes\nabla_{a_{j}}l$
+\end{array}\right)\otimes\frac{1}{\alpha}\nabla_{a_{j}}l
+\end{eqnarray*}
+
 \end_inset
 
 
 \end_layout
 
 \begin_layout Standard
-update for 
+We use the property that 
+\begin_inset Formula $\left(A\otimes B\right)\left(C\otimes D\right)=AC\otimes BD$
+\end_inset
+
+ when the sizes of the matrices 
+\begin_inset Formula $A,B,C,D$
+\end_inset
+
+ match.
+ From this expression we can write the update for 
 \begin_inset Formula $W$
 \end_inset
 
@@ -3629,10 +3655,9 @@ update for
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\Delta\text{vec}\left(W\right) & = & C^{-1}\frac{1}{n}\sum_{j}h_{j}\otimes\nabla_{a_{j}}l-C^{-1}\frac{1}{n}\sum_{i}h_{i}\otimes\frac{1}{n}\sum_{j}\nabla_{a_{j}}l\\
- & = & C^{-1}\frac{1}{n}\sum_{j}h_{j}\otimes\nabla_{a_{j}}l-C^{-1}\frac{1}{n}\sum_{j}\frac{1}{n}\sum_{i}h_{i}\otimes\nabla_{a_{j}}l\\
- & = & C^{-1}\frac{1}{n}\sum_{j}\left(h_{j}\otimes\nabla_{a_{j}}l-\frac{1}{n}\sum_{i}h_{i}\otimes\nabla_{a_{j}}l\right)\\
- & = & C^{-1}\frac{1}{n}\sum_{j}\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)\otimes\nabla_{a_{j}}l
+\Delta\text{vec}\left(W\right) & = & C^{-1}\frac{1}{n}\sum_{j}h_{j}\otimes\frac{1}{\alpha}\nabla_{a_{j}}l-C^{-1}\frac{1}{n}\sum_{i}h_{i}\otimes\frac{1}{n}\sum_{j}\frac{1}{\alpha}\nabla_{a_{j}}l\\
+ & = & \frac{1}{\alpha}C^{-1}\frac{1}{n}\sum_{j}\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)\otimes\nabla_{a_{j}}l\\
+\Delta W & = & \frac{1}{\alpha}\frac{1}{n}\sum_{j}\nabla_{a_{j}}l\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}C^{-1}
 \end{eqnarray*}
 
 \end_inset
@@ -3641,38 +3666,7 @@ update for
 \end_layout
 
 \begin_layout Standard
-mais on peut aussi retourner en:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-\Delta\text{vec}\left(W\right) & = & C^{-1}\frac{1}{n}\sum_{j}h_{j}\otimes\left(\nabla_{a_{j}}l-\frac{1}{n}\sum_{i}\nabla_{a_{i}}l\right)
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-ou encore:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-\frac{1}{n}\sum_{j}\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)\otimes\left(\nabla_{a_{j}}l-\frac{1}{n}\sum_{i}\nabla_{a_{i}}l\right) & = & \frac{1}{n}\left(\sum_{j}h_{j}\otimes\nabla_{a_{j}}l+\frac{1}{n}\sum_{i}h_{i}\otimes\sum_{i}\nabla_{a_{i}}l-\sum_{j}h_{j}\otimes\frac{1}{n}\sum_{i}\nabla_{a_{i}}l-\frac{1}{n}\sum_{i}h_{i}\otimes\sum_{j}\nabla_{a_{j}}l\right)\\
- & = & \frac{1}{n}\left(\sum_{j}h_{j}\otimes\nabla_{a_{j}}l-\frac{1}{n}\sum_{i}h_{i}\otimes\sum_{j}\nabla_{a_{j}}l\right)
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-update for 
+And the update for 
 \begin_inset Formula $b$
 \end_inset
 
@@ -3682,9 +3676,9 @@ update for
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\Delta b & = & -\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}\frac{1}{n}\sum_{j}h_{j}\otimes\nabla_{a_{j}}l+\left(1+\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}\frac{1}{n}\sum_{i}h_{i}\right)\otimes\frac{1}{n}\sum_{j}\nabla_{a_{j}}l\\
- & = & \frac{1}{n}\sum_{j}\nabla_{a_{j}}-\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}\frac{1}{n}\sum_{j}\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)\otimes\nabla_{a_{j}}l\\
- & = & \frac{1}{n}\sum_{j}\nabla_{a_{j}}-\frac{1}{n}\sum_{i}h_{i}^{T}\Delta\text{vec}\left(W\right)
+\Delta b & = & -\frac{1}{n}\sum_{j}\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}h_{j}\frac{1}{\alpha}\nabla_{a_{j}}l+\left(1+\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}\frac{1}{n}\sum_{i}h_{i}\right)\frac{1}{n}\sum_{j}\frac{1}{\alpha}\nabla_{a_{j}}l\\
+ & = & \frac{1}{n}\sum_{j}\frac{1}{\alpha}\nabla_{a_{j}}l-\frac{1}{n}\sum_{j}\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)\frac{1}{\alpha}\nabla_{a_{j}}l\\
+ & = & \frac{1}{\alpha}\frac{1}{n}\sum_{j}\nabla_{a_{j}}l-\Delta W\frac{1}{n}\sum_{i}h_{i}
 \end{eqnarray*}
 
 \end_inset
@@ -3692,8 +3686,81 @@ update for
 
 \end_layout
 
+\begin_layout Subsection
+Comparison with standard SGD
+\end_layout
+
+\begin_layout Standard
+The updates for standard SGD are 
+\begin_inset Formula $\Delta_{SGD}b=\frac{1}{n}\sum_{j}\nabla_{a_{j}}l$
+\end_inset
+
+ and 
+\begin_inset Formula $\Delta_{SGD}W=\frac{1}{n}\sum_{j}\nabla_{a_{j}}l\left(h_{j}\right)^{T}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+update for 
+\begin_inset Formula $b$
+\end_inset
+
+
+\series default
+ gets a new term 
+\begin_inset Formula $-\Delta W\frac{1}{n}\sum_{i}h_{i}$
+\end_inset
+
+ that permits taking into account the update of 
+\begin_inset Formula $W$
+\end_inset
+
+.
+ In practice, we found that it did not change much as 
+\begin_inset Formula $\Delta W$
+\end_inset
+
+ is typically at least one order of magnitude smaller than 
+\begin_inset Formula $\frac{1}{n}\sum_{j}\nabla_{a_{j}}l$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+update for 
+\begin_inset Formula $W$
+\end_inset
+
+ 
+\series default
+is different in 2 ways
+\end_layout
+
+\begin_layout Itemize
+the activation vector 
+\begin_inset Formula $h_{i}$
+\end_inset
+
+ is centered
+\end_layout
+
+\begin_layout Itemize
+it is also scaled using the inverse covariance matrix of the input 
+\begin_inset Formula $C^{-1}$
+\end_inset
+
+.
+\end_layout
+
 \begin_layout Section
-Approximate second order algorithms
+Other approximate second order algorithms
 \end_layout
 
 \begin_layout Subsection
