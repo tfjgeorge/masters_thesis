@@ -55,9 +55,9 @@ figs-within-sections
 \use_package stackrel 1
 \use_package stmaryrd 1
 \use_package undertilde 1
-\cite_engine natbib
-\cite_engine_type authoryear
-\biblio_style plainnat
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
 \use_bibtopic false
 \use_indices false
 \paperorientation portrait
@@ -1386,10 +1386,10 @@ on of our learning procedure.
 
 \begin_layout Standard
 A difficulty in comparing optimization algorithms resides in the fact that
- there performances can change drastically for different values of the same
- hyperparameters.
+ there performances can change drastically for different values of hyperparamete
+rs.
  Optimization papers sometimes mention heuristics that they experimentally
- found provide with a sensible value for some hyperparmeters.
+ found provide with a sensible value for some hyperparameters.
  But to overcome this difficulty and provide 
 \begin_inset Quotes eld
 \end_inset
@@ -1401,8 +1401,8 @@ fair
  benchmarks, we usually tune the values of the hyperparameters by trying
  several sets of values.
  Hyperparameters tuning is a research field on its own, so we will just
- introduce 3 methods and motivate our use of a technique we call biased
- random search.
+ introduce 3 methods and motivate our use of a new technique that we call
+ biased random search.
 \end_layout
 
 \begin_layout Standard
@@ -1522,10 +1522,46 @@ sideways false
 status open
 
 \begin_layout Plain Layout
+\begin_inset Graphics
+	filename figures/hp_search_biasedrs.pdf
+	width 30text%
+
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset Graphics
+	filename figures/hp_search_biasedrs.pdf
+	width 30text%
+
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset Graphics
+	filename figures/hp_search_biasedrs.pdf
+	width 30text%
+
+\end_inset
+
+
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Comparison of hyperparameter tuning methods
+Comparison of hyperparameter tuning methods.
+ On the left a grid search, in the middle a random search and on the right
+ a biased random search.
+ Each experiment consisted in 100 iterations of SGD from a randomly initialized
+ network.
+ The color scale represents the final loss attained after a fixed number
+ of iterations.
+ The best experiments are in blue, the worst experiments in yellow.
 \end_layout
 
 \end_inset
@@ -1537,6 +1573,48 @@ name "hptune-comparison"
 
 \end_inset
 
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename figures/hp_search_correl.pdf
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Relation between 2 hyperparameters: for this experiment we can clearly see
+ that the plotted hyperparameters are not independant one from each other.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
 
 \end_layout
 
@@ -3943,6 +4021,14 @@ In particular, using a first order Taylor decomposition:
 
 \begin_layout Section
 New algorithms and discussion
+\end_layout
+
+\begin_layout Subsection
+Centered update
+\end_layout
+
+\begin_layout Subsection
+Amortized covariance preconditioner
 \end_layout
 
 \begin_layout Section
