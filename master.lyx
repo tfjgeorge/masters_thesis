@@ -12,6 +12,7 @@
 \usepackage{dsfont}
 \newcommand{\mathbbOld}{\mathbb}
 \renewcommand{\mathbb}{\mathds}
+\usepackage{natbib}
 \end_preamble
 \use_default_options true
 \begin_removed_modules
@@ -54,9 +55,9 @@ figs-within-sections
 \use_package stackrel 1
 \use_package stmaryrd 1
 \use_package undertilde 1
-\cite_engine basic
-\cite_engine_type default
-\biblio_style plain
+\cite_engine natbib
+\cite_engine_type authoryear
+\biblio_style plainnat
 \use_bibtopic false
 \use_indices false
 \paperorientation portrait
@@ -2089,7 +2090,7 @@ To counter this undesirable effect, we simply add a regularization term
 \begin{eqnarray*}
 \Delta x^{*} & = & \text{argmin}_{\Delta x}f\left(x+\Delta x\right)\\
  & \approx & \text{argmin}_{\Delta x}f\left(x\right)+\left(\nabla f\right)_{x}^{T}\Delta x+\frac{1}{2}\Delta x^{T}\left(\nabla^{2}f\right)_{x}\Delta x+\frac{\epsilon}{2}\left\Vert \Delta x\right\Vert _{2}^{2}\\
- & = & \text{argmin}_{\Delta x}f\left(x\right)+\left(\nabla f\right)_{x}^{T}\Delta x+\frac{1}{2}\Delta x^{T}\left(\left(\nabla^{2}f\right)_{x}+\epsilon\mathbf{I}\right)\Delta x
+ & = & \text{argmin}_{\Delta x}\left(\nabla f\right)_{x}^{T}\Delta x+\frac{1}{2}\Delta x^{T}\left(\left(\nabla^{2}f\right)_{x}+\epsilon\mathbf{I}\right)\Delta x
 \end{eqnarray*}
 
 \end_inset
@@ -2226,7 +2227,14 @@ By making use of the chain rule we can also give an expression for the second
 \begin_inset Formula $G_{f}\left(x_{i},\theta\right)$
 \end_inset
 
- is called the Gauss-Newton approximation of the Hessian.
+ is called the Gauss-Newton approximation of the Hessian 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "schraudolph2002fast"
+
+\end_inset
+
+.
  The remainder is proportional to 
 \begin_inset Formula $\frac{\partial}{\partial f_{j}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} $
 \end_inset
@@ -2263,7 +2271,7 @@ In practice,
 \begin_inset Formula $G_{f}\left(x_{i},\theta\right)$
 \end_inset
 
- present a much more convenient expression for common loss functions, as
+ presents a much more convenient expression for common loss functions, as
  the second derivative of the loss simplifies (
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -2447,6 +2455,36 @@ reference "sec:2ndorder-newpers"
 
  that this matrix can be factorized to design optimization algorithms adapted
  to the particular structure of neural networks.
+\end_layout
+
+\begin_layout Subsection
+Interpretation from the output of the network
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\Delta\theta^{*} & = & \text{argmin}_{\Delta\theta}\left(\nabla R\right)_{\theta}^{T}\Delta\theta+\Delta\theta^{T}\frac{1}{n}\sum_{i}\mathbf{J}\left(x_{i},\theta\right)^{T}D\left(f\left(x_{i},\theta\right),y_{i}\right)\mathbf{J}\left(x_{i},\theta\right)\Delta\theta+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert _{2}^{2}\\
+ & = & \text{argmin}_{\Delta\theta}\left(\nabla R\right)_{\theta}^{T}\Delta\theta+\frac{1}{n}\sum_{i}\left\Vert \mathbf{J}\left(x_{i},\theta\right)\Delta\theta\right\Vert _{D\left(f\left(x_{i},\theta\right),y_{i}\right)}^{2}+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert _{2}^{2}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+a first order measure of what will be the impact of a 
+\begin_inset Formula $\Delta\theta$
+\end_inset
+
+ in terms of change of change of the output of the network as measured by
+ some metrics 
+\begin_inset Formula $D\left(f\left(x_{i},\theta\right),y_{i}\right)$
+\end_inset
+
+ dependent on the example considered.
+ It constrains all changes to induce a comparable change on the output.
 \end_layout
 
 \begin_layout Subsection
@@ -2751,11 +2789,11 @@ key "amari1998natural"
 \end_layout
 
 \begin_layout Subsection
-Factorizing the FIM for neural networks
+An expression for the FIM using jacobians
 \end_layout
 
-\begin_layout Subsubsection
-An expression for the FIM using jacobians
+\begin_layout Standard
+DEVELOPER comment on passe de la jointe à la proba simple.
 \end_layout
 
 \begin_layout Standard
@@ -2830,8 +2868,8 @@ Note the ressemblance with the Gauss Newton matrix.
  of the network.
 \end_layout
 
-\begin_layout Subsubsection
-Approximations to the FIM
+\begin_layout Subsection
+Approximating the FIM
 \end_layout
 
 \begin_layout Standard
@@ -2889,233 +2927,37 @@ A second common approximation we make in practice is to use the empirical
 .
 \end_layout
 
-\begin_layout Subsubsection
-Factorization of the 
-\begin_inset Formula $\mathbf{F}_{i}$
-\end_inset
-
-s using the Kronecker product
-\end_layout
-
-\begin_layout Standard
-In the rest of this note, we will restrict our analysis to a multilayer
- perceptron.
- Each layer is parametrized using a weight matrix 
-\begin_inset Formula $W$
-\end_inset
-
- of size 
-\begin_inset Formula $\left(\text{out}\times\text{in}\right)$
-\end_inset
-
- and a bias vector 
-\begin_inset Formula $b$
-\end_inset
-
- of size 
-\begin_inset Formula $\left(\text{out}\right)$
-\end_inset
-
-.
- A layer consists in a linear transformation and a non-linearity 
-\begin_inset Formula $f$
-\end_inset
-
- to give the hidden representation of the next layer:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-h_{l+1}=f_{l}\left(a_{l}\right) & \text{with} & a_{l}=W_{l}h_{l}+b_{l}
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-We will focus on a single layer, and drop the subscript 
-\begin_inset Formula $l$
-\end_inset
-
-.
- In the following, we will also focus on a single example in the expectation
- for the FIM.
- Each individual example has its own jacobian with respect to the parameter.
- In other words, this jacobian measures how the output of the network changes
- for this example, if you move the parameter values.
-\end_layout
-
-\begin_layout Standard
-The jacobians for parameters 
-\begin_inset Formula $W$
-\end_inset
-
- and 
-\begin_inset Formula $b$
-\end_inset
-
- are obtained using the chain rule for derivation: 
-\begin_inset Formula $\boldsymbol{J}_{\boldsymbol{y}}^{W}=\boldsymbol{J}_{\boldsymbol{y}}^{a}\boldsymbol{J}_{a}^{W}$
-\end_inset
-
- and 
-\begin_inset Formula $\boldsymbol{J}_{\boldsymbol{y}}^{b}=\boldsymbol{J}_{\boldsymbol{y}}^{a}\boldsymbol{J}_{a}^{b}$
-\end_inset
-
-.
- The jacobian for the bias simplifies as 
-\begin_inset Formula $\boldsymbol{J}_{a}^{b}=\mathbf{I}$
-\end_inset
-
-.
- For the weight matrix, it is a little bit more tricky.
- As 
-\begin_inset Formula $W$
-\end_inset
-
- is a matrix and not a vector, we can not express a jacobian matrix directly.
- We will have to make use of the Kronecker product and the 
-\begin_inset Formula $\text{vec}$
-\end_inset
-
- operator.
- We start from the linear relation 
-\begin_inset Formula $a=Wh+b$
-\end_inset
-
- and remark that 
-\begin_inset Formula $a=\text{vec}\left(a\right)$
-\end_inset
-
- since 
-\begin_inset Formula $a$
-\end_inset
-
- is a vector.
- We can now make use of the formula 
-\begin_inset Formula $\text{vec}\left(AXB\right)=\left(B^{T}\otimes A\right)\text{vec}\left(X\right)$
-\end_inset
-
- to obtain:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-a & = & \left(h^{T}\otimes\mathbf{I}_{out}\right)\text{vec}\left(W\right)\\
-\boldsymbol{J}_{a}^{\text{vec}\left(W\right)} & = & \left(h^{T}\otimes\mathbf{I}_{out}\right)
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Putting everything together we get the jacobians:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-\boldsymbol{J}_{\boldsymbol{y}}^{\text{vec}\left(W\right)} & = & \boldsymbol{J}_{\boldsymbol{y}}^{a}\left(h^{T}\otimes\mathbf{I}_{out}\right)\\
- & = & h^{T}\otimes\boldsymbol{J}_{\boldsymbol{y}}^{a}\\
-\boldsymbol{J}_{\boldsymbol{y}}^{b} & = & \boldsymbol{J}_{\boldsymbol{y}}^{a}
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Now imagine that we stack all parameters 
-\begin_inset Formula $W$
-\end_inset
-
- and 
-\begin_inset Formula $b$
-\end_inset
-
- in a vector 
-\begin_inset Formula $\theta=\left(\text{vec}\left(W\right)_{1}\cdots\text{vec}\left(W\right)_{in\times out}b_{1}\cdots b_{out}\right)$
-\end_inset
-
-.
- We get the full jacobian by stacking the jacobians:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-\boldsymbol{J}_{\boldsymbol{y}}^{\theta} & = & \left(\begin{array}{cc}
-h^{T} & 1\end{array}\right)\otimes\boldsymbol{J}_{\boldsymbol{y}}^{a}
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-From this expression we can finally express the FIM in a factorized form:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray}
-\mathbf{F} & = & \mathbb{E}\left[\left\{ \left(\begin{array}{c}
-h\\
-1
-\end{array}\right)\otimes\left(\boldsymbol{J}_{\boldsymbol{y}}^{a}\right)^{T}\right\} D\left(\boldsymbol{y}\right)\left\{ \left(\begin{array}{cc}
-h^{T} & 1\end{array}\right)\otimes\boldsymbol{J}_{\boldsymbol{y}}^{a}\right\} \right]\nonumber \\
- & = & \mathbb{E}\left[\left(\begin{array}{cc}
-hh^{T} & h\\
-h^{T} & 1
-\end{array}\right)\otimes\left(\left(\boldsymbol{J}_{\boldsymbol{y}}^{a}\right)^{T}D\left(\boldsymbol{y}\right)\boldsymbol{J}_{\boldsymbol{y}}^{a}\right)\right]\label{eq:factoredfim}
-\end{eqnarray}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-In this expression, remember that all 3 variables 
-\begin_inset Formula $h$
-\end_inset
-
-, 
-\begin_inset Formula $a$
-\end_inset
-
- and 
-\begin_inset Formula $\boldsymbol{y}$
-\end_inset
-
- have a different value for each individual example.
- The FIM is the sum of the contributions of each example.
- The use of the Kronecker product permits splitting the contribution of
- each example in a term that involves the input of the layer 
-\begin_inset Formula $\left(\begin{array}{cc}
-hh^{T} & h\\
-h^{T} & 1
-\end{array}\right)$
-\end_inset
-
- and a term that involves the jacobian received on the output of the linear
- transformation 
-\begin_inset Formula $\left(\boldsymbol{J}_{\boldsymbol{y}}^{a}\right)^{T}D\left(\boldsymbol{y}\right)\boldsymbol{J}_{\boldsymbol{y}}^{a}$
-\end_inset
-
-.
+\begin_layout Subsection
+Overcoming catastrophic forgetting
 \end_layout
 
 \begin_layout Subsection
-Overcoming catastrophic forgetting
+Relation with the GN approximation of the Hessian
+\end_layout
+
+\begin_layout Standard
+We have just shown that the Gauss-Newton of the empirical risk with respect
+ to the parameters, and the Fisher Information Matrix share a similar structure
+ that is composed of the jacobians of the output of the network with respect
+ to the parameters, and a diagonal matrix.
+ The main difference is in this diagonal matrix.
+ For Fisher methods it does not depend on any true target and it is just
+ an intrinsic property of a neural network, associated with an input distributio
+n.
+ In the case of the GN matrix it depends on the true target except for the
+ quadratic error.
+\end_layout
+
+\begin_layout Standard
+Note that this share of structure was acknowledged in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "pascanu2013revisiting"
+
+\end_inset
+
+ but for unsupervised learning, in which case the FIM and the GN are strictly
+ equal.
 \end_layout
 
 \begin_layout Section
@@ -3130,15 +2972,9 @@ name "sec:2ndorder-newpers"
 \end_layout
 
 \begin_layout Standard
-We have just shown expressions for the GN matrix and the FIM.
- They both share a very similar structure composed of a sum of the jacobians
- of the output of the network, and a diagonal matrix.
- In the case of the quadratic error they even strictly have the same expression.
-\end_layout
-
-\begin_layout Standard
-The expressions obtained so far are generic in the sense that they could
- be applied to any model and any empirical risk composed of a sum of terms.
+The expressions that we obtained for the FIM and the GN so far are generic
+ in the sense that they could be applied to any model and any empirical
+ risk composed of a sum of terms.
  We will now exploit the very particular structure of neural networks, to
  obtain a better understanding of how to apply these techniques for real
  tasks.
@@ -3529,7 +3365,16 @@ Here the does not depend on
 \end_inset
 
 .
- TODO explain what this means
+ This approximation means that we ignore the interactions between the outputs
+ of a layer.
+ Instead we just focus on some statistics of the activations of the current
+ layer.
+ We can interpret this preconditioner as penalizing an update if the correspondi
+ng activation has a high variance.
+ This makes sense since in this case changing the value here will change
+ the next forward propagated signal more that if the variance of the correspondi
+ng activation were lower.
+ This would result in a bigger expected change in the output.
 \end_layout
 
 \begin_layout Standard
@@ -3686,6 +3531,10 @@ And the update for
 
 \end_layout
 
+\begin_layout Standard
+These expressions are an original contribution.
+\end_layout
+
 \begin_layout Subsection
 Comparison with standard SGD
 \end_layout
@@ -3757,6 +3606,10 @@ it is also scaled using the inverse covariance matrix of the input
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Standard
+These
 \end_layout
 
 \begin_layout Section

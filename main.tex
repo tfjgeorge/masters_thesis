@@ -1,7 +1,7 @@
 % N.B. : Assurez-vous de compiler ce fichier en employant "pdflatex" afin que les images soient incluses.
 
 % Tout commentaire est bienvenu et devrait être adressé à "support@dms.umontreal.ca".
-%\PassOptionToPackage{longnamesfirst,numbers}{natbib}
+
 \documentclass[12pt,maitrise,nobabel,anglais,twoside,initial]{template/dms} 
 % La commande précédente charge la classe "dms.cls" avec les options suivantes : 
 %   -police de caractères en 12 pts 
@@ -29,6 +29,7 @@
 
 \usepackage[canadian]{babel}  %Equivalent to USenglish.  As options, there are also : british, australian, newzealand
 \usepackage{standalone}
+\usepackage{natbib}
 
 
 % La commande \sloppy peut avoir des effets étranges sur les
@@ -251,8 +252,8 @@
 %% choix.  Le fichier francaissc.bst est inclus avec le gabarit.  Vous pouvez
 %% utiliser ce style avec  \bibliographystyle{francaissc}
 % 
-\bibliographystyle{plain}		    % Le style de la bibliographie. Notons que les extensions ne sont pas données pour ces deux fichiers.
-\bibliography{biblio}		    % La base de données contenant des entrées bibliographiques. Seules celles référencées dans le texte seront ajoutées \`a la bibliographie.
+%\bibliographystyle{plainnat}		    % Le style de la bibliographie. Notons que les extensions ne sont pas données pour ces deux fichiers.
+%\bibliography{biblio}		    % La base de données contenant des entrées bibliographiques. Seules celles référencées dans le texte seront ajoutées \`a la bibliographie.
 
 
 %
