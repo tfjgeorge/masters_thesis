@@ -1895,7 +1895,7 @@ Gradient descent is a black box technique that can be applied to any kind
  But we are interested in optimizing a very specific function, which is
  a sum of stacked transformations and a loss function.
  In this section, we introduce the well known second order methods known
- as Newton's method and Natural gradient.
+ as Newton's method and Natural gradient descent.
  We then derive the updates of this methods adapted to neural networks,
  and show how second order methods can be approximated in order to be applied
  to real scale tasks.
@@ -1931,7 +1931,11 @@ f\left(x+\Delta x\right) & = & f\left(x\right)+\left(\nabla f\right)_{x}^{T}\Del
 \begin_inset Formula $\left(\nabla^{2}f\right)_{x}$
 \end_inset
 
- is the Hessian matrix, computed in 
+ is the Hessian matrix of 
+\begin_inset Formula $f$
+\end_inset
+
+, expressed in 
 \begin_inset Formula $x$
 \end_inset
 
@@ -2040,7 +2044,7 @@ Newton step
 
 \begin_layout Standard
 The main difficulty of this algorithm is that it does not scale well when
- applied to neural network optimization.
+ applied to problems with many variables such as neural network optimization.
  The limitations come from the following aspects:
 \end_layout
 
@@ -2099,8 +2103,8 @@ Inverting the Hessian matrix
 \end_inset
 
  with the size of the matrix.
- We present an algorithm that make use of second order information but without
- the need to invert the Hessian matrix known as 
+ Some techniques use 2nd order information without inverting the Hessian
+ such as 
 \shape italic
 Hessian Free
 \shape default
@@ -2111,10 +2115,12 @@ key "martens2010deep"
 
 \end_inset
 
- in 
+.
+ We propose to factorize the Hessian so as to require inverting a smaller
+ matrix while benefiting from some 2nd order information in 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "subsec:Hessian-free"
+reference "subsec:focus-covariance"
 
 \end_inset
 
@@ -2139,7 +2145,7 @@ In the previous section, we considered that our function was approximated
 .
  In particular this is the case when the Newton step provide big updates,
  that is when the Hessian has at least one small eigenvalue.
- The corresponding direction pointed by this eigenvalue will have a low
+ The corresponding eigenvector points in a direction that will have a low
  curvature using the quadratic approximation, so the minimum following this
  direction will be far away.
  But the actual function that we are minimizing is not a quadratic, and
@@ -2196,8 +2202,8 @@ This new hyperparameter
 \begin_inset Formula $\epsilon$
 \end_inset
 
- controls the size of the steps, and thus plays a very similar role than
- the learning rate.
+ controls the size of the steps, and thus plays a very similar role to the
+ learning rate.
 \end_layout
 
 \begin_layout Standard
@@ -2255,7 +2261,7 @@ By making use of the chain rule we can also give an expression for the second
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\frac{\partial}{\partial\theta}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\}  & = & \mathbf{J}\left(x_{i},\theta\right)^{T}\left(\frac{\partial}{\partial f}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} \right)
+\frac{\partial}{\partial\theta}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\}  & = & \mathbf{J}_{\theta}\left(x_{i},\theta\right)^{T}\left(\frac{\partial}{\partial f}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} \right)^{T}
 \end{eqnarray*}
 
 \end_inset
@@ -2292,8 +2298,8 @@ By making use of the chain rule we can also give an expression for the second
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\frac{\partial^{2}}{\partial\theta^{2}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\}  & = & \underbrace{\mathbf{J}\left(x_{i},\theta\right)^{T}\frac{\partial^{2}}{\partial f^{2}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} \mathbf{J}\left(x_{i},\theta\right)}_{G_{f}\left(x_{i},\theta\right)}\\
- &  & +\sum_{j}\left(\nabla^{2}f_{j}\left(x_{i},\theta\right)\right)\frac{\partial}{\partial f_{j}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} 
+\frac{\partial^{2}}{\partial\theta^{2}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\}  & = & \underbrace{\mathbf{J}_{\theta}\left(x_{i},\theta\right)^{T}\frac{\partial^{2}}{\partial f^{2}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} \mathbf{J}_{\theta}\left(x_{i},\theta\right)}_{G_{f}\left(x_{i},\theta\right)}\\
+ &  & +\sum_{j}\left(\nabla^{2}f_{j}\left(x_{i},\theta\right)\right)\left(\frac{\partial}{\partial f_{j}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} \right)^{T}
 \end{eqnarray*}
 
 \end_inset
@@ -2345,12 +2351,20 @@ key "schraudolph2002fast"
 \end_layout
 
 \begin_layout Standard
+In terms of computational efficiency, we can also note that we can compute
+ the GN part using standard backpropagation, but this time of the jacobian.
+ The other term is much more complicated because it involves a second derivative
+ of a composed function that requires much more 
+\end_layout
+
+\begin_layout Standard
 In practice, 
 \begin_inset Formula $G_{f}\left(x_{i},\theta\right)$
 \end_inset
 
  presents a much more convenient expression for common loss functions, as
- the second derivative of the loss simplifies (
+ the second derivative of the loss with respect to the ouput of the network
+ simplifies (
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "gn-loss"
@@ -3414,6 +3428,13 @@ Unfortunately, we can not write the GN matrix nor the FIM using 2 matrices
 
 \begin_layout Subsection
 Focus on the covariance part of the decomposition
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:focus-covariance"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
