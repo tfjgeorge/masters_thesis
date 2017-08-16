@@ -13,6 +13,7 @@
 \newcommand{\mathbbOld}{\mathbb}
 \renewcommand{\mathbb}{\mathds}
 \usepackage{natbib}
+\usepackage{algorithm,algpseudocode}
 \end_preamble
 \use_default_options true
 \begin_removed_modules
@@ -1451,6 +1452,13 @@ In the rest of this work, we will use an extension of random search that
 \series bold
 biased random search
 \series default
+
+\begin_inset CommandInset label
+LatexCommand label
+name "biased-random-search"
+
+\end_inset
+
 .
  During the hyperparameter tuning procedure, we create a model of our cost
  landscape in the space of hyperparameters.
@@ -1776,7 +1784,14 @@ key "glorot2011deep"
 \begin_inset Formula $\alpha$
 \end_inset
 
- as a hyperparameter, and tuned it using a biased random search.
+ as a hyperparameter, and tuned it using a biased random search 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "biased-random-search"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
@@ -3545,6 +3560,7 @@ ng activation has a high variance.
  the next forward propagated signal more that if the variance of the correspondi
 ng activation were lower.
  This would result in a bigger expected change in the output.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -3660,16 +3676,16 @@ From this expression we can write the update for
 \begin_inset Formula 
 \begin{eqnarray*}
 \Delta\text{vec}\left(W\right) & = & C^{-1}\frac{1}{n}\sum_{j}h_{j}\otimes\frac{1}{\alpha}\nabla_{a_{j}}l-C^{-1}\frac{1}{n}\sum_{i}h_{i}\otimes\frac{1}{n}\sum_{j}\frac{1}{\alpha}\nabla_{a_{j}}l\\
- & = & \frac{1}{\alpha}C^{-1}\frac{1}{n}\sum_{j}\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)\otimes\nabla_{a_{j}}l\\
+ & = & \frac{1}{\alpha}C^{-1}\frac{1}{n}\sum_{j}\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)\otimes\nabla_{a_{j}}l
 \end{eqnarray*}
 
 \end_inset
 
 
 \begin_inset Formula 
-\[
-\boxed{\Delta W=\frac{1}{\alpha}\frac{1}{n}\sum_{j}\nabla_{a_{j}}l\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}C^{-1}}
-\]
+\begin{equation}
+\boxed{\Delta W=\frac{1}{\alpha}\frac{1}{n}\sum_{j}\nabla_{a_{j}}l\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}C^{-1}}\label{eq:upd_w}
+\end{equation}
 
 \end_inset
 
@@ -3688,16 +3704,16 @@ And the update for
 \begin_inset Formula 
 \begin{eqnarray*}
 \Delta b & = & -\frac{1}{n}\sum_{j}\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}h_{j}\frac{1}{\alpha}\nabla_{a_{j}}l+\left(1+\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}\frac{1}{n}\sum_{i}h_{i}\right)\frac{1}{n}\sum_{j}\frac{1}{\alpha}\nabla_{a_{j}}l\\
- & = & \frac{1}{n}\sum_{j}\frac{1}{\alpha}\nabla_{a_{j}}l-\frac{1}{n}\sum_{j}\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)\frac{1}{\alpha}\nabla_{a_{j}}l\\
+ & = & \frac{1}{n}\sum_{j}\frac{1}{\alpha}\nabla_{a_{j}}l-\frac{1}{n}\sum_{j}\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)\frac{1}{\alpha}\nabla_{a_{j}}l
 \end{eqnarray*}
 
 \end_inset
 
 
 \begin_inset Formula 
-\[
-\boxed{\Delta b=\frac{1}{\alpha}\frac{1}{n}\sum_{j}\nabla_{a_{j}}l-\Delta W\frac{1}{n}\sum_{i}h_{i}}
-\]
+\begin{equation}
+\boxed{\Delta b=\frac{1}{\alpha}\frac{1}{n}\sum_{j}\nabla_{a_{j}}l-\Delta W\frac{1}{n}\sum_{i}h_{i}}\label{eq:upd_b}
+\end{equation}
 
 \end_inset
 
@@ -3785,15 +3801,334 @@ key "lecun1998gradient,schraudolph2012centering"
 \end_layout
 
 \begin_layout Section
-New algorithms and discussion
+Algorithms and experiments
 \end_layout
 
 \begin_layout Subsection
-Centered update
+Centered gradient descent
+\end_layout
+
+\begin_layout Standard
+Following the update for 
+\begin_inset Formula $W$
+\end_inset
+
+ derived in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:upd_w"
+
+\end_inset
+
+, we simply replace the usual update for the weight matrices by a centered
+ version 
+\begin_inset Formula $\Delta W=\frac{1}{n}\sum_{j}\nabla_{a_{j}}l\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}$
+\end_inset
+
+.
+ The gradient, as well as the inner expectation, are computed using a minibatch.
+ Some author refer to a very similar idea as 
+\shape italic
+mean-only batch normalization
+\shape default
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "salimans2016weight"
+
+\end_inset
+
+ but the difference here is that we do not reparametrize the forward propagation
+, instead we just follow a slightly different direction which is not the
+ gradient but a centered gradient.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float algorithm
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{algorithmic}[1] 
+\backslash
+Require{$
+\backslash
+rho 
+\backslash
+geq 1$} 
+\backslash
+Ensure{$X_k$} 
+\backslash
+While{not converged} 
+\backslash
+State{Solve $X_{k+1}=
+\backslash
+min_{X} L(X,Y_k, 
+\backslash
+mu_k)$} 
+\backslash
+State{$Y_{k+1}=Y_k+
+\backslash
+mu_k h(X_{k+1})$} 
+\backslash
+State{$
+\backslash
+mu_{k+1}=
+\backslash
+rho 
+\backslash
+mu_k$} 
+\backslash
+EndWhile 
+\backslash
+end{algorithmic}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Centered gradient descent
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
 Amortized covariance preconditioner
+\end_layout
+
+\begin_layout Standard
+In the updates derived from the covariance 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:upd_b"
+
+\end_inset
+
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:upd_w"
+
+\end_inset
+
+, we require an inverse of the matrix 
+\begin_inset Formula $C=\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{j}h_{j}\right)\left(h_{i}-\frac{1}{n}\sum_{j}h_{j}\right)^{T}$
+\end_inset
+
+.
+ This matrix has the size of the input of a layer 
+\begin_inset Formula $n_{in}$
+\end_inset
+
+.
+ While it is smaller than the full GN or FIM for a single layer of size
+ 
+\begin_inset Formula $\left(n_{in}+1\right)\times n_{out}$
+\end_inset
+
+, it is still not very efficient to estimate the inverse at each iteration.
+ Meanwhile, these statistics do not change much between iterations so a
+ natural idea is to amortize the cost of inversion over several updates.
+\end_layout
+
+\begin_layout Standard
+A question remains for the choice of 
+\begin_inset Formula $\alpha$
+\end_inset
+
+.
+ We adopt two approaches.
+ The first one consists in treating it as a hyperparameter and tune it using
+ our biased random search 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "biased-random-search"
+
+\end_inset
+
+.
+ The second one is a very experimental heuristics, which consists in taking
+ the maximum value of the squarred gradient 
+\begin_inset Formula $\alpha=\max_{i\in\text{minibatch},j\leq n_{out}}\left(\nabla_{a_{i}}l\right)_{j}^{2}$
+\end_inset
+
+.
+ This gives a different value for each layer, and also different for each
+ minibatch.
+ We found it worked very well experimentally, and we justify it as being
+ a measure of the curvature of the risk, with respect to the output of the
+ layer.
+\end_layout
+
+\begin_layout Standard
+For numerical stability and to account for the imprecision of 
+\begin_inset Formula $C$
+\end_inset
+
+ between two estimates, we use Tikhonov regularization.
+ In this case it is scaled by 
+\begin_inset Formula $\alpha$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\frac{1}{n}\sum_{i}\left(\begin{array}{cc}
+h_{i}h_{i}^{T} & h_{i}\\
+h_{i}^{T} & 1
+\end{array}\right)\otimes\alpha\mathbf{I}_{out}+\lambda\mathbf{I} & = & \frac{1}{n}\sum_{i}\left(\begin{array}{cc}
+h_{i}h_{i}^{T}+\frac{\lambda}{\alpha}\mathbf{I} & h_{i}\\
+h_{i}^{T} & 1+\frac{\lambda}{\alpha}
+\end{array}\right)\otimes\alpha\mathbf{I}_{out}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float algorithm
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{algorithmic}[1]
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+Require{$
+\backslash
+rho 
+\backslash
+geq 1$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+Ensure{$X_k$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+While{not converged}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{Solve $X_{k+1}=
+\backslash
+min_{X} L(X,Y_k, 
+\backslash
+mu_k)$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$Y_{k+1}=Y_k+
+\backslash
+mu_k h(X_{k+1})$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$
+\backslash
+mu_{k+1}=
+\backslash
+rho 
+\backslash
+mu_k$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+EndWhile
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{algorithmic}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Amortized covariance preconditioner
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Experiments
 \end_layout
 
 \begin_layout Section
