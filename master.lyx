@@ -1559,6 +1559,8 @@ Comparison of hyperparameter tuning methods.
  a biased random search.
  Each experiment consisted in 100 iterations of SGD from a randomly initialized
  network.
+ We tune 2 hyperparameters on the x and y axis (what they represent is not
+ relevant here).
  The color scale represents the final loss attained after a fixed number
  of iterations.
  The best experiments are in blue, the worst experiments in yellow.
@@ -2351,10 +2353,36 @@ key "schraudolph2002fast"
 \end_layout
 
 \begin_layout Standard
-In terms of computational efficiency, we can also note that we can compute
- the GN part using standard backpropagation, but this time of the jacobian.
+In terms of computational cost, we can also note that we can compute the
+ GN part using standard backpropagation, but this time of the jacobian.
  The other term is much more complicated because it involves a second derivative
- of a composed function that requires much more 
+ of a composed function.
+ To illustrate this point we write the first and second derivatives of a
+ scalar function 
+\begin_inset Formula $f\circ g\circ h:\mathbb{R}\rightarrow\mathbb{R}$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\left(f\circ g\circ h\right)' & = & \left(f'\circ g\circ h\right)\left(g'\circ h\right)h'\\
+\left(f\circ g\circ h\right)^{(2)} & = & \left(f^{\left(2\right)}\circ g\circ h\right)\left(\left(g'\circ h\right)h'\right)^{2}+\left(f'\circ g\circ h\right)\left(g^{\left(2\right)}\circ h\right)\left(h'\right)^{2}+\left(f'\circ g\circ h\right)\left(g'\circ h\right)h^{\left(2\right)}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The second derivative requires derivating once more each term in the chain
+ rule.
+ For this simple example of 3 composed functions, this translates into 3
+ backpropagations.
+ For bigger networks it quickly becomes very slow.
 \end_layout
 
 \begin_layout Standard
@@ -2529,7 +2557,7 @@ We finally give an expression for the Gauss-Newton approximation of the
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-G_{f}\left(\theta\right) & = & \frac{1}{n}\sum_{i}\mathbf{J}\left(x_{i},\theta\right)^{T}D\left(f\left(x_{i},\theta\right),y_{i}\right)\mathbf{J}\left(x_{i},\theta\right)
+G_{f}\left(\theta\right) & = & \frac{1}{n}\sum_{i}\mathbf{J}_{\theta}\left(x_{i},\theta\right)^{T}D\left(f\left(x_{i},\theta\right),y_{i}\right)\mathbf{J}_{\theta}\left(x_{i},\theta\right)
 \end{eqnarray*}
 
 \end_inset
@@ -2580,17 +2608,6 @@ a first order measure of what will be the impact of a
 \end_layout
 
 \begin_layout Subsection
-Hessian free
-\begin_inset CommandInset label
-LatexCommand label
-name "subsec:Hessian-free"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
 Block diagonal Hessian 
 \begin_inset CommandInset label
 LatexCommand label
@@ -2613,7 +2630,7 @@ Apart from the issue of computing a value for the hessian matrix, a main
 \begin_inset Formula $O\left(n^{3}\right)$
 \end_inset
 
- operations so it rapidly becomes unfeasible for deep networks.
+ operations so it rapidly becomes untractable for deep networks.
  A first approximation we make is by ignoring the interactions between the
  parameters of different layers.
  We make the hessian block diagonal, each block having the size of the number
@@ -2653,7 +2670,7 @@ locally
 \end_inset
 
  in the network, and use its inverse to update the gradient direction for
- the corresponding block using 
+ the corresponding block (or layer) using 
 \begin_inset Formula $\theta_{i}\leftarrow\theta_{i}-\lambda\mathbf{H}_{i}^{-1}\frac{\partial C}{\partial\theta_{i}}$
 \end_inset
 
@@ -2695,7 +2712,7 @@ natural
 \end_inset
 
  gradient using this information.
- Let us first recall the definition of the KL divergence for 2 distributions
+ Let us first write the definition of the KL divergence for 2 distributions
  
 \begin_inset Formula $p$
 \end_inset
@@ -2719,7 +2736,7 @@ natural
 \end_layout
 
 \begin_layout Standard
-It is a non-negative quantity that looks like a measure of how much 
+It is a non-negative quantity that resembles a measure of how much 
 \begin_inset Formula $q$
 \end_inset
 
@@ -2791,7 +2808,11 @@ key "pascanu2013revisiting"
 \end_layout
 
 \begin_layout Standard
-This expression exhibits the FIM which can now be used directly as a regularizer.
+\begin_inset Formula $\mathbf{F}=\mathbb{E}_{x}\left[\left(\frac{\partial\log p_{\theta}\left(x\right)}{\partial\theta}\right)^{T}\left(\frac{\partial\log p_{\theta}\left(x\right)}{\partial\theta}\right)\right]$
+\end_inset
+
+ is the Fisher information matrix, which can now be used directly as a regulariz
+er.
  Interestingly, even if the KL divergence is not symmetric, its second order
  approximation is, as we also have 
 \begin_inset Formula $\text{KL}\left(p_{\theta+\Delta\theta}\Vert p_{\theta}\right)=\Delta\theta^{T}\mathbf{F}\Delta\theta+o(\left\Vert \Delta\theta\right\Vert _{2}^{2})$
@@ -2801,7 +2822,194 @@ This expression exhibits the FIM which can now be used directly as a regularizer
 \end_layout
 
 \begin_layout Subsection
-(Natural) gradient descent
+An expression for the FIM using jacobians
+\end_layout
+
+\begin_layout Standard
+We use the probabilistic interpretation of neural networks.
+ In this case the output is seen as a conditional probability 
+\begin_inset Formula $p\left(y|x\right)=f_{\theta}\left(x\right)$
+\end_inset
+
+ of observing the value 
+\begin_inset Formula $y$
+\end_inset
+
+ given an input 
+\begin_inset Formula $x$
+\end_inset
+
+.
+ The FIM can be expressed 
+\begin_inset Formula $\mathbf{F}=\mathbb{E}_{x,y\sim p\left(x,y\right)}\left[\left(\frac{\partial\log p_{\theta}\left(x,y\right)}{\partial\theta}\right)^{T}\left(\frac{\partial\log p_{\theta}\left(x,y\right)}{\partial\theta}\right)\right]$
+\end_inset
+
+ which simplifies in:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathbf{F} & = & \mathbb{E}_{x,y\sim p\left(x,y\right)}\left[\left(\frac{\partial\log p_{\theta}\left(x,y\right)}{\partial\theta}\right)^{T}\left(\frac{\partial\log p_{\theta}\left(x,y\right)}{\partial\theta}\right)\right]\\
+ & = & \mathbb{E}_{x\sim q\left(x\right)}\left[\mathbb{E}_{y\sim p_{\theta}\left(y|x\right)}\left[\left(\frac{\partial\log p_{\theta}\left(x,y\right)}{\partial\theta}\right)^{T}\left(\frac{\partial\log p_{\theta}\left(x,y\right)}{\partial\theta}\right)\right]\right]
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Since 
+\begin_inset Formula $\log p_{\theta}\left(x,y\right)=\log p_{\theta}\left(y|x\right)+\log q\left(x\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $q$
+\end_inset
+
+ does not depend on 
+\begin_inset Formula $\theta$
+\end_inset
+
+ then this can be further simplified in:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathbf{F} & = & \mathbb{E}_{x\sim q\left(x\right)}\left[\mathbb{E}_{y\sim p_{\theta}\left(y|x\right)}\left[\left(\frac{\partial\log p_{\theta}\left(y|x\right)}{\partial\theta}\right)^{T}\left(\frac{\partial\log p_{\theta}\left(y|x\right)}{\partial\theta}\right)\right]\right]
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Interestingly, for the usual distributions expressed by neural networks,
+ we can derive an expression for the inner expectation.
+ The FIM takes the following simple form as shown by 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "pascanu2013revisiting"
+
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathbf{F} & = & \mathbb{E}_{x\sim q\left(x\right)}\left[\boldsymbol{J}_{\boldsymbol{y}\left(x\right)}^{T}D\left(\boldsymbol{y}\left(x\right)\right)\boldsymbol{J}_{\boldsymbol{y}\left(x\right)}\right]
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The values for 
+\begin_inset Formula $x$
+\end_inset
+
+ are drawn from the data generating distribution 
+\begin_inset Formula $q$
+\end_inset
+
+.
+ The notation 
+\begin_inset Formula $\boldsymbol{J}_{\boldsymbol{y}\left(x\right)}$
+\end_inset
+
+ is used for the jacobian of the output of the network (i.e.
+ the probability expressed at a given 
+\begin_inset Formula $x$
+\end_inset
+
+ : 
+\begin_inset Formula $p\left(y\mid x\right)$
+\end_inset
+
+), with respect to the parameters.
+ In other words, it measures how much the output of the network will change
+ for a given 
+\begin_inset Formula $x$
+\end_inset
+
+ if we change the parameters.
+ 
+\begin_inset Formula $D$
+\end_inset
+
+ is a diagonal matrix with non negative diagonal terms, and depends of the
+ cost function used.
+ For the quadratic loss it is the identity.
+\end_layout
+
+\begin_layout Subsection
+Approximating the FIM
+\end_layout
+
+\begin_layout Standard
+The FIM is difficult to compute because of its size (
+\begin_inset Formula $n_{parameters}\times n_{parameters}$
+\end_inset
+
+) and because in general we do not have an expression for 
+\begin_inset Formula $q$
+\end_inset
+
+ but only samples from a training dataset.
+ As for Newton, we can make the two following approximations:
+\end_layout
+
+\begin_layout Itemize
+A first approximation that we can make is by ignoring the interactions between
+ layers.
+ In this case the FIM takes the form of a block diagonal matrix, where each
+ block is a square matrix which has the size of the parameters of a layer.
+ For a neural network with 
+\begin_inset Formula $n_{layers}$
+\end_inset
+
+ layers this reduces the FIM into 
+\begin_inset Formula $n_{layers}$
+\end_inset
+
+ smaller matrices.
+ We will denote by 
+\begin_inset Formula $\mathbf{F}_{i}$
+\end_inset
+
+ the block corresponding to layer 
+\begin_inset Formula $i$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+A second common approximation we make in practice is to use the empirical
+ FIM for a training dataset of 
+\begin_inset Formula $n$
+\end_inset
+
+ examples 
+\begin_inset Formula $x_{i}$
+\end_inset
+
+: 
+\begin_inset Formula $\mathbf{F}=\frac{1}{n}\sum_{i}\boldsymbol{J}_{\boldsymbol{y}\left(x_{i}\right)}^{T}D\left(\boldsymbol{y}\left(x_{i}\right)\right)\boldsymbol{J}_{\boldsymbol{y}\left(x_{i}\right)}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+(Natural) gradient descent TODO
 \end_layout
 
 \begin_layout Standard
@@ -2878,149 +3086,6 @@ key "amari1998natural"
 \end_inset
 
 .
-\end_layout
-
-\begin_layout Subsection
-An expression for the FIM using jacobians
-\end_layout
-
-\begin_layout Standard
-DEVELOPER comment on passe de la jointe à la proba simple.
-\end_layout
-
-\begin_layout Standard
-Interestingly, for the usual distributions expressed by neural networks,
- the FIM takes the following simple form as shown by 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "pascanu2013revisiting"
-
-\end_inset
-
-:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-\mathbf{F} & = & \mathbb{E}_{x\sim q}\left[\boldsymbol{J}_{\boldsymbol{y}\left(x\right)}^{T}D\left(\boldsymbol{y}\left(x\right)\right)\boldsymbol{J}_{\boldsymbol{y}\left(x\right)}\right]
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The values for 
-\begin_inset Formula $x$
-\end_inset
-
- are drawn from the data generating distribution 
-\begin_inset Formula $q$
-\end_inset
-
-.
- The notation 
-\begin_inset Formula $\boldsymbol{J}_{\boldsymbol{y}\left(x\right)}$
-\end_inset
-
- is used for the jacobian of the output of the network (i.e.
- the probability expressed at a given 
-\begin_inset Formula $x$
-\end_inset
-
- : 
-\begin_inset Formula $p\left(y\mid x\right)$
-\end_inset
-
-), with respect to the parameters.
- In other words, it measures how much the output of the network will change
- for a given 
-\begin_inset Formula $x$
-\end_inset
-
- if we change the parameters.
- 
-\begin_inset Formula $D$
-\end_inset
-
- is a diagonal matrix with non negative diagonal terms, and depends of the
- cost function used.
- For the quadratic loss it is the identity.
-\end_layout
-
-\begin_layout Standard
-Note the ressemblance with the Gauss Newton matrix.
- But as opposed to Gauss Newton, in this expression, 
-\begin_inset Formula $D$
-\end_inset
-
- does not depend on the true target, and is just a function of the output
- of the network.
-\end_layout
-
-\begin_layout Subsection
-Approximating the FIM
-\end_layout
-
-\begin_layout Standard
-The FIM is difficult to compute because of its size (
-\begin_inset Formula $n_{parameters}\times n_{parameters}$
-\end_inset
-
-) and because in general we do not have an expression for 
-\begin_inset Formula $q$
-\end_inset
-
- but only samples from a training dataset.
- As for Newton, we can make the two following approximations:
-\end_layout
-
-\begin_layout Itemize
-A first approximation that we can make is by ignoring the interactions between
- layers.
- In this case the FIM takes the form of a block diagonal matrix, where each
- block is a square matrix which has the size of the parameters of a layer.
- For a neural network with 
-\begin_inset Formula $n_{layers}$
-\end_inset
-
- layers this reduces the FIM into 
-\begin_inset Formula $n_{layers}$
-\end_inset
-
- smaller matrices.
- We will denote by 
-\begin_inset Formula $\mathbf{F}_{i}$
-\end_inset
-
- the block corresponding to layer 
-\begin_inset Formula $i$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Itemize
-A second common approximation we make in practice is to use the empirical
- FIM for a training dataset of 
-\begin_inset Formula $n$
-\end_inset
-
- examples 
-\begin_inset Formula $x_{i}$
-\end_inset
-
-: 
-\begin_inset Formula $\mathbf{F}=\frac{1}{n}\sum_{i}\boldsymbol{J}_{\boldsymbol{y}\left(x_{i}\right)}^{T}D\left(\boldsymbol{y}\left(x_{i}\right)\right)\boldsymbol{J}_{\boldsymbol{y}\left(x_{i}\right)}$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Subsection
-Overcoming catastrophic forgetting
 \end_layout
 
 \begin_layout Subsection
@@ -3176,7 +3241,8 @@ reference "subsec:gauss-newton"
 
 \end_inset
 
-, we now focus on a single layer defined by the linear transformation 
+, we use the block diagonal approximation and focus on a single layer defined
+ by the linear transformation 
 \begin_inset Formula $a=Wh+b$
 \end_inset
 
@@ -3332,14 +3398,6 @@ reference "subsec:gauss-newton"
 \end_inset
 
 .
- We use the block diagonal approximation presented in 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:Block-diagonal-Hessian"
-
-\end_inset
-
- and we focus on a single layer.
  We can rewrite this expression using the factorization 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -3368,7 +3426,16 @@ h_{i}^{T} & 1
 \end_layout
 
 \begin_layout Standard
-This factorization is interesting because it separates the GN matrix into
+We used the property that 
+\begin_inset Formula $\left(A\otimes B\right)\left(C\otimes D\right)=AC\otimes BD$
+\end_inset
+
+ when the sizes of the matrices 
+\begin_inset Formula $A,B,C,D$
+\end_inset
+
+ match.
+ This factorization is interesting because it separates the GN matrix into
  a contribution from the backpropagated jacobian, and a part that only uses
  the forward statistics.
  While these 2 contributions are clearly separated for a single example,
@@ -3459,13 +3526,17 @@ h_{i}^{T} & 1
 \end_layout
 
 \begin_layout Standard
-Here the does not depend on 
+Here 
+\begin_inset Formula $\alpha$
+\end_inset
+
+ does not depend on 
 \begin_inset Formula $i$
 \end_inset
 
 .
- This approximation means that we ignore the interactions between the outputs
- of a layer.
+ This approximation means that we ignore the interactions between the output
+ neurons of a layer.
  Instead we just focus on some statistics of the activations of the current
  layer.
  We can interpret this preconditioner as penalizing an update if the correspondi
@@ -3484,7 +3555,7 @@ h_{i}^{T} & 1
 \end{array}\right)$
 \end_inset
 
- correponds to some statistics on the input of the considered layer.
+ corresponds to some statistics on the input of the considered layer.
  It has the size 
 \begin_inset Formula $\left(n_{in}+1\right)\times\left(n_{in}+1\right)$
 \end_inset
@@ -3535,10 +3606,8 @@ Applying this preconditioner to a gradient update we can get a new update
  Let us first recall the gradient for a minibatch of examples.
  In order to be able to use it with our preconditioner we put the parameters
  into a vector 
-\begin_inset Formula $\theta=\left(\begin{array}{c}
-\text{vec}\left(W\right)\\
-b
-\end{array}\right)$
+\begin_inset Formula $\theta=\left(\begin{array}{cc}
+\text{vec}\left(W\right)^{T} & b^{T}\end{array}\right)^{T}$
 \end_inset
 
 :
@@ -3547,7 +3616,7 @@ b
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\frac{\partial R}{\partial\theta} & = & \frac{1}{n}\sum_{j}\left(\begin{array}{c}
+\nabla_{\theta}R & = & \frac{1}{n}\sum_{j}\left(\begin{array}{c}
 h_{j}\\
 1
 \end{array}\right)\otimes\nabla_{a_{j}}l
@@ -3565,7 +3634,7 @@ The corresponding update is:
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathbf{F}_{in}^{-1}\frac{\partial R}{\partial\theta} & = & \frac{1}{n}\sum_{j}\left(\begin{array}{cc}
+\mathbf{F}_{in}^{-1}\nabla_{\theta}R & = & \frac{1}{n}\sum_{j}\left(\begin{array}{cc}
 C^{-1} & -C^{-1}\frac{1}{n}\sum_{i}h_{i}\\
 -\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1} & 1+\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}\frac{1}{n}\sum_{i}h_{i}
 \end{array}\right)\left(\begin{array}{c}
@@ -3580,16 +3649,7 @@ h_{j}\\
 \end_layout
 
 \begin_layout Standard
-We use the property that 
-\begin_inset Formula $\left(A\otimes B\right)\left(C\otimes D\right)=AC\otimes BD$
-\end_inset
-
- when the sizes of the matrices 
-\begin_inset Formula $A,B,C,D$
-\end_inset
-
- match.
- From this expression we can write the update for 
+From this expression we can write the update for 
 \begin_inset Formula $W$
 \end_inset
 
@@ -3601,8 +3661,15 @@ We use the property that
 \begin{eqnarray*}
 \Delta\text{vec}\left(W\right) & = & C^{-1}\frac{1}{n}\sum_{j}h_{j}\otimes\frac{1}{\alpha}\nabla_{a_{j}}l-C^{-1}\frac{1}{n}\sum_{i}h_{i}\otimes\frac{1}{n}\sum_{j}\frac{1}{\alpha}\nabla_{a_{j}}l\\
  & = & \frac{1}{\alpha}C^{-1}\frac{1}{n}\sum_{j}\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)\otimes\nabla_{a_{j}}l\\
-\Delta W & = & \frac{1}{\alpha}\frac{1}{n}\sum_{j}\nabla_{a_{j}}l\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}C^{-1}
 \end{eqnarray*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\boxed{\Delta W=\frac{1}{\alpha}\frac{1}{n}\sum_{j}\nabla_{a_{j}}l\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}C^{-1}}
+\]
 
 \end_inset
 
@@ -3622,8 +3689,15 @@ And the update for
 \begin{eqnarray*}
 \Delta b & = & -\frac{1}{n}\sum_{j}\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}h_{j}\frac{1}{\alpha}\nabla_{a_{j}}l+\left(1+\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}\frac{1}{n}\sum_{i}h_{i}\right)\frac{1}{n}\sum_{j}\frac{1}{\alpha}\nabla_{a_{j}}l\\
  & = & \frac{1}{n}\sum_{j}\frac{1}{\alpha}\nabla_{a_{j}}l-\frac{1}{n}\sum_{j}\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)\frac{1}{\alpha}\nabla_{a_{j}}l\\
- & = & \frac{1}{\alpha}\frac{1}{n}\sum_{j}\nabla_{a_{j}}l-\Delta W\frac{1}{n}\sum_{i}h_{i}
 \end{eqnarray*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\boxed{\Delta b=\frac{1}{\alpha}\frac{1}{n}\sum_{j}\nabla_{a_{j}}l-\Delta W\frac{1}{n}\sum_{i}h_{i}}
+\]
 
 \end_inset
 
@@ -3688,35 +3762,46 @@ update for
 
  
 \series default
-is different in 2 ways
-\end_layout
-
-\begin_layout Itemize
-the activation vector 
-\begin_inset Formula $h_{i}$
+is different in 2 ways.
+ First, it is also scaled using the inverse covariance matrix of the input
+ 
+\begin_inset Formula $C^{-1}$
 \end_inset
 
- is centered
-\end_layout
+.
+ Secondly, it is centered since we substract the expectation of 
+\begin_inset Formula $h$
+\end_inset
 
-\begin_layout Itemize
-it is also scaled using the inverse covariance matrix of the input 
-\begin_inset Formula $C^{-1}$
+.
+ This gives a new theoretical understanding of an old well used trick 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "lecun1998gradient,schraudolph2012centering"
+
 \end_inset
 
 .
 \end_layout
 
-\begin_layout Standard
-These
-\end_layout
-
 \begin_layout Section
-Other approximate second order algorithms
+New algorithms and discussion
 \end_layout
 
 \begin_layout Subsection
-KFAC
+Centered update
+\end_layout
+
+\begin_layout Subsection
+Amortized covariance preconditioner
+\end_layout
+
+\begin_layout Section
+Other related approximate second order algorithms
+\end_layout
+
+\begin_layout Subsection
+KFAC TODO
 \end_layout
 
 \begin_layout Standard
@@ -3778,7 +3863,7 @@ The Kronecker product has the nice property that for 2 invertible square
 \end_layout
 
 \begin_layout Subsection
-Natural Neural Networks
+Natural Neural Networks TODO
 \end_layout
 
 \begin_layout Standard
@@ -4041,18 +4126,6 @@ In particular, using a first order Taylor decomposition:
 \end_layout
 
 \begin_layout Section
-New algorithms and discussion
-\end_layout
-
-\begin_layout Subsection
-Centered update
-\end_layout
-
-\begin_layout Subsection
-Amortized covariance preconditioner
-\end_layout
-
-\begin_layout Section
 Links with well-used methods
 \end_layout
 
@@ -4062,84 +4135,6 @@ rmsprop
 
 \begin_layout Itemize
 msprop
-\end_layout
-
-\begin_layout Subsection
-centering trick
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-\frac{1}{n}\sum_{i}\left(\begin{array}{cc}
-h_{i}h_{i}^{T} & h_{i}\\
-h_{i}^{T} & 1
-\end{array}\right)\otimes\alpha_{i}\mathbf{I} & = & \frac{1}{n}\sum_{i}\left(\begin{array}{cc}
-\mathbf{I} & h_{i}\\
-h_{i} & 1
-\end{array}\right)\otimes\alpha_{i}\mathbf{I}
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-\frac{1}{n}\sum_{i}\left(\begin{array}{cc}
-\mathbf{I} & h_{i}\\
-h_{i} & 1
-\end{array}\right) & = & \left(\begin{array}{cc}
-\mathbf{I} & \frac{1}{n}\sum_{i}h_{i}\\
-\frac{1}{n}\sum_{i}h_{i}^{T} & 1
-\end{array}\right)
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-inverse
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-\left(\begin{array}{cc}
-\mathbf{I} & \frac{1}{n}\sum_{i}h_{i}\\
-\frac{1}{n}\sum_{i}h_{i}^{T} & 1
-\end{array}\right)^{-1} & = & \left(\begin{array}{cc}
-\left(\mathbf{I}-\frac{1}{n}\sum_{i}h_{i}\frac{1}{n}\sum_{i}h_{i}^{T}\right)^{-1} & \frac{1}{n}\sum_{i}h_{i}\\
-\frac{1}{n}\sum_{i}h_{i} & 1
-\end{array}\right)
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-update for 
-\begin_inset Formula $b$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-\Delta b & = & -\frac{1}{n}\sum_{i}h_{i}^{T}\left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1}\frac{1}{n}\sum_{j}h_{j}\otimes\mathbf{J}^{a_{j}}+\left(1+\frac{1}{n}\sum_{i}h_{i}^{T}\left(\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)\left(h_{i}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}\right)^{-1}\frac{1}{n}\sum_{i}h_{i}\right)\otimes\frac{1}{n}\sum_{j}\mathbf{J}^{a_{j}}
-\end{eqnarray*}
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Subsection
