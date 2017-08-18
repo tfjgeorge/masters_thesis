@@ -797,8 +797,8 @@ key "hinton2006reducing,vincent2008extracting"
 \end_inset
 
  are neural networks that are composed of an encoder part a decoder.
- The encoder takes the input and encodes whatever it finds relevant for
- decoding it.
+ The encoder takes the input and encodes encodes it to a new representation
+ (often with less dimension than the input).
  The decoder takes the encoded input an tries to reconstruct the output.
  The encoded representation is often a layer with less neurons than the
  size of the input.
@@ -1312,21 +1312,11 @@ name "sec:Stochastic-gradient-descent"
 \end_layout
 
 \begin_layout Standard
-\begin_inset CommandInset citation
-LatexCommand citet
-key "bottou2010large"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
 While backpropagation is an efficient way of computing the exact gradient
  of the empirical risk with respect to the parameters, in practice we are
  not required to use its exact value, but rather we can use an estimate
  of the gradient, as long as this estimate will make our objective decrease.
- It is worth recalling at this point that even the true gradient of the
+ It is worth recalling at this point that even the exact gradient of the
  empirical risk is different of the real gradient we would like to follow,
  which is the gradient of the true risk.
 \end_layout
@@ -1338,7 +1328,14 @@ A good estimate is obtained by computing the gradient using a smaller subset
 \series bold
 stochastic gradient descent
 \series default
- (SGD).
+ (SGD) 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "bottou2010large"
+
+\end_inset
+
+.
  The main benefit of using SGD instead of full gradient descent is that
  we can reduce the memory required to compute the gradient.
  The memory required to backpropagate the intermediate gradients (red arrows
@@ -1502,6 +1499,117 @@ key "altman1992introduction"
 \end_layout
 
 \begin_layout Standard
+\begin_inset Float algorithm
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{algorithmic}[1]
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+Require{$
+\backslash
+rho 
+\backslash
+geq 1$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+Ensure{$X_k$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+While{not converged}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{Solve $X_{k+1}=
+\backslash
+min_{X} L(X,Y_k, 
+\backslash
+mu_k)$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$Y_{k+1}=Y_k+
+\backslash
+mu_k h(X_{k+1})$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$
+\backslash
+mu_{k+1}=
+\backslash
+rho 
+\backslash
+mu_k$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+EndWhile
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{algorithmic}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Biased random search
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 As an illustration, we ran all 3 methods on the task described in 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -1521,6 +1629,153 @@ reference "hptune-comparison"
 
 .
  These plots show the interaction between 2 hyperparameters.
+\end_layout
+
+\begin_layout Standard
+These plots and this random search technique are a key component for assessing
+ the true performance of optimization techniques that we present in section
+ 3.
+ Indeed it is easy to experimentally find that a new optimization technique
+ gives better performance than a baseline if we spend too much time tuning
+ hyperparameters for our new technique.
+\end_layout
+
+\begin_layout Standard
+To assess the performance of biased random search we ran 100 searches of
+ 100 experiments on a simple task where we tuned 2 hyperparameters.
+ We observe that it consistently find comparable or better results than
+ standard random search (lower is better):
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="3">
+<features tabularvalignment="middle">
+<column alignment="right" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="right" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+HP tuning procedure
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Average
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Standard deviation
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Grid search
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Random search
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+27.02
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.28
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Biased random search
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+26.61
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.13
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -1634,33 +1889,6 @@ Relation between 2 hyperparameters: for this experiment we can clearly see
 \end_layout
 
 \begin_layout Section
-The learning rate
-\end_layout
-
-\begin_layout Standard
-Amongst other hyperparameters, the learning rate of standard (stochastic)
- gradient descent plays a particular role which we will show in the following.
- We can rewrite the standard gradient descent result using a second order
- Taylor expansion of the empirical risk:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-R\left(\theta+\Delta\theta\right) & = & R\left(\theta\right)+\left(\nabla R\right)_{\theta}\Delta\theta+\frac{1}{2}\Delta\theta^{T}\mathbf{H}\Delta\theta+o\left(\left\Vert \Delta\theta\right\Vert ^{3}\right)\\
- & \approx & R\left(\theta\right)+\left(\nabla R\right)_{\theta}\Delta\theta+\frac{1}{2}\Delta\theta^{T}\mathbf{H}\Delta\theta
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-learning rate using the hessian + mathematical results
-\end_layout
-
-\begin_layout Section
 Limits of (stochastic) gradient descent and some directions to overcome
  them
 \end_layout
@@ -1704,15 +1932,31 @@ A common issue for deep networks or recurrents networks is how to control
 
 , or if the derivatives of the activation functions take big values.
  In this case, we are in a situation of exploding gradients.
- A
+ This effect is amplified in recurrent networks, where the same weight matrix
+ is repeatedly used in the backward pass.
+ For such a ill-conditioned problem, gradient descent will not be effective.
+ Indeed, in the case of exploding gradient, two layers separated by several
+ others will have updates of different order of magnitude.
 \end_layout
 
-\begin_layout Itemize
-gradient magnitudes (exploding/vanishing gradient) between layers
-\end_layout
+\begin_layout Standard
+This effect can be mitigated using gradient clipping 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "pascanu2013difficulty"
 
-\begin_layout Itemize
-follow directions of steepest descent, instable in valleys
+\end_inset
+
+.
+ Perhaps less known is the fact that we can also use second order methods
+ to compensate for gradient vanishing/exploding 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "martens2011learning"
+
+\end_inset
+
+, that we will present in chapter 3.
 \end_layout
 
 \begin_layout Subsection
@@ -1799,7 +2043,7 @@ Gradient smoothing methods
 \end_layout
 
 \begin_layout Standard
-A family of optimization algorithms 
+A family of optimization tricks focuses on 
 \end_layout
 
 \begin_layout Itemize
@@ -1819,10 +2063,6 @@ name "sec:autoencoder-benchmark"
 \end_inset
 
 
-\end_layout
-
-\begin_layout Itemize
-HP plots
 \end_layout
 
 \begin_layout Standard
@@ -2056,7 +2296,8 @@ reference "eq:newton-step"
 Newton step
 \series default
 .
- By making several iterations of Newton, we will converge to a minimum.
+ By making several iterations of Newton, and under the assumption that we
+ are close enough to a minimum, the updates will converge to a minimum.
 \end_layout
 
 \begin_layout Standard
@@ -2142,6 +2383,40 @@ reference "subsec:focus-covariance"
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Section
+The learning rate
+\end_layout
+
+\begin_layout Standard
+Amongst other hyperparameters, the learning rate of standard (stochastic)
+ gradient descent plays a particular role which we will show in the following.
+ We can rewrite the standard gradient descent result using a second order
+ Taylor expansion of the empirical risk:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+R\left(\theta+\Delta\theta\right) & = & R\left(\theta\right)+\left(\nabla R\right)_{\theta}\Delta\theta+\frac{1}{2}\Delta\theta^{T}\mathbf{H}\Delta\theta+o\left(\left\Vert \Delta\theta\right\Vert _{2}^{2}\right)\\
+ & \approx & R\left(\theta\right)+\left(\nabla R\right)_{\theta}\Delta\theta+\frac{1}{2}\Delta\theta^{T}\mathbf{H}\Delta\theta
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+learning rate using the hessian + mathematical results 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "lecun1993automatic"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -2443,7 +2718,7 @@ Loss function
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $G_{f}\left(x_{i},\theta\right)$
+\begin_inset Formula $\frac{\partial^{2}}{\partial f^{2}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} $
 \end_inset
 
 
@@ -2466,7 +2741,7 @@ quadratic error
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\mathbf{J}\left(x_{i},\theta\right)^{T}\mathbf{J}\left(x_{i},\theta\right)$
+\begin_inset Formula $\mathbf{I}$
 \end_inset
 
 
@@ -2489,7 +2764,7 @@ cross entropy for binary decision
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\mathbf{J}\left(x_{i},\theta\right)^{T}\text{diag}\left(\frac{y_{i}}{\left(f(x_{i},\theta)\right)^{2}}+\frac{1-y_{i}}{\left(1-f(x_{i},\theta)\right)^{2}}\right)\mathbf{J}\left(x_{i},\theta\right)$
+\begin_inset Formula $\frac{y_{i}}{\left(f(x_{i},\theta)\right)^{2}}+\frac{1-y_{i}}{\left(1-f(x_{i},\theta)\right)^{2}}$
 \end_inset
 
 
@@ -2512,7 +2787,10 @@ cross entropy for multiclass classification
 \begin_inset Text
 
 \begin_layout Plain Layout
-TODO
+\begin_inset Formula $\text{diag}\left(\frac{y_{i}}{\left(f(x_{i},\theta)\right)^{2}}\right)$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -2548,6 +2826,14 @@ e, and the
 
  function transforms a vector into a diagonal matrix with the vector values
  on its diagonal.
+ Full derivation in appendix 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "chap:deri-second-derivatives"
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -2962,6 +3248,142 @@ The values for
  is a diagonal matrix with non negative diagonal terms, and depends of the
  cost function used.
  For the quadratic loss it is the identity.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="2">
+<features tabularvalignment="middle">
+<column alignment="right" valignment="top" width="0pt">
+<column alignment="center" valignment="top" width="0pt">
+<row>
+<cell alignment="right" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Loss function
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\mathbf{F}\left(x_{i},\theta\right)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+quadratic error
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TODO
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+cross entropy for binary decision
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TODO
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+cross entropy for multiclass classification
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TODO
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "expressions-fisher"
+
+\end_inset
+
+Expressions for the FIM, for a single sample 
+\begin_inset Formula $x_{i}$
+\end_inset
+
+.
+ For the cross entropy, all operations (division, squarred value) are elementwis
+e, and the 
+\begin_inset Formula $\text{diag}$
+\end_inset
+
+ function transforms a vector into a diagonal matrix with the vector values
+ on its diagonal.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -3451,8 +3873,15 @@ We used the property that
 
  match.
  This factorization is interesting because it separates the GN matrix into
- a contribution from the backpropagated jacobian, and a part that only uses
- the forward statistics.
+ a contribution from the backpropagated jacobian (red arrow in figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fprop-bprop"
+
+\end_inset
+
+), and a part that only uses the forward statistics and that is local to
+ a layer.
  While these 2 contributions are clearly separated for a single example,
  it becomes less clear as we sum up for several examples.
  As we will show in the next section, similar approximations were exploited
@@ -3857,27 +4286,57 @@ status open
 
 
 \backslash
-begin{algorithmic}[1] 
+begin{algorithmic}[1]
+\end_layout
+
+\begin_layout Plain Layout
+
+
 \backslash
 Require{$
 \backslash
 rho 
 \backslash
-geq 1$} 
+geq 1$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
 \backslash
-Ensure{$X_k$} 
+Ensure{$X_k$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
 \backslash
-While{not converged} 
+While{not converged}
+\end_layout
+
+\begin_layout Plain Layout
+
+
 \backslash
 State{Solve $X_{k+1}=
 \backslash
 min_{X} L(X,Y_k, 
 \backslash
-mu_k)$} 
+mu_k)$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
 \backslash
 State{$Y_{k+1}=Y_k+
 \backslash
-mu_k h(X_{k+1})$} 
+mu_k h(X_{k+1})$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
 \backslash
 State{$
 \backslash
@@ -3885,9 +4344,19 @@ mu_{k+1}=
 \backslash
 rho 
 \backslash
-mu_k$} 
+mu_k$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
 \backslash
-EndWhile 
+EndWhile
+\end_layout
+
+\begin_layout Plain Layout
+
+
 \backslash
 end{algorithmic}
 \end_layout
@@ -3993,7 +4462,7 @@ For numerical stability and to account for the imprecision of
 
  between two estimates, we use Tikhonov regularization.
  In this case it is scaled by 
-\begin_inset Formula $\alpha$
+\begin_inset Formula $\frac{1}{\alpha}$
 \end_inset
 
 :
@@ -4664,10 +5133,73 @@ options "plain"
 
 \begin_layout Chapter
 \start_of_appendix
-An example task for neural networks: learning to generate texture images
+Derivations of the second derivatives of common loss functions
 \begin_inset CommandInset label
 LatexCommand label
-name "chap:ff-texture-gen"
+name "chap:deri-second-derivatives"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Quadratic error
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+l\left(f,y\right) & = & \left\Vert f-y\right\Vert _{2}^{2}\\
+\frac{\partial l}{\partial f} & = & 2\left(f-y\right)^{T}\\
+\frac{\partial^{2}l}{\partial f^{2}} & = & \mathbf{I}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Binary cross entropy
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+l\left(f,y\right) & = & -\left(y\log\left(f\right)+\left(1-y\right)\log\left(1-f\right)\right)\\
+\frac{\partial l}{\partial f} & = & -\left(\frac{y}{f}-\frac{1-y}{1-f}\right)\\
+\frac{\partial^{2}l}{\partial f^{2}} & = & \frac{y}{f^{2}}+\frac{1-y}{\left(1-f\right)^{2}}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Multiclass cross entropy
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $f$
+\end_inset
+
+ and 
+\begin_inset Formula $y$
+\end_inset
+
+ are the vector (true, estimated) of probabilities of being a member of
+ each class.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+l\left(f,y\right) & = & -y^{T}\log\left(f\right)\\
+\frac{\partial l}{\partial f} & = & -\left(\frac{y}{f}\right)^{T}\\
+\frac{\partial^{2}l}{\partial f^{2}} & = & \text{diag}\left(\frac{y}{f^{2}}\right)
+\end{eqnarray*}
 
 \end_inset
 
@@ -4675,7 +5207,7 @@ name "chap:ff-texture-gen"
 \end_layout
 
 \begin_layout Standard
-zam
+Here all operations (division, logarithm) are elementwise.
 \end_layout
 
 \end_body
