@@ -1516,81 +1516,6 @@ status open
 
 \begin_layout Plain Layout
 
-
-\backslash
-begin{algorithmic}[1]
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-Require{$
-\backslash
-rho 
-\backslash
-geq 1$}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-Ensure{$X_k$}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-While{not converged}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-State{Solve $X_{k+1}=
-\backslash
-min_{X} L(X,Y_k, 
-\backslash
-mu_k)$}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-State{$Y_{k+1}=Y_k+
-\backslash
-mu_k h(X_{k+1})$}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-State{$
-\backslash
-mu_{k+1}=
-\backslash
-rho 
-\backslash
-mu_k$}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-EndWhile
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{algorithmic}
 \end_layout
 
 \end_inset
@@ -2947,10 +2872,15 @@ Interpretation from the output of the network
 \end_layout
 
 \begin_layout Standard
+We can rewrite the GN matrix applied to an update as a norm in the space
+ of the output of the network:
+\end_layout
+
+\begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\Delta\theta^{*} & = & \text{argmin}_{\Delta\theta}\left(\nabla R\right)_{\theta}^{T}\Delta\theta+\Delta\theta^{T}\frac{1}{n}\sum_{i}\mathbf{J}\left(x_{i},\theta\right)^{T}D\left(f\left(x_{i},\theta\right),y_{i}\right)\mathbf{J}\left(x_{i},\theta\right)\Delta\theta+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert _{2}^{2}\\
- & = & \text{argmin}_{\Delta\theta}\left(\nabla R\right)_{\theta}^{T}\Delta\theta+\frac{1}{n}\sum_{i}\left\Vert \sqrt{D\left(f\left(x_{i},\theta\right),y_{i}\right)}\mathbf{J}\left(x_{i},\theta\right)\Delta\theta\right\Vert _{2}^{2}+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert _{2}^{2}
+\Delta\theta^{*} & = & \text{argmin}_{\Delta\theta}\left(\nabla R\right)_{\theta}^{T}\Delta\theta+\frac{1}{2}\Delta\theta^{T}\frac{1}{n}\sum_{i}\mathbf{J}\left(x_{i},\theta\right)^{T}D\left(f\left(x_{i},\theta\right),y_{i}\right)\mathbf{J}\left(x_{i},\theta\right)\Delta\theta+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert _{2}^{2}\\
+ & = & \text{argmin}_{\Delta\theta}\left(\nabla R\right)_{\theta}^{T}\Delta\theta+\frac{1}{2}\frac{1}{n}\sum_{i}\left\Vert \sqrt{D\left(f\left(x_{i},\theta\right),y_{i}\right)}\mathbf{J}\left(x_{i},\theta\right)\Delta\theta\right\Vert _{2}^{2}+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert _{2}^{2}
 \end{eqnarray*}
 
 \end_inset
@@ -2959,7 +2889,13 @@ Interpretation from the output of the network
 \end_layout
 
 \begin_layout Standard
-a first order measure of what will be the impact of a 
+By an abuse of notation we denoted by 
+\begin_inset Formula $\sqrt{\,}$
+\end_inset
+
+ an elementwise square root.
+ Written like this GN can be considered a first order measure of what will
+ be the impact of a 
 \begin_inset Formula $\Delta\theta$
 \end_inset
 
@@ -2970,6 +2906,42 @@ a first order measure of what will be the impact of a
 
  dependent on the example considered.
  It constrains all changes to induce a comparable change on the output.
+ Interestingly, for cross entropies (binary and multiclass) we have the
+ unexpected equivalence 
+\begin_inset Formula $\sqrt{D\left(f\left(x_{i},\theta\right),y_{i}\right)}=-\left(\frac{\partial l}{\partial f}\right)^{T}$
+\end_inset
+
+ which can be combined with the jacobian to give the simplified formulation:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\Delta\theta^{*} & = & \text{argmin}_{\Delta\theta}\left(\nabla R\right)_{\theta}^{T}\Delta\theta+\frac{1}{2}\frac{1}{n}\sum_{i}\left\Vert -\left(\frac{\partial l}{\partial f}\right)^{T}\mathbf{J}\left(x_{i},\theta\right)\Delta\theta\right\Vert _{2}^{2}+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert _{2}^{2}\\
+ & = & \text{argmin}_{\Delta\theta}\left(\nabla R\right)_{\theta}^{T}\Delta\theta+\frac{1}{2}\frac{1}{n}\sum_{i}\left\Vert \left(\nabla l\left(f\left(x_{i},\theta\right),y_{i}\right)\right)_{\theta}^{T}\Delta\theta\right\Vert _{2}^{2}+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert _{2}^{2}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We will draw a link between this formulation and the well-used RMSProp 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "tieleman2012lecture"
+
+\end_inset
+
+ technique in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:RMSProp"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
@@ -4353,24 +4325,6 @@ begin{algorithmic}[1]
 
 
 \backslash
-Require{$
-\backslash
-rho 
-\backslash
-geq 1$}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-Ensure{$X_k$}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
 While{not converged}
 \end_layout
 
@@ -4378,20 +4332,16 @@ While{not converged}
 
 
 \backslash
-State{Solve $X_{k+1}=
+State{Sample a minibatch $
 \backslash
-min_{X} L(X,Y_k, 
-\backslash
-mu_k)$}
+mathcal{D}$}
 \end_layout
 
 \begin_layout Plain Layout
 
 
 \backslash
-State{$Y_{k+1}=Y_k+
-\backslash
-mu_k h(X_{k+1})$}
+For{all layers}
 \end_layout
 
 \begin_layout Plain Layout
@@ -4400,11 +4350,74 @@ mu_k h(X_{k+1})$}
 \backslash
 State{$
 \backslash
-mu_{k+1}=
+Delta_{a_i}
 \backslash
-rho 
+leftarrow
 \backslash
-mu_k$}
+nabla_{a_i} l
+\backslash
+left(f
+\backslash
+left(x_i
+\backslash
+right), y_i
+\backslash
+right) 
+\backslash
+forall i 
+\backslash
+in 
+\backslash
+mathcal{D}$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$b
+\backslash
+leftarrow b + 
+\backslash
+lambda 
+\backslash
+frac{1}{n} 
+\backslash
+sum_i 
+\backslash
+Delta_{a_i}$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$W
+\backslash
+leftarrow W + 
+\backslash
+lambda 
+\backslash
+frac{1}{n} 
+\backslash
+sum_i 
+\backslash
+Delta_{a_i} 
+\backslash
+left(h_{i}-
+\backslash
+frac{1}{n}
+\backslash
+sum_{j}h_{j}
+\backslash
+right)^T $}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+EndFor
 \end_layout
 
 \begin_layout Plain Layout
@@ -4557,81 +4570,6 @@ status open
 
 \begin_layout Plain Layout
 
-
-\backslash
-begin{algorithmic}[1]
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-Require{$
-\backslash
-rho 
-\backslash
-geq 1$}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-Ensure{$X_k$}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-While{not converged}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-State{Solve $X_{k+1}=
-\backslash
-min_{X} L(X,Y_k, 
-\backslash
-mu_k)$}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-State{$Y_{k+1}=Y_k+
-\backslash
-mu_k h(X_{k+1})$}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-State{$
-\backslash
-mu_{k+1}=
-\backslash
-rho 
-\backslash
-mu_k$}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-EndWhile
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{algorithmic}
 \end_layout
 
 \end_inset
@@ -4994,6 +4932,13 @@ Links with well-used methods
 
 \begin_layout Subsection
 RMSProp
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:RMSProp"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -5167,16 +5112,7 @@ Conclusions
 \end_layout
 
 \begin_layout Standard
-Further work is required to understand how to determine better approximations
- to 
-\begin_inset Formula $JJ^{T}$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-best master's thesis ever
+TODO
 \end_layout
 
 \begin_layout Standard
