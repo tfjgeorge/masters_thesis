@@ -987,22 +987,6 @@ key "ulyanov2016texture"
 .
  It has the main advantage of being very fast as generating new images once
  it has be trained on a specific artwork.
- We will explain how to create 
-\begin_inset Formula $\mathcal{L}_{\text{style}}$
-\end_inset
-
- and 
-\begin_inset Formula $\mathcal{L}_{\text{content}}$
-\end_inset
-
- in details in 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "chap:ff-texture-gen"
-
-\end_inset
-
-.
 \end_layout
 
 \begin_layout Standard
@@ -1581,23 +1565,6 @@ While{not converged}
 
 
 \backslash
-State{$a
-\backslash
-sim U
-\backslash
-left(
-\backslash
-mathcal{D}
-\backslash
-right)$}
-\backslash
-Comment{Sample values for HP}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
 State{$
 \backslash
 text{rejected}
@@ -1614,6 +1581,23 @@ text{true}$}
 While{$
 \backslash
 text{rejected}$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$a
+\backslash
+sim U
+\backslash
+left(
+\backslash
+mathcal{D}
+\backslash
+right)$}
+\backslash
+Comment{Sample values for HP}
 \end_layout
 
 \begin_layout Plain Layout
@@ -1700,6 +1684,8 @@ leftarrow run
 left( a 
 \backslash
 right)$}
+\backslash
+Comment{Run experiment with HP values $a$}
 \end_layout
 
 \begin_layout Plain Layout
