@@ -4773,6 +4773,278 @@ status open
 
 \begin_layout Plain Layout
 
+
+\backslash
+begin{algorithmic}[1]
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+Require{$
+\backslash
+mathbf{N}$  estimate statistics every $
+\backslash
+mathbf{N}$ minibatches}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$n_{updates} 
+\backslash
+leftarrow 0$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+While{not converged}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+If{$n_{updates}
+\backslash
+mod
+\backslash
+mathbf{N}=0$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{Sample a minibatch $
+\backslash
+mathcal{D}$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+For{each layer $j$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$C^{
+\backslash
+left(j
+\backslash
+right)} 
+\backslash
+leftarrow 
+\backslash
+text{cov} 
+\backslash
+left(h^{
+\backslash
+left(j
+\backslash
+right)}, h^{
+\backslash
+left(j
+\backslash
+right)} 
+\backslash
+right)$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$inv
+\backslash
+_C^{
+\backslash
+left(j
+\backslash
+right)} 
+\backslash
+leftarrow 
+\backslash
+text{inverse} 
+\backslash
+left( C^{
+\backslash
+left(j
+\backslash
+right)} 
+\backslash
+right)$}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+EndFor
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+EndIf
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{Sample a minibatch $
+\backslash
+mathcal{D}$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+For{each layer $j$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$
+\backslash
+Delta_{a_i^{
+\backslash
+left(j
+\backslash
+right)}}
+\backslash
+leftarrow
+\backslash
+nabla_{a_i^{
+\backslash
+left(j
+\backslash
+right)}} l
+\backslash
+left(f
+\backslash
+left(x_i
+\backslash
+right), y_i
+\backslash
+right) 
+\backslash
+forall i 
+\backslash
+in 
+\backslash
+mathcal{D}$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$b
+\backslash
+leftarrow b + 
+\backslash
+lambda 
+\backslash
+frac{1}{n} 
+\backslash
+sum_i 
+\backslash
+Delta_{a_i^{
+\backslash
+left(j
+\backslash
+right)}}$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$W
+\backslash
+leftarrow W + 
+\backslash
+lambda 
+\backslash
+frac{1}{n} 
+\backslash
+sum_i 
+\backslash
+Delta_{a_i^{
+\backslash
+left(j
+\backslash
+right)}} 
+\backslash
+left(h_{i}^{
+\backslash
+left(j
+\backslash
+right)}-
+\backslash
+frac{1}{n}
+\backslash
+sum_{k}h_{k}^{
+\backslash
+left(j
+\backslash
+right)}
+\backslash
+right)^T inv
+\backslash
+_C^{
+\backslash
+left(j
+\backslash
+right)}$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+EndFor
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$n_{updates} 
+\backslash
+leftarrow n_{updates} + 1$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+EndWhile
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{algorithmic}
 \end_layout
 
 \end_inset
