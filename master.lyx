@@ -1516,6 +1516,209 @@ status open
 
 \begin_layout Plain Layout
 
+
+\backslash
+begin{algorithmic}[1]
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+Require{$
+\backslash
+mathcal{M}$ used to model the cost landscape in the space of HP}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+Require{$
+\backslash
+mathcal{D}$ the domain of HP that we will explore}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$
+\backslash
+mathcal{H} 
+\backslash
+leftarrow 
+\backslash
+left[ 
+\backslash
+, 
+\backslash
+right]$}
+\backslash
+Comment{History of explored HP values and corresponding result}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+While{not converged}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$a
+\backslash
+sim U
+\backslash
+left(
+\backslash
+mathcal{D}
+\backslash
+right)$}
+\backslash
+Comment{Sample values for HP}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$
+\backslash
+text{rejected}
+\backslash
+leftarrow
+\backslash
+text{true}$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+While{$
+\backslash
+text{rejected}$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$c_{estimate} 
+\backslash
+leftarrow 
+\backslash
+mathcal{M} 
+\backslash
+left( 
+\backslash
+mathcal{H}, a 
+\backslash
+right) $}
+\backslash
+Comment{Estimate $c$ for HP $a$ using history $
+\backslash
+mathcal{H}$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$p
+\backslash
+leftarrow
+\backslash
+frac{c_{max}-c_{estimate}}{c_{max}-c_{min}}$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$x
+\backslash
+sim U
+\backslash
+left( 
+\backslash
+left[ 0, 1
+\backslash
+right] 
+\backslash
+right)$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+If{$x < p$} 
+\backslash
+State {$
+\backslash
+text{rejected}
+\backslash
+leftarrow
+\backslash
+text{false}$}
+\backslash
+EndIf
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+EndWhile
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$result 
+\backslash
+leftarrow run
+\backslash
+left( a 
+\backslash
+right)$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$
+\backslash
+mathcal{H} 
+\backslash
+leftarrow  
+\backslash
+mathcal{H} + 
+\backslash
+left( a, result 
+\backslash
+right)$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+EndWhile
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{algorithmic}
 \end_layout
 
 \end_inset
