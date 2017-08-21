@@ -2895,7 +2895,7 @@ status open
 <column alignment="right" valignment="top" width="0pt">
 <column alignment="center" valignment="top" width="0pt">
 <row>
-<cell alignment="right" valignment="top" bottomline="true" usebox="none">
+<cell alignment="right" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2904,7 +2904,7 @@ Loss function
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2918,7 +2918,7 @@ Loss function
 </cell>
 </row>
 <row>
-<cell alignment="right" valignment="top" usebox="none">
+<cell alignment="right" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2927,7 +2927,7 @@ quadratic error
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2941,7 +2941,7 @@ quadratic error
 </cell>
 </row>
 <row>
-<cell alignment="right" valignment="top" usebox="none">
+<cell alignment="right" valignment="top" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2950,7 +2950,7 @@ cross entropy for binary decision
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2964,7 +2964,7 @@ cross entropy for binary decision
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2973,7 +2973,7 @@ cross entropy for multiclass classification
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3500,7 +3500,7 @@ status open
 <column alignment="right" valignment="top" width="0pt">
 <column alignment="center" valignment="top" width="0pt">
 <row>
-<cell alignment="right" valignment="top" bottomline="true" usebox="none">
+<cell alignment="right" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3509,11 +3509,11 @@ Loss function
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\mathbf{F}\left(x_{i},\theta\right)$
+\begin_inset Formula $D\left(\boldsymbol{y}\left(x\right)\right)$
 \end_inset
 
 
@@ -3523,7 +3523,7 @@ Loss function
 </cell>
 </row>
 <row>
-<cell alignment="right" valignment="top" usebox="none">
+<cell alignment="right" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3532,18 +3532,21 @@ quadratic error
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-TODO
+\begin_inset Formula $\mathbf{I}$
+\end_inset
+
+
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="right" valignment="top" usebox="none">
+<cell alignment="right" valignment="top" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3552,18 +3555,21 @@ cross entropy for binary decision
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-TODO
+\begin_inset Formula $\frac{1}{f_{\theta}\left(x\right)\left(1-f_{\theta}\left(x\right)\right)}$
+\end_inset
+
+
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3572,11 +3578,14 @@ cross entropy for multiclass classification
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" usebox="none">
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-TODO
+\begin_inset Formula $\text{diag}\left(\frac{1}{f_{\theta}\left(x\right)}\right)$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -3611,6 +3620,14 @@ e, and the
 
  function transforms a vector into a diagonal matrix with the vector values
  on its diagonal.
+ Full derivation in appendix 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "chap:deri-fim"
+
+\end_inset
+
+.
 \end_layout
 
 \end_inset
@@ -5684,6 +5701,133 @@ Multiclass cross entropy
 l\left(f,y\right) & = & -y^{T}\log\left(f\right)\\
 \frac{\partial l}{\partial f} & = & -\left(\frac{y}{f}\right)^{T}\\
 \frac{\partial^{2}l}{\partial f^{2}} & = & \text{diag}\left(\frac{y}{f^{2}}\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Here all operations (division, logarithm) are elementwise.
+\end_layout
+
+\begin_layout Chapter
+Derivations of the expression for the FIM
+\begin_inset CommandInset label
+LatexCommand label
+name "chap:deri-fim"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathbf{F} & = & \mathbb{E}_{x\sim q\left(x\right)}\left[\mathbb{E}_{y\sim p_{\theta}\left(y|x\right)}\left[\left(\frac{\partial\log p_{\theta}\left(y|x\right)}{\partial\theta}\right)^{T}\left(\frac{\partial\log p_{\theta}\left(y|x\right)}{\partial\theta}\right)\right]\right]
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Quadratic error
+\end_layout
+
+\begin_layout Standard
+In the case of the quadratic error we suppose that the samples are drawn
+ from a gaussian with diagonal covariance matrix 
+\begin_inset Formula $\sigma^{2}\mathbf{I}$
+\end_inset
+
+ centered in 
+\begin_inset Formula $f_{\theta}\left(x\right)$
+\end_inset
+
+ (the output of the network).
+ We denote by 
+\begin_inset Formula $n$
+\end_inset
+
+ the dimension of the output.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+p\left(y|x\right) & =\frac{1}{\left(2\pi\sigma^{2}\right)^{\frac{n}{2}}}\exp\left(-\frac{1}{2\sigma^{2}}\left(y-f_{\theta}\left(x\right)\right)^{T}\left(y-f_{\theta}\left(x\right)\right)\right)\\
+\log p_{\theta}\left(y|x\right) & =-\frac{1}{2\sigma^{2}}\left(y-f_{\theta}\left(x\right)\right)^{T}\left(y-f_{\theta}\left(x\right)\right)-\frac{n}{2}\log\left(2\pi\sigma^{2}\right)\\
+\frac{\partial\log p_{\theta}\left(y|x\right)}{\partial\theta} & =-\frac{1}{\sigma^{2}}\left(y-f_{\theta}\left(x\right)\right)^{T}\left(\frac{\partial f_{\theta}\left(x\right)}{\partial\theta}\right)\\
+\left(\frac{\partial\log p_{\theta}\left(y|x\right)}{\partial\theta}\right)^{T}\left(\frac{\partial\log p_{\theta}\left(y|x\right)}{\partial\theta}\right) & =\frac{1}{\left(\sigma^{2}\right)^{2}}\left(\frac{\partial f_{\theta}\left(x\right)}{\partial\theta}\right)^{T}\left(y-f_{\theta}\left(x\right)\right)\left(y-f_{\theta}\left(x\right)\right)^{T}\left(\frac{\partial f_{\theta}\left(x\right)}{\partial\theta}\right)\\
+\mathbb{E}_{y\sim p_{\theta}\left(y|x\right)}\left[\left(\frac{\partial\log p_{\theta}\left(y|x\right)}{\partial\theta}\right)^{T}\left(\frac{\partial\log p_{\theta}\left(y|x\right)}{\partial\theta}\right)\right]
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+ & =\frac{1}{\left(\sigma^{2}\right)^{2}}\left(\frac{\partial f_{\theta}\left(x\right)}{\partial\theta}\right)^{T}\mathbb{E}_{y\sim p_{\theta}\left(y|x\right)}\left[\left(y-f_{\theta}\left(x\right)\right)\left(y-f_{\theta}\left(x\right)\right)^{T}\right]\left(\frac{\partial f_{\theta}\left(x\right)}{\partial\theta}\right)\\
+ & =\frac{1}{\left(\sigma^{2}\right)^{2}}\left(\frac{\partial f_{\theta}\left(x\right)}{\partial\theta}\right)^{T}\sigma^{2}\mathbf{I}\left(\frac{\partial f_{\theta}\left(x\right)}{\partial\theta}\right)\\
+ & =\frac{1}{\sigma^{2}}\left(\frac{\partial f_{\theta}\left(x\right)}{\partial\theta}\right)^{T}\left(\frac{\partial f_{\theta}\left(x\right)}{\partial\theta}\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Binary cross entropy
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\log p_{\theta}\left(y|x\right) & = & \left(y\log\left(f_{\theta}\left(x\right)\right)+\left(1-y\right)\log\left(1-f_{\theta}\left(x\right)\right)\right)\\
+\frac{\partial\log p_{\theta}\left(y|x\right)}{\partial\theta} & = & \left(\frac{y}{f_{\theta}\left(x\right)}-\frac{1-y}{1-f_{\theta}\left(x\right)}\right)\left(\frac{\partial f_{\theta}\left(x\right)}{\partial\theta}\right)\\
+\left(\frac{\partial\log p_{\theta}\left(y|x\right)}{\partial\theta}\right)^{T}\left(\frac{\partial\log p_{\theta}\left(y|x\right)}{\partial\theta}\right) & = & \left(\frac{y}{f_{\theta}\left(x\right)}-\frac{1-y}{1-f_{\theta}\left(x\right)}\right)^{2}\left(\frac{\partial f_{\theta}\left(x\right)}{\partial\theta}\right)^{T}\left(\frac{\partial f_{\theta}\left(x\right)}{\partial\theta}\right)\\
+ & = & \frac{\left(y-f_{\theta}\left(x\right)\right)^{2}}{f_{\theta}\left(x\right)^{2}\left(1-f_{\theta}\left(x\right)\right)^{2}}\left(\frac{\partial f_{\theta}\left(x\right)}{\partial\theta}\right)^{T}\left(\frac{\partial f_{\theta}\left(x\right)}{\partial\theta}\right)\\
+\mathbb{E}_{y\sim p_{\theta}\left(y|x\right)}\left[\left(\frac{\partial\log p_{\theta}\left(y|x\right)}{\partial\theta}\right)^{T}\left(\frac{\partial\log p_{\theta}\left(y|x\right)}{\partial\theta}\right)\right] & = & \frac{\mathbb{E}_{y\sim p_{\theta}\left(y|x\right)}\left[\left(y-f_{\theta}\left(x\right)\right)^{2}\right]}{f_{\theta}\left(x\right)^{2}\left(1-f_{\theta}\left(x\right)\right)^{2}}\left(\frac{\partial f_{\theta}\left(x\right)}{\partial\theta}\right)^{T}\left(\frac{\partial f_{\theta}\left(x\right)}{\partial\theta}\right)\\
+ & = & \frac{1}{f_{\theta}\left(x\right)\left(1-f_{\theta}\left(x\right)\right)}\left(\frac{\partial f_{\theta}\left(x\right)}{\partial\theta}\right)^{T}\left(\frac{\partial f_{\theta}\left(x\right)}{\partial\theta}\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Multiclass cross entropy
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $f$
+\end_inset
+
+ and 
+\begin_inset Formula $y$
+\end_inset
+
+ are the vector (true, estimated) of probabilities of being a member of
+ each class.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\log p_{\theta}\left(y|x\right) & = & y^{T}\log\left(f_{\theta}\left(x\right)\right)\\
+\frac{\partial\log p_{\theta}\left(y|x\right)}{\partial\theta} & = & \left(\frac{y}{f_{\theta}\left(x\right)}\right)\left(\frac{\partial f_{\theta}\left(x\right)}{\partial\theta}\right)\\
+\left(\frac{\partial\log p_{\theta}\left(y|x\right)}{\partial\theta}\right)^{T}\left(\frac{\partial\log p_{\theta}\left(y|x\right)}{\partial\theta}\right) & = & \left(\frac{\partial f_{\theta}\left(x\right)}{\partial\theta}\right)^{T}\text{diag}\left(\frac{y^{2}}{f_{\theta}\left(x\right)^{2}}\right)\left(\frac{\partial f_{\theta}\left(x\right)}{\partial\theta}\right)\\
+\mathbb{E}_{y\sim p_{\theta}\left(y|x\right)}\left[\left(\frac{\partial\log p_{\theta}\left(y|x\right)}{\partial\theta}\right)^{T}\left(\frac{\partial\log p_{\theta}\left(y|x\right)}{\partial\theta}\right)\right] & = & \left(\frac{\partial f_{\theta}\left(x\right)}{\partial\theta}\right)^{T}\text{diag}\left(\frac{\mathbb{E}_{y\sim p_{\theta}\left(y|x\right)}\left[y^{2}\right]}{f_{\theta}\left(x\right)^{2}}\right)\left(\frac{\partial f_{\theta}\left(x\right)}{\partial\theta}\right)\\
+ & = & \left(\frac{\partial f_{\theta}\left(x\right)}{\partial\theta}\right)^{T}\text{diag}\left(\frac{1}{f_{\theta}\left(x\right)}\right)\left(\frac{\partial f_{\theta}\left(x\right)}{\partial\theta}\right)
 \end{eqnarray*}
 
 \end_inset
