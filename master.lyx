@@ -65,6 +65,11 @@ figs-within-sections
 \suppress_date false
 \justification true
 \use_refstyle 1
+\branch hidden
+\selected 0
+\filename_suffix 0
+\color #faf0e6
+\end_branch
 \index Index
 \shortcut idx
 \color #008000
@@ -799,7 +804,8 @@ key "hinton2006reducing,vincent2008extracting"
  are neural networks that are composed of an encoder part a decoder.
  The encoder takes the input and encodes encodes it to a new representation
  (often with less dimension than the input).
- The decoder takes the encoded input an tries to reconstruct the output.
+ The decoder takes the encoded input with the task of reconstructing the
+ output.
  The encoded representation is often a layer with less neurons than the
  size of the input.
  The autoencoder is trained end-to-end, without manually taking care of
@@ -1291,7 +1297,7 @@ key "bastien2012theano"
 \end_inset
 
 .
- Using such a tools we can define a model and a scalar cost function, then
+ Using such a tool we can define a model and a scalar cost function, then
  call a method 
 \family typewriter
 grad
@@ -2043,15 +2049,29 @@ Gradient smoothing methods
 \end_layout
 
 \begin_layout Standard
-A family of optimization tricks focuses on 
-\end_layout
+A family of optimization tricks make use of the representation of the empiriral
+ risk as a manifold in the space of the parameters.
+ In this case with some common sense we can define a simple principle to
+ derive better updates which is that for an equivalent decrease of the empirical
+ risk, we must follow a direction of descent that has a lower derivative
+ for longer in order to achieve the same improvement as for a direction
+ that has a greater derivative.
+ Many popular techniques use this principle, the most successful ones at
+ the time of writing being Adam 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "kingma2014adam"
 
-\begin_layout Itemize
-cost landscape with valleys and plateaus
-\end_layout
+\end_inset
 
-\begin_layout Itemize
-momentum + nesterov
+, RMSProp 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "tieleman2012lecture"
+
+\end_inset
+
+, Nesterov momentum and so on.
 \end_layout
 
 \begin_layout Section
@@ -2385,22 +2405,24 @@ reference "subsec:focus-covariance"
 .
 \end_layout
 
-\begin_layout Section
+\begin_layout Subsection
 The learning rate
 \end_layout
 
 \begin_layout Standard
 Amongst other hyperparameters, the learning rate of standard (stochastic)
  gradient descent plays a particular role which we will show in the following.
- We can rewrite the standard gradient descent result using a second order
- Taylor expansion of the empirical risk:
+ We use the quadratic approximation for a function 
+\begin_inset Formula $f$
+\end_inset
+
+:
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-R\left(\theta+\Delta\theta\right) & = & R\left(\theta\right)+\left(\nabla R\right)_{\theta}\Delta\theta+\frac{1}{2}\Delta\theta^{T}\mathbf{H}\Delta\theta+o\left(\left\Vert \Delta\theta\right\Vert _{2}^{2}\right)\\
- & \approx & R\left(\theta\right)+\left(\nabla R\right)_{\theta}\Delta\theta+\frac{1}{2}\Delta\theta^{T}\mathbf{H}\Delta\theta
+\Delta x^{*} & = & \text{argmin}_{\Delta x}f\left(x\right)+\left(\nabla f\right)_{x}^{T}\Delta x+\frac{1}{2}\Delta x^{T}\left(\nabla^{2}f\right)_{x}\Delta x+o\left(\left\Vert \Delta x\right\Vert _{2}^{2}\right)
 \end{eqnarray*}
 
 \end_inset
@@ -2408,15 +2430,57 @@ R\left(\theta+\Delta\theta\right) & = & R\left(\theta\right)+\left(\nabla R\righ
 
 \end_layout
 
-\begin_layout Itemize
-learning rate using the hessian + mathematical results 
+\begin_layout Standard
+If we ignore the second derivative and higher order terms we can simplify
+ this expression to the following one that is often used for deriving the
+ first order gradient descent update:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\Delta x^{*} & \approx & \text{argmin}_{\Delta x}f\left(x\right)+\left(\nabla f\right)_{x}^{T}\Delta x+\frac{\lambda}{2}\Delta x^{T}\Delta x
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+By solving this minimization problem we recover the update 
+\begin_inset Formula $\Delta x^{*}=-\frac{1}{\lambda}\left(\nabla f\right)_{x}$
+\end_inset
+
+.
+ But of course this 
+\begin_inset Formula $\lambda$
+\end_inset
+
+ 
+\begin_inset Quotes eld
+\end_inset
+
+hides
+\begin_inset Quotes erd
+\end_inset
+
+ second order information.
+ In fact, 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "lecun1993automatic"
 
 \end_inset
 
+ proposes to automatically adapt the value of the learning rate by using
+ the biggest eigenvalue of the hessian as 
+\begin_inset Formula $\lambda$
+\end_inset
 
+.
+ In this case we are guaranteed to go as far as possible in the direction
+ of greatest curvature (the corresponding eigenvector).
 \end_layout
 
 \begin_layout Subsection
@@ -2886,7 +2950,7 @@ Interpretation from the output of the network
 \begin_inset Formula 
 \begin{eqnarray*}
 \Delta\theta^{*} & = & \text{argmin}_{\Delta\theta}\left(\nabla R\right)_{\theta}^{T}\Delta\theta+\Delta\theta^{T}\frac{1}{n}\sum_{i}\mathbf{J}\left(x_{i},\theta\right)^{T}D\left(f\left(x_{i},\theta\right),y_{i}\right)\mathbf{J}\left(x_{i},\theta\right)\Delta\theta+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert _{2}^{2}\\
- & = & \text{argmin}_{\Delta\theta}\left(\nabla R\right)_{\theta}^{T}\Delta\theta+\frac{1}{n}\sum_{i}\left\Vert \mathbf{J}\left(x_{i},\theta\right)\Delta\theta\right\Vert _{D\left(f\left(x_{i},\theta\right),y_{i}\right)}^{2}+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert _{2}^{2}
+ & = & \text{argmin}_{\Delta\theta}\left(\nabla R\right)_{\theta}^{T}\Delta\theta+\frac{1}{n}\sum_{i}\left\Vert \sqrt{D\left(f\left(x_{i},\theta\right),y_{i}\right)}\mathbf{J}\left(x_{i},\theta\right)\Delta\theta\right\Vert _{2}^{2}+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert _{2}^{2}
 \end{eqnarray*}
 
 \end_inset
@@ -3189,7 +3253,7 @@ Since
 
 \begin_layout Standard
 Interestingly, for the usual distributions expressed by neural networks,
- we can derive an expression for the inner expectation.
+ we can derive an exact expression for the inner expectation.
  The FIM takes the following simple form as shown by 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -3446,7 +3510,7 @@ A second common approximation we make in practice is to use the empirical
 \end_layout
 
 \begin_layout Subsection
-(Natural) gradient descent TODO
+(Natural) gradient descent
 \end_layout
 
 \begin_layout Standard
@@ -3457,7 +3521,7 @@ The usual gradient descent algorithm can be formulated as the minimization
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\Delta\theta & = & \text{argmin}_{\Delta\theta}\left\{ \Delta\theta^{T}\nabla\mathcal{L}+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert ^{2}\right\} 
+\Delta\theta & = & \text{argmin}_{\Delta\theta}\left\{ \Delta\theta^{T}\nabla_{\theta}R+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert ^{2}\right\} 
 \end{eqnarray*}
 
 \end_inset
@@ -3466,13 +3530,9 @@ The usual gradient descent algorithm can be formulated as the minimization
 \end_layout
 
 \begin_layout Standard
-We use the notation 
-\begin_inset Formula $\mathcal{L}$
-\end_inset
-
- for the expectation of the loss function over the distribution of the data.
- This expression can be easily solved giving the expression 
-\begin_inset Formula $\Delta\theta=-\frac{1}{\lambda}\nabla\mathcal{L}$
+This expression can be easily solved giving the usual gradient descent update
+ 
+\begin_inset Formula $\Delta\theta=-\frac{1}{\epsilon}\nabla_{\theta}R$
 \end_inset
 
 .
@@ -3489,7 +3549,7 @@ We use the notation
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\Delta\theta & = & \text{argmin}_{\Delta\theta}\left\{ \Delta\theta^{T}\nabla\mathcal{L}+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert ^{2}+\frac{\lambda}{2}\Delta\theta^{T}\mathbf{F}\Delta\theta\right\} 
+\Delta\theta & = & \text{argmin}_{\Delta\theta}\left\{ \Delta\theta^{T}\nabla_{\theta}R+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert ^{2}+\frac{\lambda}{2}\Delta\theta^{T}\mathbf{F}\Delta\theta\right\} 
 \end{eqnarray*}
 
 \end_inset
@@ -3502,7 +3562,7 @@ We now constrain our gradient step to be small in term of change of parameter
  values, and also to be small in term of how much the resulting distribution
  changes.
  This expression can be solved to give 
-\begin_inset Formula $\Delta\theta=\frac{1}{\lambda}\left(\mathbf{F}+\epsilon\mathbf{I}\right)^{-1}\nabla\mathcal{L}$
+\begin_inset Formula $\Delta\theta=\frac{1}{\lambda}\left(\mathbf{F}+\frac{\epsilon}{\lambda}\mathbf{I}\right)^{-1}\nabla_{\theta}R$
 \end_inset
 
 .
@@ -3844,18 +3904,18 @@ reference "eq:jaco_factorization"
 
 :
 \begin_inset Formula 
-\begin{eqnarray*}
+\begin{eqnarray}
 G_{f} & = & \frac{1}{n}\sum_{i}\left[\left(\begin{array}{cc}
 h_{i}^{T} & 1\end{array}\right)\otimes\mathbf{J}_{a_{i}}\right]^{T}D\left(x_{i}\right)\left[\left(\begin{array}{cc}
-h_{i}^{T} & 1\end{array}\right)\otimes\mathbf{J}_{a_{i}}\right]\\
+h_{i}^{T} & 1\end{array}\right)\otimes\mathbf{J}_{a_{i}}\right]\nonumber \\
  & = & \frac{1}{n}\sum_{i}\left(\begin{array}{cc}
 h_{i}^{T} & 1\end{array}\right)^{T}\left(\begin{array}{cc}
-h_{i}^{T} & 1\end{array}\right)\otimes\left(\mathbf{J}_{a_{i}}^{T}D\left(x_{i}\right)\mathbf{J}_{a_{i}}\right)\\
+h_{i}^{T} & 1\end{array}\right)\otimes\left(\mathbf{J}_{a_{i}}^{T}D\left(x_{i}\right)\mathbf{J}_{a_{i}}\right)\nonumber \\
  & = & \frac{1}{n}\sum_{i}\left(\begin{array}{cc}
 h_{i}h_{i}^{T} & h_{i}\\
 h_{i}^{T} & 1
-\end{array}\right)\otimes\left(\mathbf{J}_{a_{i}}^{T}D\left(x_{i}\right)\mathbf{J}_{a_{i}}\right)
-\end{eqnarray*}
+\end{array}\right)\otimes\left(\mathbf{J}_{a_{i}}^{T}D\left(x_{i}\right)\mathbf{J}_{a_{i}}\right)\label{eq:factored}
+\end{eqnarray}
 
 \end_inset
 
@@ -4604,35 +4664,33 @@ Experiments
 Other related approximate second order algorithms
 \end_layout
 
+\begin_layout Standard
+The 2 following techniques have been proposed using the same factorization
+ of the FIM that we wrote in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:factored"
+
+\end_inset
+
+.
+ In addition to their factorization we introduced the explicit separation
+ of weight matrix and bias.
+\end_layout
+
 \begin_layout Subsection
-KFAC TODO
+KFAC
 \end_layout
 
 \begin_layout Standard
+KFAC 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "martens2015optimizing"
 
 \end_inset
 
- use a simplification of the FIM that drastically reduce the computation
- required for inverting it.
- Remember that even if we consider a block diagonal approximation of the
- FIM, each block still has size 
-\begin_inset Formula $n_{parameters}\times n_{parameters}$
-\end_inset
-
-.
- We need to invert this block, and the operation of inverting a square matrix
- is 
-\begin_inset Formula $O\left(n_{parameters}^{3}\right)$
-\end_inset
-
-.
- They propose the following approximation:
-\end_layout
-
-\begin_layout Standard
+ proposes to split the sum of Kronecker products into a product of sums:
 \begin_inset Formula 
 \begin{eqnarray*}
 \mathbf{F} & \approx & \mathbb{E}\left[\left(\begin{array}{cc}
@@ -4662,42 +4720,37 @@ The Kronecker product has the nice property that for 2 invertible square
 
 .
  It follows that inverting the FIM now requires inverting 2 smaller matrices.
- However the approximation they use is questionable, and they show some
- interesting experimental results.
+ As for the approximation we made in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:focus-covariance"
+
+\end_inset
+
+, we lose the coupling between the forward and backward part of the FIM.
+ In our experiments we found a comparable performance between KFAC and ACP.
 \end_layout
 
 \begin_layout Subsection
-Natural Neural Networks TODO
+Natural Neural Networks
 \end_layout
 
 \begin_layout Standard
+Natural neural networks 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "desjardins2015natural"
 
 \end_inset
 
- exploit the same factorization 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:factoredfim"
-
+ exploit the same factorization by focusing on the input covariance part
+ of each layer.
+ .
+ They propose a reparametrization that makes 
+\begin_inset Formula $\mathbb{E}\left[hh^{T}\right]$
 \end_inset
 
- but only consider the term involving the input of the linear transformation
- (
-\begin_inset Formula $h$
-\end_inset
-
-).
- They propose a reparametrization that will make 
-\begin_inset Formula $\mathbb{E}\left[\left(\begin{array}{cc}
-hh^{T} & h\\
-h^{T} & 1
-\end{array}\right)\right]$
-\end_inset
-
- equal the identity.
+ equal the identity, and also they use the centering trick.
  To this view, they change the original linear transformation 
 \begin_inset Formula $a=Wh+b$
 \end_inset
@@ -4763,7 +4816,7 @@ a & = & VU\left(h-\mu\right)+d
 \end_layout
 
 \begin_layout Standard
-Our new parameters 
+The new parameters 
 \begin_inset Formula $V$
 \end_inset
 
@@ -4776,7 +4829,7 @@ Our new parameters
 \begin_inset Formula $h_{e}=U\left(h-\mu\right)$
 \end_inset
 
- our new 
+ the new 
 \begin_inset Quotes eld
 \end_inset
 
@@ -4793,7 +4846,7 @@ effective
 \begin_inset Formula $\mathbb{E}\left[h_{e}\right]=U\left(\mathbb{E}\left[h\right]-\mu\right)=U\left(\mu-\mu\right)=0$
 \end_inset
 
-, so the new input is centered on average.
+, so the reparametrized input is centered on average.
  A second remark is that 
 \begin_inset Formula $\mathbb{E}\left[h_{e}h_{e}^{T}\right]=U\mathbb{E}\left[\left(h-\mu\right)\left(h-\mu\right)^{T}\right]U^{T}=\mathbf{I}$
 \end_inset
@@ -4829,11 +4882,12 @@ h_{e}^{T} & 1
 \end_layout
 
 \begin_layout Standard
-The FIM for our new reparametrization thus has a better form, and they also
- show experimentally that this method is very efficient, and that by amortizing
- the cost of inverting the covariance matrix over several parameter updates,
- it can be faster that standard SGD.
+The FIM for the reparametrization thus has a better form.
 \end_layout
+
+\begin_layout Standard
+\begin_inset Branch hidden
+status open
 
 \begin_layout Section
 Direct gradient update
@@ -4929,16 +4983,21 @@ In particular, using a first order Taylor decomposition:
 
 \end_layout
 
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 Links with well-used methods
 \end_layout
 
 \begin_layout Subsection
-rmsprop
+RMSProp
 \end_layout
 
-\begin_layout Itemize
-msprop
+\begin_layout Standard
+WIP: RMSProp is very close to diagonal GN for cross entropies.
 \end_layout
 
 \begin_layout Subsection
@@ -5099,8 +5158,8 @@ reference "centering-trick"
 .
 \end_layout
 
-\begin_layout Itemize
-effect on the forward pass, and the gradient
+\begin_layout Standard
+WIP
 \end_layout
 
 \begin_layout Chapter*
