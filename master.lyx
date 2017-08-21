@@ -769,10 +769,6 @@ A multilayer perceptron consists in alternatively stacking layers of a linear
 
 \end_layout
 
-\begin_layout Plain Layout
-
-\end_layout
-
 \end_inset
 
 
@@ -780,6 +776,25 @@ A multilayer perceptron consists in alternatively stacking layers of a linear
 
 \begin_layout Subsection
 Convolutional networks
+\end_layout
+
+\begin_layout Standard
+Convolutional networks 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "lecun1989backpropagation"
+
+\end_inset
+
+ are well-suited for tasks involving sequential (timeseries) or spatial
+ data (images).
+ Instead of multiplying a weight matrix with the whole input vector, we
+ split this input into smaller chunks of fixed sized corresponding to small
+ vectors (2d case) or small matrices (3d case).
+ The same weight matrix is applied to each of this smaller vectors so as
+ to get a result at each position.
+ In fact it amounts to a standard MLP with the weight matrix sharing weight
+ values between corresponding positions.
 \end_layout
 
 \begin_layout Subsection
@@ -811,10 +826,7 @@ key "hinton2006reducing,vincent2008extracting"
  The autoencoder is trained end-to-end, without manually taking care of
  the encoded representation.
  This representation is automatically created by learning from the data.
-\end_layout
-
-\begin_layout Subsection
-Residual networks
+ It is a special case for regression.
 \end_layout
 
 \begin_layout Section
@@ -5071,6 +5083,23 @@ Amortized covariance preconditioner
 
 \begin_layout Subsection
 Experiments
+\end_layout
+
+\begin_layout Standard
+Plots (updates + time) of ACP (fixed 
+\begin_inset Formula $\alpha$
+\end_inset
+
+ + heuristics for 
+\begin_inset Formula $\alpha)$
+\end_inset
+
+ vs NNN vs KFAC vs BN
+\end_layout
+
+\begin_layout Standard
+Plots (updates + time) of SGD vs centered gradient descent vs mean only
+ BN.
 \end_layout
 
 \begin_layout Section
