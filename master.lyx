@@ -3100,8 +3100,8 @@ By an abuse of notation we denoted by
 \begin_inset Formula $\Delta\theta$
 \end_inset
 
- in terms of change of change of the output of the network as measured by
- some metrics 
+ in terms of change of the output of the network as measured by some metrics
+ 
 \begin_inset Formula $D\left(f\left(x_{i},\theta\right),y_{i}\right)$
 \end_inset
 
@@ -3109,10 +3109,31 @@ By an abuse of notation we denoted by
  It constrains all changes to induce a comparable change on the output.
  Interestingly, for cross entropies (binary and multiclass) we have the
  unexpected equivalence 
-\begin_inset Formula $\sqrt{D\left(f\left(x_{i},\theta\right),y_{i}\right)}=-\left(\frac{\partial l}{\partial f}\right)^{T}$
+\begin_inset Formula $\left(\sqrt{D\left(f\left(x_{i},\theta\right),y_{i}\right)}\right)_{t}=-\left(\frac{\partial l}{\partial f}\right)^{T}$
 \end_inset
 
- which can be combined with the jacobian to give the simplified formulation:
+ and 
+\begin_inset Formula $\left(\sqrt{D\left(f\left(x_{i},\theta\right),y_{i}\right)}\right)_{i}=0$
+\end_inset
+
+ when 
+\begin_inset Formula $i\neq t$
+\end_inset
+
+, where 
+\begin_inset Formula $t$
+\end_inset
+
+ is the true class, that is the only index of 
+\begin_inset Formula $y$
+\end_inset
+
+ that equal to 
+\begin_inset Formula $1$
+\end_inset
+
+.
+ This can be combined with the jacobian to give the simplified formulation:
 \end_layout
 
 \begin_layout Standard
@@ -3128,7 +3149,8 @@ By an abuse of notation we denoted by
 \end_layout
 
 \begin_layout Standard
-We will draw a link between this formulation and the well-used RMSProp 
+We will draw a connection between this formulation and the well-used RMSProp
+ 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "tieleman2012lecture"
@@ -3700,7 +3722,7 @@ A second common approximation we make in practice is to use the empirical
 \end_layout
 
 \begin_layout Subsection
-(Natural) gradient descent
+Natural gradient descent
 \end_layout
 
 \begin_layout Standard
@@ -3711,7 +3733,7 @@ The usual gradient descent algorithm can be formulated as the minimization
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\Delta\theta & = & \text{argmin}_{\Delta\theta}\left\{ \Delta\theta^{T}\nabla_{\theta}R+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert ^{2}\right\} 
+\Delta\theta^{*} & = & \text{argmin}_{\Delta\theta}\left\{ \Delta\theta^{T}\nabla_{\theta}R+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert ^{2}\right\} 
 \end{eqnarray*}
 
 \end_inset
@@ -3739,7 +3761,7 @@ This expression can be easily solved giving the usual gradient descent update
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\Delta\theta & = & \text{argmin}_{\Delta\theta}\left\{ \Delta\theta^{T}\nabla_{\theta}R+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert ^{2}+\frac{\lambda}{2}\Delta\theta^{T}\mathbf{F}\Delta\theta\right\} 
+\Delta\theta^{*} & = & \text{argmin}_{\Delta\theta}\left\{ \Delta\theta^{T}\nabla_{\theta}R+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert ^{2}+\frac{\lambda}{2}\Delta\theta^{T}\mathbf{F}\Delta\theta\right\} 
 \end{eqnarray*}
 
 \end_inset
@@ -3752,7 +3774,7 @@ We now constrain our gradient step to be small in term of change of parameter
  values, and also to be small in term of how much the resulting distribution
  changes.
  This expression can be solved to give 
-\begin_inset Formula $\Delta\theta=\frac{1}{\lambda}\left(\mathbf{F}+\frac{\epsilon}{\lambda}\mathbf{I}\right)^{-1}\nabla_{\theta}R$
+\begin_inset Formula $\Delta\theta^{*}=\frac{1}{\lambda}\left(\mathbf{F}+\frac{\epsilon}{\lambda}\mathbf{I}\right)^{-1}\nabla_{\theta}R$
 \end_inset
 
 .
