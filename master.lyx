@@ -5185,19 +5185,8 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename figures/2nd_updates.pdf
-	width 45text%
-
-\end_inset
-
-
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset Graphics
-	filename figures/2nd_time.pdf
-	width 45col%
+	filename figures/2nd.pdf
+	width 100text%
 
 \end_inset
 
