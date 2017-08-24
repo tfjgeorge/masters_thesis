@@ -3016,14 +3016,7 @@ e, and the
 
  function transforms a vector into a diagonal matrix with the vector values
  on its diagonal.
- Full derivation in appendix 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "chap:deri-second-derivatives"
-
-\end_inset
-
-
+ Full derivation in appendix.
 \end_layout
 
 \end_inset
@@ -3634,14 +3627,7 @@ e, and the
 
  function transforms a vector into a diagonal matrix with the vector values
  on its diagonal.
- Full derivation in appendix 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "chap:deri-fim"
-
-\end_inset
-
-.
+ Full derivation in appendix.
 \end_layout
 
 \end_inset
