@@ -80,9 +80,6 @@ This work is mostly focused on optimization in artificial neural networks.
  My main contributions are a deeper understanding of the very particular
  structure of the Fisher Information matrix and the Hessian matrix when
  used in the setting of neural networks.
- It gives new insights on some methods that have proven to be very good
- empirically such as batch normalization or RMSProp, but without a formal
- understanding of why they perform so well.
 \end_layout
 
 \begin_layout Standard

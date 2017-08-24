@@ -3107,8 +3107,8 @@ By an abuse of notation we denoted by
 
  dependent on the example considered.
  It constrains all changes to induce a comparable change on the output.
- Interestingly, for cross entropies (binary and multiclass) we have the
- unexpected equivalence 
+ Interestingly, for log losses (binary and multiclass crossentropy) we have
+ the unexpected equivalence 
 \begin_inset Formula $\left(\sqrt{D\left(f\left(x_{i},\theta\right),y_{i}\right)}\right)_{t}=-\left(\frac{\partial l}{\partial f}\right)^{T}$
 \end_inset
 
@@ -3149,18 +3149,10 @@ By an abuse of notation we denoted by
 \end_layout
 
 \begin_layout Standard
-We will draw a connection between this formulation and the well-used RMSProp
- 
+This gives an explanation of the outer product metrics mentionned in 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "tieleman2012lecture"
-
-\end_inset
-
- technique in 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:RMSProp"
+key "ollivier2013riemannian"
 
 \end_inset
 
@@ -5527,6 +5519,10 @@ In particular, using a first order Taylor decomposition:
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Branch hidden
+status open
+
 \begin_layout Section
 Links with well-used methods
 \end_layout
@@ -5706,6 +5702,11 @@ reference "centering-trick"
 
 \begin_layout Standard
 WIP
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Chapter*
