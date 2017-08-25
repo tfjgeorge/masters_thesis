@@ -1918,30 +1918,8 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename figures/hp_search_biasedrs.pdf
-	width 30text%
-
-\end_inset
-
-
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset Graphics
-	filename figures/hp_search_rs.pdf
-	width 30text%
-
-\end_inset
-
-
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset Graphics
-	filename figures/hp_search_biasedrs.pdf
-	width 30text%
+	filename figures/hp_search.pdf
+	width 100text%
 
 \end_inset
 
