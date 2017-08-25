@@ -350,7 +350,7 @@
 
 
 \def\@maketitle{%
- \ifinitial@\pagenumbering{alph}\cleardoublepage\thispagestyle{empty}\mbox{}\newpage\pagenumbering{roman}\setcounter{page}{0}\fi
+ %\ifinitial@\pagenumbering{alph}\cleardoublepage\thispagestyle{empty}\mbox{}\newpage\pagenumbering{roman}\setcounter{page}{0}\fi
 
 
 \cleardoublepage \thispagestyle{empty}%
