@@ -1888,6 +1888,8 @@ Biased random search
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 26.61
 \end_layout
 
@@ -1897,6 +1899,8 @@ Biased random search
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 0.13
 \end_layout
 
@@ -5310,11 +5314,34 @@ For each experiment we plot the expected loss on the train set, and on a
  spent on each experiment.
  We selected the best hyperparameters using biased random search, and we
  only plot the best experiment.
+ For the test experiments, we also only plot the best result for each technique.
+ We ran each experiment for 
+\begin_inset Formula $3\times10^{5}$
+\end_inset
+
+ updates.
 \end_layout
 
 \begin_layout Standard
 In the first experiment, we compare the performance of mean only batched
  norm and centered gradient descent to vanilla gradient descent.
+ While our first experiments showed an improvement when centering the gradient
+ for a small number of updates, this does not generalize to longer experiments
+ as proved by this experiment.
+ The best performing centered update is mean only batch norm, on both the
+ training and test sets.
+\end_layout
+
+\begin_layout Standard
+In the second experiment, we compare all second order approximations to
+ a baseline using batch normalization.
+ For all experiments we use an amortization factor of 100, that is we update
+ the statistics and invert the corresponding matrices every 100 updates.
+ We use a minibatch size of 200 for each update as well as for the statistics.
+ We observe that KFAC, ACP and ACP with fixed alpha perform similarly with
+ respect to time, and all outperform batch norm and SGD by a large margin.
+ On the test set, we observe a small improvement for ACP over all techniques,
+ in both the best (lower) value and the time spent to reach this value.
 \end_layout
 
 \begin_layout Standard
