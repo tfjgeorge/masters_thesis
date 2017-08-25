@@ -1830,7 +1830,7 @@ Grid search
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+27.23
 \end_layout
 
 \end_inset
@@ -1839,7 +1839,7 @@ Grid search
 \begin_inset Text
 
 \begin_layout Plain Layout
-0
+0.42
 \end_layout
 
 \end_inset
@@ -4458,7 +4458,7 @@ key "lecun1998gradient,schraudolph2012centering"
 \end_layout
 
 \begin_layout Section
-Algorithms and experiments
+Algorithms
 \end_layout
 
 \begin_layout Subsection
@@ -5062,103 +5062,6 @@ Amortized covariance preconditioner
 
 \end_layout
 
-\begin_layout Subsection
-Experiments
-\end_layout
-
-\begin_layout Standard
-We compared these
-\end_layout
-
-\begin_layout Standard
-Plots (updates + time) of ACP (fixed 
-\begin_inset Formula $\alpha$
-\end_inset
-
- + heuristics for 
-\begin_inset Formula $\alpha)$
-\end_inset
-
- vs NNN vs KFAC vs BN
-\end_layout
-
-\begin_layout Standard
-Plots (updates + time) of SGD vs centered gradient descent vs mean only
- BN.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-placement h
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename figures/centering.pdf
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Centering experiments WIP
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-placement h
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename figures/2nd.pdf
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Second order experiments WIP
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
 \begin_layout Section
 Other related approximate second order algorithms
 \end_layout
@@ -5382,6 +5285,108 @@ h_{e}^{T} & 1
 
 \begin_layout Standard
 The FIM for the reparametrization thus has a better form.
+\end_layout
+
+\begin_layout Section
+Experiments
+\end_layout
+
+\begin_layout Standard
+We compare our algorithms using the autoencoder benchmark presented in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:autoencoder-benchmark"
+
+\end_inset
+
+.
+ We ran all experiments on the same architecture using a Titan Black GPU.
+\end_layout
+
+\begin_layout Standard
+For each experiment we plot the expected loss on the train set, and on a
+ test set that we did not use for learning.
+ To assess the practical performance, the x-axis represents the actual time
+ spent on each experiment.
+ We selected the best hyperparameters using biased random search, and we
+ only plot the best experiment.
+\end_layout
+
+\begin_layout Standard
+In the first experiment, we compare the performance of mean only batched
+ norm and centered gradient descent to vanilla gradient descent.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename figures/centering.pdf
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Centering experiments WIP
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename figures/2nd.pdf
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Second order experiments WIP
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
