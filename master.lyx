@@ -5333,18 +5333,6 @@ In the first experiment, we compare the performance of mean only batched
 \end_layout
 
 \begin_layout Standard
-In the second experiment, we compare all second order approximations to
- a baseline using batch normalization.
- For all experiments we use an amortization factor of 100, that is we update
- the statistics and invert the corresponding matrices every 100 updates.
- We use a minibatch size of 200 for each update as well as for the statistics.
- We observe that KFAC, ACP and ACP with fixed alpha perform similarly with
- respect to time, and all outperform batch norm and SGD by a large margin.
- On the test set, we observe a small improvement for ACP over all techniques,
- in both the best (lower) value and the time spent to reach this value.
-\end_layout
-
-\begin_layout Standard
 \begin_inset Float figure
 placement h
 wide false
@@ -5380,6 +5368,18 @@ Centering experiments WIP
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+In the second experiment, we compare all second order approximations to
+ a baseline using batch normalization.
+ For all experiments we use an amortization factor of 100, that is we update
+ the statistics and invert the corresponding matrices every 100 updates.
+ We use a minibatch size of 200 for each update as well as for the statistics.
+ We observe that KFAC, ACP and ACP with fixed alpha perform similarly with
+ respect to time, and all outperform batch norm and SGD by a large margin.
+ On the test set, we observe a small improvement for ACP over all techniques,
+ in both the best (lower) value and the time spent to reach this value.
 \end_layout
 
 \begin_layout Standard
@@ -5714,7 +5714,20 @@ Conclusions
 \end_layout
 
 \begin_layout Standard
-TODO
+During this work, we derived new expressions for the well known GN matrix
+ and FIM.
+ We showed that there is a common factor in both matrices that is composed
+ of the covariance matrix of the activation at each layer, in the case of
+ a block diagonal approximation.
+ By separating the bias and the weight matrices we introduced a new mathematical
+ explanation for the well-known centering trick.
+\end_layout
+
+\begin_layout Standard
+Using this new expressions we derived a new algorithm ACP that loosely resembles
+ 2 state of the art methods inspired by natural gradient.
+ We benchmarked our new algorithm against these methods and showed that
+ they all perform similarly.
 \end_layout
 
 \begin_layout Standard
