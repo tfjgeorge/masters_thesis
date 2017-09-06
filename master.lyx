@@ -2485,97 +2485,6 @@ reference "sec:2ndorder-newpers"
 \end_layout
 
 \begin_layout Subsection
-Interpretation from the output of the network
-\end_layout
-
-\begin_layout Standard
-We can rewrite the GN matrix applied to an update as a norm in the space
- of the output of the network:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-\Delta\theta^{*} & = & \text{argmin}_{\Delta\theta}\left(\nabla R\right)_{\theta}^{T}\Delta\theta+\frac{1}{2}\Delta\theta^{T}\frac{1}{n}\sum_{i}\mathbf{J}\left(x_{i},\theta\right)^{T}D\left(f\left(x_{i},\theta\right),y_{i}\right)\mathbf{J}\left(x_{i},\theta\right)\Delta\theta+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert _{2}^{2}\\
- & = & \text{argmin}_{\Delta\theta}\left(\nabla R\right)_{\theta}^{T}\Delta\theta+\frac{1}{2}\frac{1}{n}\sum_{i}\left\Vert \sqrt{D\left(f\left(x_{i},\theta\right),y_{i}\right)}\mathbf{J}\left(x_{i},\theta\right)\Delta\theta\right\Vert _{2}^{2}+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert _{2}^{2}
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-By an abuse of notation we denoted by 
-\begin_inset Formula $\sqrt{\,}$
-\end_inset
-
- an elementwise square root.
- Written like this GN can be considered a first order measure of what will
- be the impact of a 
-\begin_inset Formula $\Delta\theta$
-\end_inset
-
- in terms of change of the output of the network as measured by some metrics
- 
-\begin_inset Formula $D\left(f\left(x_{i},\theta\right),y_{i}\right)$
-\end_inset
-
- dependent on the example considered.
- It constrains all changes to induce a comparable change on the output.
- Interestingly, for log losses (binary and multiclass crossentropy) we have
- the unexpected equivalence 
-\begin_inset Formula $\left(\sqrt{D\left(f\left(x_{i},\theta\right),y_{i}\right)}\right)_{t}=-\left(\frac{\partial l}{\partial f}\right)^{T}$
-\end_inset
-
- and 
-\begin_inset Formula $\left(\sqrt{D\left(f\left(x_{i},\theta\right),y_{i}\right)}\right)_{i}=0$
-\end_inset
-
- when 
-\begin_inset Formula $i\neq t$
-\end_inset
-
-, where 
-\begin_inset Formula $t$
-\end_inset
-
- is the true class, that is the only index of 
-\begin_inset Formula $y$
-\end_inset
-
- that equal to 
-\begin_inset Formula $1$
-\end_inset
-
-.
- This can be combined with the jacobian to give the simplified formulation:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-\Delta\theta^{*} & = & \text{argmin}_{\Delta\theta}\left(\nabla R\right)_{\theta}^{T}\Delta\theta+\frac{1}{2}\frac{1}{n}\sum_{i}\left\Vert -\left(\frac{\partial l}{\partial f}\right)^{T}\mathbf{J}\left(x_{i},\theta\right)\Delta\theta\right\Vert _{2}^{2}+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert _{2}^{2}\\
- & = & \text{argmin}_{\Delta\theta}\left(\nabla R\right)_{\theta}^{T}\Delta\theta+\frac{1}{2}\frac{1}{n}\sum_{i}\left\Vert \left(\nabla l\left(f\left(x_{i},\theta\right),y_{i}\right)\right)_{\theta}^{T}\Delta\theta\right\Vert _{2}^{2}+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert _{2}^{2}
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-This gives an explanation of the outer product metrics mentionned in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "ollivier2013riemannian"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Subsection
 Block diagonal Hessian 
 \begin_inset CommandInset label
 LatexCommand label
@@ -3199,6 +3108,10 @@ A second common approximation we make in practice is to use the empirical
 \end_layout
 
 \begin_layout Section
+Common misconceptions about natural gradient
+\end_layout
+
+\begin_layout Subsection
 Relation with the GN approximation of the Hessian
 \end_layout
 
@@ -3227,6 +3140,97 @@ key "pascanu2013revisiting"
  equal.
 \end_layout
 
+\begin_layout Subsection
+Interpretation from the output of the network
+\end_layout
+
+\begin_layout Standard
+We can rewrite the GN matrix applied to an update as a norm in the space
+ of the output of the network:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\Delta\theta^{*} & = & \text{argmin}_{\Delta\theta}\left(\nabla R\right)_{\theta}^{T}\Delta\theta+\frac{1}{2}\Delta\theta^{T}\frac{1}{n}\sum_{i}\mathbf{J}\left(x_{i},\theta\right)^{T}D\left(f\left(x_{i},\theta\right),y_{i}\right)\mathbf{J}\left(x_{i},\theta\right)\Delta\theta+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert _{2}^{2}\\
+ & = & \text{argmin}_{\Delta\theta}\left(\nabla R\right)_{\theta}^{T}\Delta\theta+\frac{1}{2}\frac{1}{n}\sum_{i}\left\Vert \sqrt{D\left(f\left(x_{i},\theta\right),y_{i}\right)}\mathbf{J}\left(x_{i},\theta\right)\Delta\theta\right\Vert _{2}^{2}+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert _{2}^{2}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+By an abuse of notation we denoted by 
+\begin_inset Formula $\sqrt{\,}$
+\end_inset
+
+ an elementwise square root.
+ Written like this GN can be considered a first order measure of what will
+ be the impact of a 
+\begin_inset Formula $\Delta\theta$
+\end_inset
+
+ in terms of change of the output of the network as measured by some metrics
+ 
+\begin_inset Formula $D\left(f\left(x_{i},\theta\right),y_{i}\right)$
+\end_inset
+
+ dependent on the example considered.
+ It constrains all changes to induce a comparable change on the output.
+ Interestingly, for log losses (binary and multiclass crossentropy) we have
+ the unexpected equivalence 
+\begin_inset Formula $\left(\sqrt{D\left(f\left(x_{i},\theta\right),y_{i}\right)}\right)_{t}=-\left(\frac{\partial l}{\partial f}\right)^{T}$
+\end_inset
+
+ and 
+\begin_inset Formula $\left(\sqrt{D\left(f\left(x_{i},\theta\right),y_{i}\right)}\right)_{i}=0$
+\end_inset
+
+ when 
+\begin_inset Formula $i\neq t$
+\end_inset
+
+, where 
+\begin_inset Formula $t$
+\end_inset
+
+ is the true class, that is the only index of 
+\begin_inset Formula $y$
+\end_inset
+
+ that equal to 
+\begin_inset Formula $1$
+\end_inset
+
+.
+ This can be combined with the jacobian to give the simplified formulation:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\Delta\theta^{*} & = & \text{argmin}_{\Delta\theta}\left(\nabla R\right)_{\theta}^{T}\Delta\theta+\frac{1}{2}\frac{1}{n}\sum_{i}\left\Vert -\left(\frac{\partial l}{\partial f}\right)^{T}\mathbf{J}\left(x_{i},\theta\right)\Delta\theta\right\Vert _{2}^{2}+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert _{2}^{2}\\
+ & = & \text{argmin}_{\Delta\theta}\left(\nabla R\right)_{\theta}^{T}\Delta\theta+\frac{1}{2}\frac{1}{n}\sum_{i}\left\Vert \left(\nabla l\left(f\left(x_{i},\theta\right),y_{i}\right)\right)_{\theta}^{T}\Delta\theta\right\Vert _{2}^{2}+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert _{2}^{2}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This gives an explanation of the outer product metrics mentionned in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ollivier2013riemannian"
+
+\end_inset
+
+.
+\end_layout
+
 \begin_layout Chapter
 Factorized second order
 \begin_inset CommandInset label
@@ -3250,6 +3254,10 @@ The expressions that we obtained for the FIM and the GN so far are generic
 
 \begin_layout Section
 A local criterion and the importance of the covariance of inputs in a layer
+\end_layout
+
+\begin_layout Subsection
+Derivation of a new update
 \end_layout
 
 \begin_layout Standard
@@ -3300,14 +3308,24 @@ We now focus on a single layer
 \begin_inset Formula $-\lambda\nabla_{a}l$
 \end_inset
 
-:
+.
+ We call this optimization problem 
+\begin_inset Quotes eld
+\end_inset
+
+local
+\begin_inset Quotes erd
+\end_inset
+
+ in the sense that it is formulated locally to a single layer.
+ We formulate our criterion as:
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\Delta W^{*},\Delta b^{*} & = & \text{argmin}_{\Delta W,\Delta b}\sum_{i}\left\Vert \Delta Wh^{(i)}+\Delta b+\lambda\nabla_{a^{(i)}}l\right\Vert _{2}^{2}+\epsilon\left\Vert \Delta W\right\Vert _{2}^{2}\\
- & = & \text{argmin}_{\Delta W,\Delta b}C\left(\Delta W,\Delta b\right)
+\Delta W^{*},\Delta b^{*} & = & \text{argmin}_{\Delta W,\Delta b}\frac{1}{n}\sum_{i}\left\Vert \Delta Wh^{(i)}+\Delta b+\lambda\nabla_{a^{(i)}}l\right\Vert _{2}^{2}+\epsilon\left\Vert \Delta W\right\Vert _{2}^{2}\\
+ & = & \text{argmin}_{\Delta W,\Delta b}l_{C}\left(\Delta W,\Delta b\right)
 \end{eqnarray*}
 
 \end_inset
@@ -3339,10 +3357,10 @@ Instead of using gradient descent to find the optimal values for
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\frac{\partial C}{\partial\Delta W} & = & \sum_{i}\left(\Delta Wh^{(i)}+\Delta b+\lambda\nabla_{a^{(i)}}l\right)h^{(i)T}+\epsilon\Delta W\\
- & = & \Delta b\sum_{i}h^{(i)T}+\epsilon\Delta W+\Delta W\sum_{i}h^{(i)}h^{(i)T}+\lambda\sum_{i}\left(\nabla_{a^{(i)}}l\right)h^{(i)T}\\
-\frac{\partial C}{\partial\Delta b} & = & \sum_{i}\left(\Delta Wh^{(i)}+\Delta b+\lambda\nabla_{a^{(i)}}l\right)\\
- & = & n\Delta b+\Delta W\sum_{i}h^{(i)}+\lambda\sum_{i}\nabla_{a^{(i)}}l
+\frac{\partial l_{C}}{\partial\Delta W} & = & \frac{1}{n}\sum_{i}\left(\Delta Wh^{(i)}+\Delta b+\lambda\nabla_{a^{(i)}}l\right)h^{(i)T}+\epsilon\Delta W\\
+ & = & \Delta b\frac{1}{n}\sum_{i}h^{(i)T}+\epsilon\Delta W+\Delta W\frac{1}{n}\sum_{i}h^{(i)}h^{(i)T}+\frac{\lambda}{n}\sum_{i}\left(\nabla_{a^{(i)}}l\right)h^{(i)T}\\
+\frac{\partial l_{C}}{\partial\Delta b} & = & \frac{1}{n}\sum_{i}\left(\Delta Wh^{(i)}+\Delta b+\lambda\nabla_{a^{(i)}}l\right)\\
+ & = & \Delta b+\Delta W\frac{1}{n}\sum_{i}h^{(i)}+\frac{\lambda}{n}\sum_{i}\nabla_{a^{(i)}}l
 \end{eqnarray*}
 
 \end_inset
@@ -3351,14 +3369,18 @@ Instead of using gradient descent to find the optimal values for
 \end_layout
 
 \begin_layout Standard
-By putting both expressions together we get:
+By putting both expressions together and simplifying for 
+\begin_inset Formula $\Delta W^{*}$
+\end_inset
+
+ we get:
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\Delta W^{*}\left(\sum_{i}h^{(i)}h^{(i)T}-\frac{1}{n}\sum_{i}h^{(i)}h^{(i)T}+\epsilon\mathbf{I}\right) & = & -\lambda\left(\sum_{i}\left(\nabla_{a^{(i)}}l\right)h^{(i)T}-\frac{1}{n}\sum_{i}\left(\nabla_{a^{(i)}}l\right)\sum_{i}h^{(i)T}\right)\\
-\Delta b^{*} & = & -\frac{1}{n}\lambda\sum_{i}\nabla_{a^{(i)}}l-\frac{1}{n}\Delta W\sum_{i}h^{(i)}
+\Delta W^{*}\left(C+\epsilon\mathbf{I}\right) & = & -\frac{\lambda}{n}\sum_{i}\left(\nabla_{a^{(i)}}l\right)\left(h^{(i)}-\frac{1}{n}\sum_{i}h^{(i)}\right)^{T}\\
+\Delta b^{*} & = & -\frac{\lambda}{n}\sum_{i}\nabla_{a^{(i)}}l-\frac{1}{n}\Delta W\sum_{i}h^{(i)}
 \end{eqnarray*}
 
 \end_inset
@@ -3366,24 +3388,124 @@ By putting both expressions together we get:
 
 \end_layout
 
-\begin_layout Itemize
-context (target prop/diff target prop)
+\begin_layout Standard
+We denoted by 
+\begin_inset Formula $C=\frac{1}{n}\sum_{i}\left(h^{(i)}-\frac{1}{n}\sum_{i}h^{(i)}\right)\left(h^{(i)}-\frac{1}{n}\sum_{i}h^{(i)}\right)^{T}$
+\end_inset
+
+ the covariance matrix of the activation of the previous layer.
+ This expressions can be solved by inverting the square matrix 
+\begin_inset Formula $\left(C+\epsilon\mathbf{I}\right)$
+\end_inset
+
+.
+ While experimenting with this updates on real tasks we found that gave
+ very competitive performance, compared to state of the art applied optimization
+ algorithms, but was very sensitive to hyperparameter values.
+ In particular, there is a coupling between the learning rate and the Tikhonov
+ regularization term 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+.
 \end_layout
 
-\begin_layout Itemize
-local criterion (match desired change in output)
+\begin_layout Subsection
+Comparison with standard SGD
 \end_layout
 
-\begin_layout Itemize
-derivation
+\begin_layout Standard
+The updates for standard SGD are 
+\begin_inset Formula $\Delta_{SGD}b=-\frac{\lambda}{n}\sum_{i}\nabla_{a^{(i)}}l$
+\end_inset
+
+ and 
+\begin_inset Formula $\Delta_{SGD}W=-\frac{\lambda}{n}\sum_{i}\left(\nabla_{a^{(i)}}l\right)h^{(i)T}$
+\end_inset
+
+.
 \end_layout
 
-\begin_layout Itemize
-performance
+\begin_layout Standard
+The 
+\series bold
+update for 
+\begin_inset Formula $b$
+\end_inset
+
+
+\series default
+ gets a new term 
+\begin_inset Formula $-\frac{1}{n}\Delta W\sum_{i}h^{(i)}$
+\end_inset
+
+ that permits taking into account the update of 
+\begin_inset Formula $W$
+\end_inset
+
+.
+ In practice, we found that it did not change much as 
+\begin_inset Formula $\Delta W$
+\end_inset
+
+ is typically at least one order of magnitude smaller than 
+\begin_inset Formula $\frac{\lambda}{n}\sum_{i}\nabla_{a^{(i)}}l$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+update for 
+\begin_inset Formula $W$
+\end_inset
+
+ 
+\series default
+is different in 2 ways.
+ First, it is also scaled using the inverse covariance matrix of the input
+ 
+\begin_inset Formula $C^{-1}$
+\end_inset
+
+.
+ Secondly, it is centered since we substract the expectation of 
+\begin_inset Formula $h$
+\end_inset
+
+.
+ This is related to an old well used trick 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "lecun1998gradient,schraudolph2012centering"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Section
 Rewriting this local criterion as second order
+\end_layout
+
+\begin_layout Standard
+While we found our local update to be very effective in practice it lacked
+ a formal understanding of what was happening behind.
+ A first step 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+l_{C}\left(\Delta W,\Delta b\right) & = & \frac{1}{n}\sum_{i}\left\Vert \Delta Wh^{(i)}+\Delta b+\lambda\nabla_{a^{(i)}}l\right\Vert _{2}^{2}+\epsilon\left\Vert \Delta W\right\Vert _{2}^{2}\\
+ & = & \frac{1}{n}\sum_{i}\left\Vert \Delta Wh^{(i)}+\Delta b+\lambda\nabla_{a^{(i)}}l\right\Vert _{2}^{2}+\epsilon\left\Vert \Delta W\right\Vert _{2}^{2}
+\end{eqnarray*}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Itemize
@@ -3962,86 +4084,6 @@ And the update for
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-These expressions are an original contribution.
-\end_layout
-
-\begin_layout Subsection
-Comparison with standard SGD
-\end_layout
-
-\begin_layout Standard
-The updates for standard SGD are 
-\begin_inset Formula $\Delta_{SGD}b=\frac{1}{n}\sum_{j}\nabla_{a_{j}}l$
-\end_inset
-
- and 
-\begin_inset Formula $\Delta_{SGD}W=\frac{1}{n}\sum_{j}\nabla_{a_{j}}l\left(h_{j}\right)^{T}$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-The 
-\series bold
-update for 
-\begin_inset Formula $b$
-\end_inset
-
-
-\series default
- gets a new term 
-\begin_inset Formula $-\Delta W\frac{1}{n}\sum_{i}h_{i}$
-\end_inset
-
- that permits taking into account the update of 
-\begin_inset Formula $W$
-\end_inset
-
-.
- In practice, we found that it did not change much as 
-\begin_inset Formula $\Delta W$
-\end_inset
-
- is typically at least one order of magnitude smaller than 
-\begin_inset Formula $\frac{1}{n}\sum_{j}\nabla_{a_{j}}l$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-The 
-\series bold
-update for 
-\begin_inset Formula $W$
-\end_inset
-
- 
-\series default
-is different in 2 ways.
- First, it is also scaled using the inverse covariance matrix of the input
- 
-\begin_inset Formula $C^{-1}$
-\end_inset
-
-.
- Secondly, it is centered since we substract the expectation of 
-\begin_inset Formula $h$
-\end_inset
-
-.
- This gives a new theoretical understanding of an old well used trick 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "lecun1998gradient,schraudolph2012centering"
-
-\end_inset
-
-.
 \end_layout
 
 \begin_layout Section
