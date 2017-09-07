@@ -3112,6 +3112,14 @@ Common misconceptions about natural gradient
 \end_layout
 
 \begin_layout Subsection
+Joint vs conditional probability
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\begin_layout Subsection
 Relation with the GN approximation of the Hessian
 \end_layout
 
@@ -3229,6 +3237,779 @@ key "ollivier2013riemannian"
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Chapter
+Experimental setup
+\end_layout
+
+\begin_layout Standard
+In order to be able to assess the performance of the ideas and algorithms
+ in the next chapters, we now present our experimental setup.
+\end_layout
+
+\begin_layout Section
+Biased random search
+\end_layout
+
+\begin_layout Standard
+While comparing optimization techniques on real tasks, we found that it
+ was very difficult to provide a fair benchmark, because a slight change
+ in a hyperparameter value can drastically improve its performance.
+ Indeed, we were often able to improve the benchmarks provided in optimization
+ papers.
+\end_layout
+
+\begin_layout Standard
+While hyperparameter tuning is a full field on its own, we just use a simple
+ technique that refines random search, by allocating more ressource to explore
+ regions in the hyperparameter space that are more likely to give a good
+ performance.
+ We now describe this method that we call biased random search, and 
+\end_layout
+
+\begin_layout Standard
+During the hyperparameter tuning procedure, we create a model of our cost
+ landscape in the space of hyperparameters.
+ As the number of experiments grows, the cost landscape is refined.
+ We use this estimated cost landscape to bias our random search, so that
+ regions of the hyperparameter space that are expected to provide a better
+ result will have higher probability of being explored.
+ In practice, we use a simple 1-nearest neighbor regressor 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "altman1992introduction"
+
+\end_inset
+
+ to model the cost landscape.
+ Using the estimated value of the criteria 
+\begin_inset Formula $c_{estimate}$
+\end_inset
+
+, we decide to keep the sampled value with probability 
+\begin_inset Formula $p$
+\end_inset
+
+, or otherwise we reject the value and sample a new one, and so on until
+ we get a value that is not rejected, which will be our next experiment.
+ We can choose the value of 
+\begin_inset Formula $p$
+\end_inset
+
+ using different heuristics, in practice we use 
+\begin_inset Formula $p=\frac{c_{max}-c_{estimate}}{c_{max}-c_{min}}$
+\end_inset
+
+ (in this notation, the criteria needs to be minimized).
+ This value for 
+\begin_inset Formula $p$
+\end_inset
+
+ will almost surely reject values that are close to the worst experiments,
+ and almost surely accept values that are close to the best experiments.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float algorithm
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{algorithmic}[1]
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+Require{$
+\backslash
+mathcal{M}$ used to model the cost landscape in the space of HP}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+Require{$
+\backslash
+mathcal{D}$ the domain of HP that we will explore}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$
+\backslash
+mathcal{H} 
+\backslash
+leftarrow 
+\backslash
+left[ 
+\backslash
+, 
+\backslash
+right]$}
+\backslash
+Comment{History of explored HP values and corresponding result}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+While{not converged}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$
+\backslash
+text{rejected}
+\backslash
+leftarrow
+\backslash
+text{true}$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+While{$
+\backslash
+text{rejected}$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$a
+\backslash
+sim U
+\backslash
+left(
+\backslash
+mathcal{D}
+\backslash
+right)$}
+\backslash
+Comment{Sample values for HP}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$c_{estimate} 
+\backslash
+leftarrow 
+\backslash
+mathcal{M} 
+\backslash
+left( 
+\backslash
+mathcal{H}, a 
+\backslash
+right) $}
+\backslash
+Comment{Estimate $c$ for HP $a$ using history $
+\backslash
+mathcal{H}$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$p
+\backslash
+leftarrow
+\backslash
+frac{c_{max}-c_{estimate}}{c_{max}-c_{min}}$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$x
+\backslash
+sim U
+\backslash
+left( 
+\backslash
+left[ 0, 1
+\backslash
+right] 
+\backslash
+right)$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+If{$x < p$} 
+\backslash
+State {$
+\backslash
+text{rejected}
+\backslash
+leftarrow
+\backslash
+text{false}$}
+\backslash
+EndIf
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+EndWhile
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$result 
+\backslash
+leftarrow run
+\backslash
+left( a 
+\backslash
+right)$}
+\backslash
+Comment{Run experiment with HP values $a$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$
+\backslash
+mathcal{H} 
+\backslash
+leftarrow  
+\backslash
+mathcal{H} + 
+\backslash
+left( a, result 
+\backslash
+right)$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+EndWhile
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{algorithmic}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Biased random search
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+To assess the performance of biased random search we ran 100 searches of
+ 100 experiments on a simple task where we tuned 2 hyperparameters.
+ We observe that it consistently find comparable or better results than
+ standard random search (lower is better):
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="3">
+<features tabularvalignment="middle">
+<column alignment="right" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="right" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+HP tuning procedure
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Average
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Standard deviation
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Grid search
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+27.23
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.42
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Random search
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+27.02
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.28
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Biased random search
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+26.61
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+0.13
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename figures/hp_search.pdf
+	width 100text%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Comparison of hyperparameter tuning methods.
+ On the left a grid search, in the middle a random search and on the right
+ a biased random search.
+ Each experiment consisted in 100 iterations of SGD from a randomly initialized
+ network.
+ We tune 2 hyperparameters on the x and y axis (what they represent is not
+ relevant here).
+ The color scale represents the final loss attained after a fixed number
+ of iterations.
+ The best experiments are in blue, the worst experiments in yellow.
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "hptune-comparison"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\begin_layout Section
+A standard benchmark: Autoencoding written digits
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:autoencoder-benchmark"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We now describe the main benchmark that we will be using in the rest of
+ this document.
+ The dataset MNIST 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "lecun2010mnist"
+
+\end_inset
+
+ is composed of 60.000 
+\begin_inset Formula $28\times28$
+\end_inset
+
+ grayscale images of handwritten digits, and the corresponding value of
+ the digit that is represented in the image.
+ For this benchmark, we use an autoencoder 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Autoencoders"
+
+\end_inset
+
+ with layer sizes 
+\begin_inset Formula $\left\{ 784,1000,500,250,30,250,500,1000,784\right\} $
+\end_inset
+
+.
+ The autoencoder encodes the input image into a vector of size 
+\begin_inset Formula $30$
+\end_inset
+
+, and then decodes it to reconstruct the original image.
+ We use the quadratic error 
+\begin_inset Formula $l\left(f\left(x\right),y\right)=\left\Vert f\left(x\right)-y\right\Vert _{2}^{2}$
+\end_inset
+
+.
+ The benchmark consists in minimizing the empirical risk over the train
+ set after a fixed time on the same architecture.
+\end_layout
+
+\begin_layout Standard
+This benchmark has a long history in the neural network optimization litterature
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "hinton2006reducing,martens2010deep,martens2015optimizing,desjardins2015natural"
+
+\end_inset
+
+.
+ To assess the performance of an algorithm, we can use 2 metrics: the empirical
+ risk after a given number of iterations of the algorithm, and the empirical
+ risk after a fixed elapsed time for a given computer.
+ In real world tasks, the latter is more useful.
+ It gives a better understanding of the trade-off between a more complex
+ update that takes longer to compute and gives a better improvement, and
+ a fast update that gives a small improvement, but that can be iterated
+ several times in the meantime.
+\end_layout
+
+\begin_layout Standard
+The limits of the benchmark are many.
+ In particular the fact that the state of the art papers in computer vision
+ do not use MLPs and sigmoid activations but rather variants of mixed convolutio
+nal networks and residual connections, and variants of ReLU activations.
+ Another limit is in the use of the quadratic loss.
+ Nonetheless, we still use this benchmark as it is used by several other
+ papers which allows for a fair comparison, and because it is reasonably
+ deep (8 layers) and wide (the biggest weight matrix has size 
+\begin_inset Formula $1000\times784$
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Section
+A classification task on an image dataset
+\end_layout
+
+\begin_layout Standard
+The second benchmark that we use is a multilayer perceptron with rectifier
+ activation functions, trained to recognize images amongst 10 classes on
+ the CIFAR-10 dataset 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "torralba200880"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Chapter
+Evolution of the backpropagated gradient while updating the parameters
+\end_layout
+
+\begin_layout Standard
+In this section, we present a prototypical technique to account for the
+ interactions between parameters of different layers while computing updates.
+ While we could not come up with an efficient algorithm to implement this
+ technique, early results show that it could be useful in deep networks.
+\end_layout
+
+\begin_layout Section
+How is the gradient modified when changing the value of a parameter
+\end_layout
+
+\begin_layout Standard
+In usual gradient descent, we compute the gradient of the empirical risk
+ with respect to all parameters, then we update all parameters at once.
+ But since we are using backpropagation, then the process of getting the
+ partial derivatives is sequential, that is, we get the derivatives of the
+ top layers first, and afterwards we get the derivatives of the bottom layers.
+ Now suppose that we apply the update for the parameters of the top layers
+ before backpropagating through it.
+ The idea here is to estimate the new backpropagated signal.
+ This can also be interpreted as doing gradient descent separately for each
+ layer, but instead of recomputing the full forward and backward propagation
+ to the target layer, we just do a single updated backpropagation.
+\end_layout
+
+\begin_layout Standard
+To illustrate the idea, we focus on the transformation computed by a single
+ layer:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+h_{l+1} & = & f\left(a_{l}\right)\\
+a_{l} & = & Wh_{l}+b
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Using backpropagation through this layer we get the partial derivative:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray}
+\frac{\partial l}{\partial h_{l}} & = & \frac{\partial l}{\partial f}\frac{\partial f}{\partial a_{l}}\frac{\partial a_{l}}{\partial h_{l}}\nonumber \\
+ & = & \frac{\partial l}{\partial f}\frac{\partial f}{\partial a_{l}}W\label{eq:dldhl}
+\end{eqnarray}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This partial derivative is thus a function of 
+\begin_inset Formula $W$
+\end_inset
+
+ in an explicit way.
+ It is also a function of 
+\begin_inset Formula $W$
+\end_inset
+
+ and 
+\begin_inset Formula $b$
+\end_inset
+
+ through the other terms 
+\begin_inset Formula $\frac{\partial l}{\partial f}$
+\end_inset
+
+ and 
+\begin_inset Formula $\frac{\partial f}{\partial a_{l}}$
+\end_inset
+
+.
+ Can we get an update expression for 
+\begin_inset Formula $\frac{\partial l}{\partial h_{l}}\left(W+\Delta W,b+\Delta b\right)$
+\end_inset
+
+?
+\end_layout
+
+\begin_layout Section
+A first order update of a first order derivative
+\end_layout
+
+\begin_layout Standard
+A simple first order expansion gives a way of getting such an update:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial l}{\partial h_{l}}\left(W+\Delta W,b+\Delta b\right)\approx & \frac{\partial l}{\partial h_{l}}\left(W,b\right)+\frac{\partial}{\partial\text{vec}\left(W\right)}\left\{ \frac{\partial l}{\partial h_{l}}\left(W,b\right)\right\} \text{vec}\left(\Delta W\right)\\
+ & +\frac{\partial}{\partial b}\left\{ \frac{\partial l}{\partial h_{l}}\left(W,b\right)\right\} \Delta b
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We used the vec operator in order to have a matrix expression for the second
+ derivative with respect to 
+\begin_inset Formula $W$
+\end_inset
+
+.
+ Using the expression 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:dldhl"
+
+\end_inset
+
+ for 
+\begin_inset Formula $\frac{\partial l}{\partial h_{l}}$
+\end_inset
+
+ we see that it requires deriving 3 terms.
+ Indeed the second derivative of the jacobian of the input of the network,
+ with respect to the preactivation 
+\begin_inset Formula $\frac{\partial f}{\partial a_{l}}$
+\end_inset
+
+ is too costly to be used in a real problem.
+ We choose not to use it.
+ The remaining 2 derivatives give an update:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\frac{\partial l}{\partial h_{l}}\left(W+\Delta W,b+\Delta b\right) & \approx & \left(\frac{\partial l}{\partial f}D\right)^{T}\Delta W+W^{T}D^{T}\frac{\partial^{2}l}{\partial f^{2}}D\left(\Delta Wh+\Delta b\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In the process, we just did 2 approximations: the first one in using a first
+ order expansion, the second one in not using the true second derivatives,
+ but instead just a part of them.
+\end_layout
+
+\begin_layout Section
+Experiments
 \end_layout
 
 \begin_layout Chapter
@@ -4916,595 +5697,11 @@ h_{e}^{T} & 1
 The FIM for the reparametrization thus has a better form.
 \end_layout
 
-\begin_layout Chapter
+\begin_layout Section
 Experiments
 \end_layout
 
-\begin_layout Section
-Biased random search
-\end_layout
-
-\begin_layout Standard
-While comparing optimization techniques on real tasks, we found that it
- was very difficult to provide a fair benchmark, because a slight change
- in a hyperparameter value can drastically improve its performance.
- Indeed, we were often able to improve the benchmarks provided in optimization
- papers.
-\end_layout
-
-\begin_layout Standard
-While hyperparameter tuning is a full field on its own, we just use a simple
- technique that refines random search, by allocating more ressource to explore
- regions in the hyperparameter space that are more likely to give a good
- performance.
- We now describe this method that we call biased random search, and 
-\end_layout
-
-\begin_layout Standard
-During the hyperparameter tuning procedure, we create a model of our cost
- landscape in the space of hyperparameters.
- As the number of experiments grows, the cost landscape is refined.
- We use this estimated cost landscape to bias our random search, so that
- regions of the hyperparameter space that are expected to provide a better
- result will have higher probability of being explored.
- In practice, we use a simple 1-nearest neighbor regressor 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "altman1992introduction"
-
-\end_inset
-
- to model the cost landscape.
- Using the estimated value of the criteria 
-\begin_inset Formula $c_{estimate}$
-\end_inset
-
-, we decide to keep the sampled value with probability 
-\begin_inset Formula $p$
-\end_inset
-
-, or otherwise we reject the value and sample a new one, and so on until
- we get a value that is not rejected, which will be our next experiment.
- We can choose the value of 
-\begin_inset Formula $p$
-\end_inset
-
- using different heuristics, in practice we use 
-\begin_inset Formula $p=\frac{c_{max}-c_{estimate}}{c_{max}-c_{min}}$
-\end_inset
-
- (in this notation, the criteria needs to be minimized).
- This value for 
-\begin_inset Formula $p$
-\end_inset
-
- will almost surely reject values that are close to the worst experiments,
- and almost surely accept values that are close to the best experiments.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float algorithm
-placement h
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{algorithmic}[1]
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-Require{$
-\backslash
-mathcal{M}$ used to model the cost landscape in the space of HP}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-Require{$
-\backslash
-mathcal{D}$ the domain of HP that we will explore}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-State{$
-\backslash
-mathcal{H} 
-\backslash
-leftarrow 
-\backslash
-left[ 
-\backslash
-, 
-\backslash
-right]$}
-\backslash
-Comment{History of explored HP values and corresponding result}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-While{not converged}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-State{$
-\backslash
-text{rejected}
-\backslash
-leftarrow
-\backslash
-text{true}$}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-While{$
-\backslash
-text{rejected}$}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-State{$a
-\backslash
-sim U
-\backslash
-left(
-\backslash
-mathcal{D}
-\backslash
-right)$}
-\backslash
-Comment{Sample values for HP}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-State{$c_{estimate} 
-\backslash
-leftarrow 
-\backslash
-mathcal{M} 
-\backslash
-left( 
-\backslash
-mathcal{H}, a 
-\backslash
-right) $}
-\backslash
-Comment{Estimate $c$ for HP $a$ using history $
-\backslash
-mathcal{H}$}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-State{$p
-\backslash
-leftarrow
-\backslash
-frac{c_{max}-c_{estimate}}{c_{max}-c_{min}}$}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-State{$x
-\backslash
-sim U
-\backslash
-left( 
-\backslash
-left[ 0, 1
-\backslash
-right] 
-\backslash
-right)$}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-If{$x < p$} 
-\backslash
-State {$
-\backslash
-text{rejected}
-\backslash
-leftarrow
-\backslash
-text{false}$}
-\backslash
-EndIf
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-EndWhile
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-State{$result 
-\backslash
-leftarrow run
-\backslash
-left( a 
-\backslash
-right)$}
-\backslash
-Comment{Run experiment with HP values $a$}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-State{$
-\backslash
-mathcal{H} 
-\backslash
-leftarrow  
-\backslash
-mathcal{H} + 
-\backslash
-left( a, result 
-\backslash
-right)$}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-EndWhile
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{algorithmic}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Biased random search
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-To assess the performance of biased random search we ran 100 searches of
- 100 experiments on a simple task where we tuned 2 hyperparameters.
- We observe that it consistently find comparable or better results than
- standard random search (lower is better):
-\end_layout
-
-\begin_layout Standard
-\align center
-\begin_inset Tabular
-<lyxtabular version="3" rows="4" columns="3">
-<features tabularvalignment="middle">
-<column alignment="right" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<row>
-<cell alignment="right" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-HP tuning procedure
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Average
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Standard deviation
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="right" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Grid search
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-27.23
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0.42
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="right" valignment="top" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Random search
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-27.02
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0.28
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="right" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Biased random search
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" bottomline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-26.61
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-0.13
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename figures/hp_search.pdf
-	width 100text%
-
-\end_inset
-
-
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Comparison of hyperparameter tuning methods.
- On the left a grid search, in the middle a random search and on the right
- a biased random search.
- Each experiment consisted in 100 iterations of SGD from a randomly initialized
- network.
- We tune 2 hyperparameters on the x and y axis (what they represent is not
- relevant here).
- The color scale represents the final loss attained after a fixed number
- of iterations.
- The best experiments are in blue, the worst experiments in yellow.
-\end_layout
-
-\end_inset
-
-
-\begin_inset CommandInset label
-LatexCommand label
-name "hptune-comparison"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-
-\end_layout
-
-\begin_layout Section
-A standard benchmark: Autoencoding written digits
-\begin_inset CommandInset label
-LatexCommand label
-name "sec:autoencoder-benchmark"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-We now describe the main benchmark that we will be using in the rest of
- this document.
- The dataset MNIST 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "lecun2010mnist"
-
-\end_inset
-
- is composed of 60.000 
-\begin_inset Formula $28\times28$
-\end_inset
-
- grayscale images of handwritten digits, and the corresponding value of
- the digit that is represented in the image.
- For this benchmark, we use an autoencoder 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:Autoencoders"
-
-\end_inset
-
- with layer sizes 
-\begin_inset Formula $\left\{ 784,1000,500,250,30,250,500,1000,784\right\} $
-\end_inset
-
-.
- The autoencoder encodes the input image into a vector of size 
-\begin_inset Formula $30$
-\end_inset
-
-, and then decodes it to reconstruct the original image.
- We use the quadratic error 
-\begin_inset Formula $l\left(f\left(x\right),y\right)=\left\Vert f\left(x\right)-y\right\Vert _{2}^{2}$
-\end_inset
-
-.
- The benchmark consists in minimizing the empirical risk over the train
- set after a fixed time on the same architecture.
-\end_layout
-
-\begin_layout Standard
-This benchmark has a long history in the neural network optimization litterature
- 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "hinton2006reducing,martens2010deep,martens2015optimizing,desjardins2015natural"
-
-\end_inset
-
-.
- To assess the performance of an algorithm, we can use 2 metrics: the empirical
- risk after a given number of iterations of the algorithm, and the empirical
- risk after a fixed elapsed time for a given computer.
- In real world tasks, the latter is more useful.
- It gives a better understanding of the trade-off between a more complex
- update that takes longer to compute and gives a better improvement, and
- a fast update that gives a small improvement, but that can be iterated
- several times in the meantime.
-\end_layout
-
-\begin_layout Standard
-The limits of the benchmark are many.
- In particular the fact that the state of the art papers in computer vision
- do not use MLPs and sigmoid activations but rather variants of mixed convolutio
-nal networks and residual connections, and variants of ReLU activations.
- Another limit is in the use of the quadratic loss.
- Nonetheless, we still use this benchmark as it is used by several other
- papers which allows for a fair comparison, and because it is reasonably
- deep (8 layers) and wide (the biggest weight matrix has size 
-\begin_inset Formula $1000\times784$
-\end_inset
-
-).
-\end_layout
-
-\begin_layout Section
+\begin_layout Subsection
 Centering tricks
 \end_layout
 
@@ -5583,7 +5780,7 @@ Comparison of centering methods
 
 \end_layout
 
-\begin_layout Section
+\begin_layout Subsection
 Comparison of 2nd order approximate methods
 \end_layout
 

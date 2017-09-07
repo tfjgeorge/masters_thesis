@@ -77,28 +77,54 @@ This thesis presents my work during my master at MILA under the supervision
 
 \begin_layout Standard
 This work is mostly focused on optimization in artificial neural networks.
- My main contributions are a deeper understanding of the very particular
- structure of the Fisher Information matrix and the Hessian matrix when
- used in the setting of neural networks.
+ My contributions are a deeper understanding of the many techniques involving
+ second order applied to neural networks, the derivation of new expressions
+ tuned for the particular structure of neural networks, and their use in
+ the definition of a new algorithm that competes with current state of the
+ art on a standard benchmark.
+ In addition to this, I present a new optimization method that slightly
+ modifies the usual backpropagation algorithm for computing derivatives.
 \end_layout
 
 \begin_layout Standard
-The first part sets up the basic framework of machine learning and introduces
- neural networks.
+This document is organized as follows:
 \end_layout
 
-\begin_layout Standard
-In the second part, we introduce the usual methods of optimization that
- have enabled the recent successes in machine learning and in particular
- vision from 2012.
+\begin_layout Itemize
+the first chapter sets up the basic framework of machine learning and introduces
+ neural networks ;
 \end_layout
 
-\begin_layout Standard
-The third part showcases the results of my research.
- It is mostly a dive in into the mathematical expressions behind second
- order methods, the definition of algorithms that make use of some approximation
-s of these expressions, and the implementation and benchmarking of these
- algorithms.
+\begin_layout Itemize
+in chapter 2 we introduce the usual methods of optimization that have enabled
+ the recent successes in deep learning ;
+\end_layout
+
+\begin_layout Itemize
+in chapter 3 we review 2 second order methods called 
+\shape italic
+Gauss Newton
+\shape default
+ and 
+\shape italic
+natural gradient
+\shape default
+, and we show how they relate and how they differ ;
+\end_layout
+
+\begin_layout Itemize
+in chapter 4 we describe the experimental setup that we use next to assess
+ the performance of our algorithms ;
+\end_layout
+
+\begin_layout Itemize
+in chapter 5 we introduce a new technique that modifies backpropagation
+ ;
+\end_layout
+
+\begin_layout Itemize
+the last chapter presents a factorization that we can use to approximate
+ second order methods, and a new algorithm that exploits this factorization.
 \end_layout
 
 \end_body
