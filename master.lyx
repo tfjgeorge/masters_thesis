@@ -3847,7 +3847,24 @@ key "torralba200880"
 \end_inset
 
 .
- 
+ It is composed of 60.000 
+\begin_inset Formula $32\times32$
+\end_inset
+
+ color images, meaning that each image is composed of 
+\begin_inset Formula $32*32*3=3072$
+\end_inset
+
+ pixels.
+ The network has 8 hidden layers of size 100 making it reasonably deep but
+ still fast to train in order to experiment with many algorithms.
+ We train it using multiclass cross entropy.
+\end_layout
+
+\begin_layout Standard
+This architecture is far from producing state of the art for this task.
+ In particular, it starts overfitting for a very small number of updates.
+ Instead, we focus on the train performance.
 \end_layout
 
 \begin_layout Chapter
@@ -3855,8 +3872,8 @@ Evolution of the backpropagated gradient while updating the parameters
 \end_layout
 
 \begin_layout Standard
-In this section, we present a prototypical technique to account for the
- interactions between parameters of different layers while computing updates.
+In this section, we present a prototype technique to account for the interaction
+s between parameters of different layers while computing updates.
  While we could not come up with an efficient algorithm to implement this
  technique, early results show that it could be useful in deep networks.
 \end_layout
@@ -3994,7 +4011,7 @@ reference "eq:dldhl"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\frac{\partial l}{\partial h_{l}}\left(W+\Delta W,b+\Delta b\right) & \approx & \left(\frac{\partial l}{\partial f}D\right)^{T}\Delta W+W^{T}D^{T}\frac{\partial^{2}l}{\partial f^{2}}D\left(\Delta Wh+\Delta b\right)
+\frac{\partial l}{\partial h_{l}}\left(W+\Delta W,b+\Delta b\right) & \approx & \left(\frac{\partial l}{\partial f}\frac{\partial f}{\partial a_{l}}\right)^{T}\Delta W+W^{T}\left(\frac{\partial f}{\partial a_{l}}\right)^{T}\frac{\partial^{2}l}{\partial f^{2}}\frac{\partial f}{\partial a_{l}}\left(\Delta Wh+\Delta b\right)
 \end{eqnarray*}
 
 \end_inset
@@ -4006,6 +4023,228 @@ reference "eq:dldhl"
 In the process, we just did 2 approximations: the first one in using a first
  order expansion, the second one in not using the true second derivatives,
  but instead just a part of them.
+ We propose to replace the backpropagation step by backpropagating this
+ updated derivative.
+ We call this technique updated backpropagation, and we describe a simple
+ algorithm that implements it.
+ Note that it requires backpropagating a jacobian of the output of the network,
+ in addition to the usual gradient of the loss.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float algorithm
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{algorithmic}[1]
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+Require{$
+\backslash
+mathcal{D}$ a minibatch of $n$ examples}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+Require{$
+\backslash
+lambda$ learning rate}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$dh_i 
+\backslash
+leftarrow 
+\backslash
+frac{
+\backslash
+partial l}{
+\backslash
+partial f_i}$}
+\backslash
+Comment{Derivative of the loss w.r.t the output of the NN for each examples
+ $i$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$J_i 
+\backslash
+leftarrow 
+\backslash
+sqrt{
+\backslash
+frac{
+\backslash
+partial^{2}l}{
+\backslash
+partial f^{2}}}$}
+\backslash
+Comment{Jacobian of the output of the NN for each examples $i$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+ForAll{$l 
+\backslash
+in $ layers from top to bottom}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$da_i 
+\backslash
+leftarrow dh_i 
+\backslash
+frac{
+\backslash
+partial f_l^{(i)}}{
+\backslash
+partial a_l^{(i)}}$}
+\backslash
+Comment{Derivative of the loss w.r.t the preactivation for all examples $i$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$J_i 
+\backslash
+leftarrow J_i 
+\backslash
+frac{
+\backslash
+partial f_l^{(i)}}{
+\backslash
+partial a_l^{(i)}}$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$b
+\backslash
+leftarrow b - 
+\backslash
+lambda 
+\backslash
+sum_i 
+\backslash
+left( da_i 
+\backslash
+right)^T$}
+\backslash
+Comment{update of the bias}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$W
+\backslash
+leftarrow W - 
+\backslash
+lambda 
+\backslash
+sum_i da_i h_l^{(i)}$}
+\backslash
+Comment{update of the weights}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$dh_i 
+\backslash
+leftarrow da_i 
+\backslash
+left(W + 
+\backslash
+Delta W 
+\backslash
+right) + W^{T}J^T J 
+\backslash
+left(
+\backslash
+Delta Wh_l^{(i)}+
+\backslash
+Delta b
+\backslash
+right)$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$J_i 
+\backslash
+leftarrow J_i W$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+EndFor
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{algorithmic}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Updated backpropagation
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
