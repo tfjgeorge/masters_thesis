@@ -3108,7 +3108,7 @@ A second common approximation we make in practice is to use the empirical
 \end_layout
 
 \begin_layout Section
-Common misconceptions about natural gradient
+More elaborations on this second order methods
 \end_layout
 
 \begin_layout Subsection
@@ -3237,6 +3237,9 @@ key "ollivier2013riemannian"
 \end_inset
 
 .
+ In the best of our knowledge this result as not been published before,
+ which is very suprising as it gives a very cheap way of computing the GN
+ matrix.
 \end_layout
 
 \begin_layout Chapter
@@ -3265,7 +3268,8 @@ While hyperparameter tuning is a full field on its own, we just use a simple
  technique that refines random search, by allocating more ressource to explore
  regions in the hyperparameter space that are more likely to give a good
  performance.
- We now describe this method that we call biased random search, and 
+ We now describe this method that we call biased random search, and we validate
+ its performance using a simple experiment.
 \end_layout
 
 \begin_layout Standard
@@ -4249,6 +4253,10 @@ Updated backpropagation
 
 \begin_layout Section
 Experiments
+\end_layout
+
+\begin_layout Section
+Limits of this methods
 \end_layout
 
 \begin_layout Chapter
@@ -6069,299 +6077,6 @@ Comparison of second order methods
 
 \end_layout
 
-\begin_layout Standard
-\begin_inset Branch hidden
-status open
-
-\begin_layout Section
-Direct gradient update
-\end_layout
-
-\begin_layout Standard
-In this section, we present a new technique that makes use of updated gradient
- directions to account for interactions between layers.
-\end_layout
-
-\begin_layout Standard
-A major inconvenient of first order methods is that they update every individual
- parameter without taking into account for other parameter updates.
- As an illustration, take a neural network composed of only 2 layers 
-\begin_inset Formula $f\left(x\right)=f_{2}\left(W_{2}f_{1}\left(W_{1}x+b_{1}\right)+b_{2}\right)$
-\end_inset
-
- and a loss function 
-\begin_inset Formula $l\left(f\left(x\right),y\right)$
-\end_inset
-
-.
- Suppose that we have computed all gradients with respect to each parameters
- 
-\begin_inset Formula $\frac{\partial l}{\partial W_{1}}$
-\end_inset
-
-, 
-\begin_inset Formula $\frac{\partial l}{\partial b_{1}}$
-\end_inset
-
-, 
-\begin_inset Formula $\frac{\partial l}{\partial W_{2}}$
-\end_inset
-
- and 
-\begin_inset Formula $\frac{\partial l}{\partial b_{2}}$
-\end_inset
-
-.
- If we were using standard gradient descent, we would update the value of
- the parameters, all at once to obtain a better prediction function.
- Now suppose that we only update the parameters of layer 2, using the standard
- update rule 
-\begin_inset Formula $W_{2}\leftarrow W_{2}-\lambda\frac{\partial l}{\partial W_{2}}$
-\end_inset
-
- and 
-\begin_inset Formula $b_{2}\leftarrow b_{2}-\lambda\frac{\partial l}{\partial b_{2}}$
-\end_inset
-
-.
- From this point, we have a different function 
-\begin_inset Formula $f\left(x\right)$
-\end_inset
-
-.
- We could either update the parameters of layer 1 using the gradient already
- computed, or find the new values for the gradients for layer 1 using the
- updated 
-\begin_inset Formula $f$
-\end_inset
-
-.
- We will do the latter, by using the property that the gradient for the
- parameters of layer 1 is a function of the parameters of layer 2, which
- can be written:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-\frac{\partial l}{\partial W_{1}}\left(W_{2},b_{2}\right) & \text{ and } & \frac{\partial l}{\partial b_{1}}\left(W_{2},b_{2}\right)
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-In particular, using a first order Taylor decomposition:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-\frac{\partial l}{\partial a_{1}}\left(W_{2}+\Delta W_{2},b_{2}+\Delta b_{2}\right) & = & \frac{\partial l}{\partial a_{1}}\left(W_{2},b_{2}\right)
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Branch hidden
-status open
-
-\begin_layout Section
-Links with well-used methods
-\end_layout
-
-\begin_layout Subsection
-RMSProp
-\begin_inset CommandInset label
-LatexCommand label
-name "subsec:RMSProp"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-WIP: RMSProp is very close to diagonal GN for cross entropies.
-\end_layout
-
-\begin_layout Subsection
-Batch normalization
-\end_layout
-
-\begin_layout Standard
-Batch normalization 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "ioffe2015batch,ioffe2017batch"
-
-\end_inset
-
- is a very popular way to make the learning procedure more stable in neural
- networks.
- It consists in a simple reparametrization that effectively normalize the
- activations using statistics (mean, variance) computed from a batch of
- examples, defined as follows:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-\text{BN}\left(x\right) & = & \frac{x-\mu}{\sqrt{\sigma^{2}+\epsilon}}
-\end{eqnarray*}
-
-\end_inset
-
-with 
-\begin_inset Formula $\mu=\mathbb{E}\left[x\right]$
-\end_inset
-
- and 
-\begin_inset Formula $\sigma^{2}=\mathbb{E}\left[\left(x-\mu\right)^{2}\right]$
-\end_inset
-
- the empirical mean and variance computed over a minibatch in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "ioffe2015batch"
-
-\end_inset
-
- or using a running average in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "ioffe2017batch"
-
-\end_inset
-
-.
- A 
-\begin_inset Quotes eld
-\end_inset
-
-batch-normalized
-\begin_inset Quotes erd
-\end_inset
-
- layer is defined by:
-\begin_inset Formula 
-\[
-h_{n}(x)=f_{n}\left(\gamma_{n}\odot\text{BN}\left(W_{n}h_{n-1}\right)+\beta_{n}\right)
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-After reparametrization, we train the parameters 
-\begin_inset Formula $W$
-\end_inset
-
-, 
-\begin_inset Formula $\gamma$
-\end_inset
-
- and 
-\begin_inset Formula $\beta$
-\end_inset
-
- using a gradient based method such as stochastic gradient descent.
- The new gradient 
-\begin_inset Quotes eld
-\end_inset
-
-goes through
-\begin_inset Quotes erd
-\end_inset
-
- the BN operation (mean and square root of the variance) so both the forward
- pass and the backward pass are modified.
- We usually initialize the values of 
-\begin_inset Formula $\gamma$
-\end_inset
-
- to be a vector of 
-\begin_inset Formula $1$
-\end_inset
-
- and for 
-\begin_inset Formula $\beta$
-\end_inset
-
- a vector of 
-\begin_inset Formula $0$
-\end_inset
-
-.
- 
-\end_layout
-
-\begin_layout Standard
-A first effect of this reparametrization, as pointed by the paper, is that
- it reduces the 
-\shape italic
-covariate shift
-\shape default
- of each unit.
- If we consider a single unit, we can observe an empirical distribution
- of its activation over a dataset.
- We have seen in 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "initialization-of-weights"
-
-\end_inset
-
- that carefully tuning the initial weights and biases so that each unit
- has a desired distribution can improve drastically the efficiency or the
- learning procedure.
- This initial distribution changes throughout the learning, and this is
- what is called the 
-\shape italic
-covariate shift
-\shape default
-.
- Batch normalization forces the distribution of activations to have zero
- mean and unit variance.
-\end_layout
-
-\begin_layout Standard
-For some experiments, 
-\shape italic
-mean-only 
-\shape default
-batch normalization can also be used to improve the learning procedure.
- We will cover this question in more details in 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "centering-trick"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-WIP
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
 \begin_layout Chapter*
 Conclusions
 \end_layout
@@ -6374,13 +6089,66 @@ During this work, we derived new expressions for the well known GN matrix
  a block diagonal approximation.
  By separating the bias and the weight matrices we introduced a new mathematical
  explanation for the well-known centering trick.
+ Using this new expressions we derived a new algorithm ACP that loosely
+ resembles 2 state of the art methods inspired by natural gradient.
+ We benchmarked our new algorithm against these methods and showed that
+ they all perform similarly.
 \end_layout
 
 \begin_layout Standard
-Using this new expressions we derived a new algorithm ACP that loosely resembles
- 2 state of the art methods inspired by natural gradient.
- We benchmarked our new algorithm against these methods and showed that
- they all perform similarly.
+We also introduced a tentative modification of backpropagation in order
+ to obtain better derivatives.
+ This algorithm showed promising result since it provided better updates
+ than vanilla gradient descent.
+ However it remains some limits to applying this technique in a real setup
+ as it is still too computationnally expensive.
+\end_layout
+
+\begin_layout Standard
+A natural follow-up to this work is to extend it to other architectures
+ such as recurrent neural networks as formally initiated in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ollivier2015riemannian"
+
+\end_inset
+
+ or convolutional networks such as in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "grosse2016kronecker"
+
+\end_inset
+
+.
+ Networks with very small outputs can also be good candidates as computing
+ the jacobians thus the FIM is linear in the number of outputs.
+ Amongst them is the very popular family of GAN networks where the output
+ is a single unit, and where the natural gradient could be used as a way
+ to stabilize the training by balancing the rate of change of the output
+ from each part (generator and discriminator).
+\end_layout
+
+\begin_layout Standard
+Another direction of pursuing this research is to look for better approximations
+ of the layer FIM/GN than the one of splitting into 2 expectations.
+ Indeed, by better we do not mean an approximation that is closer in norm
+ to the real FIM, but instead to an approximation that will give updates
+ that are more efficient.
+ Amortization can also be improved, by monitoring how our inverse statistics
+ stay close to the true statistics, and just performing updates of these
+ preconditioner when it is necessary, allowing for less updates (and less
+ matrix inversions) for layers where the statistics do not change much.
+\end_layout
+
+\begin_layout Standard
+As a last word, let us just state that second order methods have proven
+ very powerful in a wide variety of optimization problems, but suffer from
+ their computation complexity and the difficulty to use them in a setup
+ with a lot of variables to optimize.
+ We hope that by pursuing this effort of clarifying things and finding approxima
+te methods that are computationnally cheaper, we will carry on contributing
+ to more efficient neural network training.
 \end_layout
 
 \begin_layout Standard
