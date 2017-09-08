@@ -3110,10 +3110,6 @@ A second common approximation we make in practice is to use the empirical
 More elaborations on this second order methods
 \end_layout
 
-\begin_layout Subsection
-Joint vs conditional probability
-\end_layout
-
 \begin_layout Standard
 
 \end_layout
@@ -3133,18 +3129,6 @@ We have just shown that the Gauss-Newton of the empirical risk with respect
 n.
  In the case of the GN matrix it depends on the true target except for the
  quadratic error.
-\end_layout
-
-\begin_layout Standard
-Note that this share of structure was acknowledged in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "pascanu2013revisiting"
-
-\end_inset
-
- but for unsupervised learning, in which case the FIM and the GN are strictly
- equal.
 \end_layout
 
 \begin_layout Subsection
@@ -4030,13 +4014,13 @@ reference "eq:dldhl"
 \end_layout
 
 \begin_layout Standard
-In the process, we just did 2 approximations: the first one in using a first
+In the process, we did 2 approximations: the first one in using a first
  order expansion, the second one in not using the true second derivatives,
  but instead just a part of them.
  We propose to replace the backpropagation step by backpropagating this
  updated derivative.
- We call this technique updated backpropagation, and we describe a simple
- algorithm that implements it.
+ We call this technique updated backpropagation (UBP), and we describe a
+ simple algorithm that implements it.
  Note that it requires backpropagating a jacobian of the output of the network,
  in addition to the usual gradient of the loss.
 \end_layout
@@ -4261,8 +4245,102 @@ Updated backpropagation
 Experiments
 \end_layout
 
+\begin_layout Standard
+We use the autoencoder benchmark to compare the performance of UBP with
+ stochastic gradient descent.
+ Our results are plotted in figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ubp-fig"
+
+\end_inset
+
+.
+ In terms of updates, we observe that this method outperforms significantly
+ compared to SGD (note that this is a logarithmic scale).
+ However it takes 10 times longer to obtain an update using UBP making it
+ unpractical on this task.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename figures/uab.pdf
+	width 70text%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Training error for standard backpropagation (in blue) and updated backpropagatio
+n (in orange)
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "ubp-fig"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
-Limits of this methods
+Limits of this method
+\end_layout
+
+\begin_layout Standard
+A first obvious limit is that it is very costly to compute the jacobians,
+ and also to store them in memory.
+\end_layout
+
+\begin_layout Standard
+A second limit which can also be very problematic is that similarly to the
+ exploding gradient issue in deep or recurrent networks, we observe that
+ this update can cause the backpropagated gradients to explode.
+ Indeed, the problem reside in the fact that we will multiply by the square
+ matrix 
+\begin_inset Formula $\left(\frac{\partial f}{\partial a_{l}}\right)^{T}\frac{\partial^{2}l}{\partial f^{2}}\frac{\partial f}{\partial a_{l}}$
+\end_inset
+
+ at each layer.
+ This matrix is a measure of how much will the preactivation of the current
+ layer change when we update its value by 
+\begin_inset Formula $\left(\Delta Wh+\Delta b\right)$
+\end_inset
+
+.
+ But by use the chain rule, we can see that we will once again multiply
+ by this matrix when we compute the update of the next layer (which is below
+ as backpropagation computes the derivatives backward from the top layer
+ to the bottom layer).
+ In the next layer, this matrix will have the expressoin 
+\begin_inset Formula $\left(\frac{\partial f}{\partial a_{l-1}}\right)^{T}\frac{\partial^{2}l}{\partial f^{2}}\frac{\partial f}{\partial a_{l-1}}=\left(\frac{\partial a_{l}}{\partial a_{l-1}}\right)^{T}\left(\frac{\partial f}{\partial a_{l}}\right)^{T}\frac{\partial^{2}l}{\partial f^{2}}\frac{\partial f}{\partial a_{l}}\frac{\partial a_{l}}{\partial a_{l-1}}$
+\end_inset
+
+, so it will contain the former matrix.
+ In this case, repeating this process multiple times will do something like
+ a power method, which will either explode or vanish depending on the biggest
+ eigenvalue of 
+\begin_inset Formula $\left(\frac{\partial f}{\partial a_{l-1}}\right)^{T}\frac{\partial^{2}l}{\partial f^{2}}\frac{\partial f}{\partial a_{l-1}}$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Chapter
@@ -6059,6 +6137,40 @@ status open
 
 \begin_layout Plain Layout
 Comparison of second order methods
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename figures/cifar10.pdf
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+CIFAR10 not definitive
 \end_layout
 
 \end_inset
