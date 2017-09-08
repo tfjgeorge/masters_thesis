@@ -1451,10 +1451,10 @@ In the rest of this work, we will use an extension of random search that
 \series bold
 biased random search
 \series default
-
-\begin_inset CommandInset label
-LatexCommand label
-name "biased-random-search"
+, and that we present in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "biased-random-search"
 
 \end_inset
 
@@ -1483,7 +1483,7 @@ reference "hptune-comparison"
 \begin_layout Standard
 These plots and this random search technique are a key component for assessing
  the true performance of optimization techniques that we present in section
- 3.
+ 4 and 5.
  Indeed it is easy to experimentally find that a new optimization technique
  gives better performance than a baseline if we spend too much time tuning
  hyperparameters for our new technique.
@@ -1738,8 +1738,7 @@ Newton steps
 \begin_layout Standard
 Second order methods refers to all optimization methods that make use of
  the second derivative or Hessian matrix of the function to be minimized.
- It follows from the Taylor series decomposition of the function to be minimized
-:
+ It follows from the Taylor series decomposition of the function:
 \end_layout
 
 \begin_layout Standard
@@ -3253,6 +3252,13 @@ In order to be able to assess the performance of the ideas and algorithms
 
 \begin_layout Section
 Biased random search
+\begin_inset CommandInset label
+LatexCommand label
+name "biased-random-search"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -4514,30 +4520,18 @@ key "lecun1998gradient,schraudolph2012centering"
 .
 \end_layout
 
-\begin_layout Section
-Rewriting this local criterion as second order
+\begin_layout Subsection
+What is behind this local criteria
 \end_layout
 
 \begin_layout Standard
-While we found our local update to be very effective in practice it lacked
- a formal understanding of what was happening behind.
- A first step 
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-l_{C}\left(\Delta W,\Delta b\right) & = & \frac{1}{n}\sum_{i}\left\Vert \Delta Wh^{(i)}+\Delta b+\lambda\nabla_{a^{(i)}}l\right\Vert _{2}^{2}+\epsilon\left\Vert \Delta W\right\Vert _{2}^{2}\\
- & = & \frac{1}{n}\sum_{i}\left\Vert \Delta Wh^{(i)}+\Delta b+\lambda\nabla_{a^{(i)}}l\right\Vert _{2}^{2}+\epsilon\left\Vert \Delta W\right\Vert _{2}^{2}
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-decomposition second order
+This new update is somewhere between usual gradient descent, and something
+ that is inspired from target propagation.
+ From a theoretical point of view it is not clear why it would provide sensitive
+ updates.
+ Also surprising is the effectiveness of these new updates.
+ In the following sections, we will show that it is actually linked to second
+ order applied to the particular structure of neural networks.
 \end_layout
 
 \begin_layout Section
