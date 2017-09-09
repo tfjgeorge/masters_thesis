@@ -3248,7 +3248,7 @@ name "biased-random-search"
 \begin_layout Standard
 While comparing optimization techniques on real tasks, we found that it
  was very difficult to provide a fair benchmark, because a slight change
- in a hyperparameter value can drastically improve its performance.
+ in a hyperparameter value can drastically improve or alter its performance.
  Indeed, we were often able to improve the benchmarks provided in optimization
  papers.
 \end_layout
@@ -3858,7 +3858,10 @@ key "torralba200880"
 \begin_layout Standard
 This architecture is far from producing state of the art for this task.
  In particular, it starts overfitting for a very small number of updates.
- Instead, we focus on the train performance.
+ Instead, we use it to compare optimization algorithms, which means that
+ we are more interested in its performance on the train set.
+ If we were interested in generalization performance, we could add regularizatio
+n to better condition the optimization problem.
 \end_layout
 
 \begin_layout Chapter
@@ -4313,8 +4316,8 @@ A first obvious limit is that it is very costly to compute the jacobians,
 A second limit which can also be very problematic is that similarly to the
  exploding gradient issue in deep or recurrent networks, we observe that
  this update can cause the backpropagated gradients to explode.
- Indeed, the problem reside in the fact that we will multiply by the square
- matrix 
+ Indeed, the problem resides in the fact that we have to multiply by the
+ square matrix 
 \begin_inset Formula $\left(\frac{\partial f}{\partial a_{l}}\right)^{T}\frac{\partial^{2}l}{\partial f^{2}}\frac{\partial f}{\partial a_{l}}$
 \end_inset
 
@@ -4343,6 +4346,20 @@ A second limit which can also be very problematic is that similarly to the
 .
 \end_layout
 
+\begin_layout Section
+Conclusion
+\end_layout
+
+\begin_layout Standard
+This current implementation is certainly not statisfying as a way to accelerate
+ optimization, because of its computational cost.
+ Instead we just see it as a proof of concept that it is possible to act
+ on the backpropagated signal in order to improve it.
+ There are probably more efficient ways of doing similar things, which could
+ improve training very deep networks, where it could account for the interaction
+s between layers that are separated by several others.
+\end_layout
+
 \begin_layout Chapter
 Factorized second order
 \begin_inset CommandInset label
@@ -4361,7 +4378,13 @@ The expressions that we obtained for the FIM and the GN so far are generic
  We will now exploit the very particular structure of neural networks, to
  obtain a better understanding of how to apply these techniques for real
  tasks.
- 
+\end_layout
+
+\begin_layout Standard
+In an unconvenional way, we will start by presenting the so called local
+ criterion that we introduce, which allowed us to get very competitive results
+ but is not really backed up by theory, and then we will introduce more
+ general expressions and algorithms.
 \end_layout
 
 \begin_layout Section
@@ -4370,6 +4393,13 @@ A local criterion and the importance of the covariance of inputs in a layer
 
 \begin_layout Subsection
 Derivation of a new update
+\begin_inset CommandInset label
+LatexCommand label
+name "lol"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -4383,8 +4413,8 @@ key "bengio2014auto,lee2015difference"
 \end_inset
 
 , we explored an alternative which consists in replacing the last step of
- the backpropagation algorithm (the one of finding updates to the parameters
- given a derivative on the preactivations), by a more efficient algorithm.
+ the backpropagation algorithm: the one of finding updates to the parameters
+ given a derivative on the preactivations.
  In figure 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -4492,7 +4522,7 @@ By putting both expressions together and simplifying for
 \begin_inset Formula 
 \begin{eqnarray*}
 \Delta W^{*}\left(C+\epsilon\mathbf{I}\right) & = & -\frac{\lambda}{n}\sum_{i}\left(\nabla_{a^{(i)}}l\right)\left(h^{(i)}-\frac{1}{n}\sum_{i}h^{(i)}\right)^{T}\\
-\Delta b^{*} & = & -\frac{\lambda}{n}\sum_{i}\nabla_{a^{(i)}}l-\frac{1}{n}\Delta W\sum_{i}h^{(i)}
+\Delta b^{*} & = & -\frac{\lambda}{n}\sum_{i}\nabla_{a^{(i)}}l-\frac{1}{n}\Delta W^{*}\sum_{i}h^{(i)}
 \end{eqnarray*}
 
 \end_inset
@@ -4937,6 +4967,16 @@ key "desjardins2015natural"
 \end_inset
 
  to build efficient optimization algorithms.
+ Note that we contribute an explicit expression for the coupling between
+ 
+\begin_inset Formula $W$
+\end_inset
+
+ and 
+\begin_inset Formula $b$
+\end_inset
+
+ while previous work did not acknowledge this important link.
 \end_layout
 
 \begin_layout Subsection
@@ -4998,7 +5038,7 @@ h_{i}^{T} & 1
 \end{array}\right)\otimes\left(\mathbf{J}_{a_{i}}^{T}D\left(x_{i}\right)\mathbf{J}_{a_{i}}\right) & = & \frac{1}{n}\sum_{i}\left(\begin{array}{cc}
 h_{i}h_{i}^{T} & h_{i}\\
 h_{i}^{T} & 1
-\end{array}\right)\otimes\alpha\mathbf{I}=\mathbf{F}_{in}
+\end{array}\right)\otimes\alpha\mathbf{I}=G_{in}
 \end{eqnarray*}
 
 \end_inset
@@ -5017,11 +5057,11 @@ Here
 
 .
  This approximation means that we ignore the interactions between the output
- neurons of a layer.
+ preactivations.
  Instead we just focus on some statistics of the activations of the current
  layer.
- We can interpret this preconditioner as penalizing an update if the correspondi
-ng activation has a high variance.
+ Looking back at the use we will make of this preconditioner, we can interpret
+ it as penalizing an update if the corresponding activation has a high variance.
  This makes sense since in this case changing the value here will change
  the next forward propagated signal more that if the variance of the correspondi
 ng activation were lower.
@@ -5044,7 +5084,7 @@ h_{i}^{T} & 1
 
  with the line/column corresponding to the bias.
  We will now derive the update that corresponds to using this matrix 
-\begin_inset Formula $\mathbf{F}_{in}$
+\begin_inset Formula $G_{in}$
 \end_inset
 
  as a preconditioner:
@@ -5098,7 +5138,7 @@ Applying this preconditioner to a gradient update we can get a new update
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\nabla_{\theta}R & = & \frac{1}{n}\sum_{j}\left(\begin{array}{c}
+\nabla_{\theta}R & = & -\frac{\lambda}{n}\sum_{j}\left(\begin{array}{c}
 h_{j}\\
 1
 \end{array}\right)\otimes\nabla_{a_{j}}l
@@ -5116,13 +5156,13 @@ The corresponding update is:
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathbf{F}_{in}^{-1}\nabla_{\theta}R & = & \frac{1}{n}\sum_{j}\left(\begin{array}{cc}
+G_{in}^{-1}\nabla_{\theta}R & = & \frac{1}{n}\sum_{j}\left(\begin{array}{cc}
 C^{-1} & -C^{-1}\frac{1}{n}\sum_{i}h_{i}\\
 -\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1} & 1+\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}\frac{1}{n}\sum_{i}h_{i}
 \end{array}\right)\left(\begin{array}{c}
 h_{j}\\
 1
-\end{array}\right)\otimes\frac{1}{\alpha}\nabla_{a_{j}}l
+\end{array}\right)\otimes\frac{-\lambda}{\alpha}\nabla_{a_{j}}l
 \end{eqnarray*}
 
 \end_inset
@@ -5141,8 +5181,8 @@ From this expression we can write the update for
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\Delta\text{vec}\left(W\right) & = & C^{-1}\frac{1}{n}\sum_{j}h_{j}\otimes\frac{1}{\alpha}\nabla_{a_{j}}l-C^{-1}\frac{1}{n}\sum_{i}h_{i}\otimes\frac{1}{n}\sum_{j}\frac{1}{\alpha}\nabla_{a_{j}}l\\
- & = & \frac{1}{\alpha}C^{-1}\frac{1}{n}\sum_{j}\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)\otimes\nabla_{a_{j}}l
+\Delta\text{vec}\left(W\right) & = & C^{-1}\frac{-\lambda}{n}\sum_{j}h_{j}\otimes\frac{1}{\alpha}\nabla_{a_{j}}l-C^{-1}\frac{1}{n}\sum_{i}h_{i}\otimes\frac{-\lambda}{n}\sum_{j}\frac{1}{\alpha}\nabla_{a_{j}}l\\
+ & = & \frac{1}{\alpha}C^{-1}\frac{-\lambda}{n}\sum_{j}\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)\otimes\nabla_{a_{j}}l
 \end{eqnarray*}
 
 \end_inset
@@ -5150,7 +5190,7 @@ From this expression we can write the update for
 
 \begin_inset Formula 
 \begin{equation}
-\boxed{\Delta W=\frac{1}{\alpha}\frac{1}{n}\sum_{j}\nabla_{a_{j}}l\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}C^{-1}}\label{eq:upd_w}
+\boxed{\Delta W=\frac{-\lambda}{\alpha}\frac{1}{n}\sum_{j}\nabla_{a_{j}}l\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}C^{-1}}\label{eq:upd_w}
 \end{equation}
 
 \end_inset
@@ -5169,8 +5209,8 @@ And the update for
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\Delta b & = & -\frac{1}{n}\sum_{j}\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}h_{j}\frac{1}{\alpha}\nabla_{a_{j}}l+\left(1+\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}\frac{1}{n}\sum_{i}h_{i}\right)\frac{1}{n}\sum_{j}\frac{1}{\alpha}\nabla_{a_{j}}l\\
- & = & \frac{1}{n}\sum_{j}\frac{1}{\alpha}\nabla_{a_{j}}l-\frac{1}{n}\sum_{j}\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)\frac{1}{\alpha}\nabla_{a_{j}}l
+\Delta b & = & -\frac{-\lambda}{n}\sum_{j}\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}h_{j}\frac{1}{\alpha}\nabla_{a_{j}}l+\left(1+\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}\frac{1}{n}\sum_{i}h_{i}\right)\frac{-\lambda}{n}\sum_{j}\frac{1}{\alpha}\nabla_{a_{j}}l\\
+ & = & \frac{-\lambda}{n}\sum_{j}\frac{1}{\alpha}\nabla_{a_{j}}l+\frac{\lambda}{n}\sum_{j}\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)\frac{1}{\alpha}\nabla_{a_{j}}l
 \end{eqnarray*}
 
 \end_inset
@@ -5178,7 +5218,7 @@ And the update for
 
 \begin_inset Formula 
 \begin{equation}
-\boxed{\Delta b=\frac{1}{\alpha}\frac{1}{n}\sum_{j}\nabla_{a_{j}}l-\Delta W\frac{1}{n}\sum_{i}h_{i}}\label{eq:upd_b}
+\boxed{\Delta b=-\frac{\lambda}{\alpha}\frac{1}{n}\sum_{j}\nabla_{a_{j}}l-\Delta W\frac{1}{n}\sum_{i}h_{i}}\label{eq:upd_b}
 \end{equation}
 
 \end_inset
@@ -5186,8 +5226,28 @@ And the update for
 
 \end_layout
 
+\begin_layout Standard
+Using an argument based on second order methods, we thus gt back to the
+ very same update as in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lol"
+
+\end_inset
+
+.
+\end_layout
+
 \begin_layout Section
 Algorithms
+\end_layout
+
+\begin_layout Standard
+We now present 2 algorithms.
+ The first one is very simple and just aims at isolating the centering trick,
+ in order to assess how much of the gain of performance comes from just
+ centering the update, and how much comes from the whole covariance.
+ The other one is the full update that we just derived.
 \end_layout
 
 \begin_layout Subsection
@@ -5431,8 +5491,8 @@ A question remains for the choice of
 
 .
  We adopt two approaches.
- The first one consists in treating it as a hyperparameter and tune it using
- our biased random search 
+ The first one consists in treating it as a fixed value, so it is a hyperparamet
+er that we tune using our biased random search 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "biased-random-search"
@@ -5449,8 +5509,8 @@ reference "biased-random-search"
  This gives a different value for each layer, and also different for each
  minibatch.
  We found it worked very well experimentally, and we justify it as being
- a measure of the curvature of the risk, with respect to the output of the
- layer.
+ a measure of the curvature of the empirical risk, with respect to the output
+ of the layer.
 \end_layout
 
 \begin_layout Standard
@@ -5806,7 +5866,7 @@ reference "eq:factored"
 
 .
  In addition to their factorization we introduced the explicit separation
- of weight matrix and bias.
+ of weight matrix and bias, which we use in the following notations.
 \end_layout
 
 \begin_layout Subsection
@@ -5821,7 +5881,7 @@ key "martens2015optimizing"
 
 \end_inset
 
- proposes to split the sum of Kronecker products into a product of sums:
+ proposed to split the sum of Kronecker products into a product of sums:
 \begin_inset Formula 
 \begin{eqnarray*}
 \mathbf{F} & \approx & \mathbb{E}\left[\left(\begin{array}{cc}
@@ -5862,6 +5922,11 @@ reference "subsec:focus-covariance"
  In our experiments we found a comparable performance between KFAC and ACP.
 \end_layout
 
+\begin_layout Standard
+KFAC has been introduced for the natural gradient, but as we shown in the
+ previous sections, it can also be adapted to Gauss-Newton.
+\end_layout
+
 \begin_layout Subsection
 Natural Neural Networks
 \end_layout
@@ -5876,12 +5941,13 @@ key "desjardins2015natural"
 
  exploit the same factorization by focusing on the input covariance part
  of each layer.
- .
  They propose a reparametrization that makes 
 \begin_inset Formula $\mathbb{E}\left[hh^{T}\right]$
 \end_inset
 
- equal the identity, and also they use the centering trick.
+ equal the identity.
+ They also notice that in order for their method to work well, they have
+ to use the centering trick.
  To this view, they change the original linear transformation 
 \begin_inset Formula $a=Wh+b$
 \end_inset
@@ -5955,7 +6021,7 @@ The new parameters
 \begin_inset Formula $d$
 \end_inset
 
- are trained using gradient descent, which will now have the desired property.
+ are trained using gradient descent.
  We will denote by 
 \begin_inset Formula $h_{e}=U\left(h-\mu\right)$
 \end_inset
@@ -6013,7 +6079,9 @@ h_{e}^{T} & 1
 \end_layout
 
 \begin_layout Standard
-The FIM for the reparametrization thus has a better form.
+The approximate FIM for the reparametrization thus has a better form.
+ In this case the natural gradient update will be closer to the usual gradient
+ update.
 \end_layout
 
 \begin_layout Section
@@ -6052,16 +6120,6 @@ For each experiment we plot the expected loss on the train set, and on a
 \end_layout
 
 \begin_layout Standard
-In the first experiment, we compare the performance of mean only batched
- norm and centered gradient descent to vanilla gradient descent.
- While our first experiments showed an improvement when centering the gradient
- for a small number of updates, this does not generalize to longer experiments
- as proved by this experiment.
- The best performing centered update is mean only batch norm, on both the
- training and test sets.
-\end_layout
-
-\begin_layout Standard
 \begin_inset Float figure
 placement h
 wide false
@@ -6082,7 +6140,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Comparison of centering methods
+MNIST autoencoder: Comparison of centering methods
 \end_layout
 
 \end_inset
@@ -6105,14 +6163,19 @@ Comparison of 2nd order approximate methods
 
 \begin_layout Standard
 In the second experiment, we compare all second order approximations to
- a baseline using batch normalization.
+ a baseline using batch normalization on the autoencoder on MNIST.
  For all experiments we use an amortization factor of 100, that is we update
  the statistics and invert the corresponding matrices every 100 updates.
  We use a minibatch size of 200 for each update as well as for the statistics.
- We observe that KFAC, ACP and ACP with fixed alpha perform similarly with
- respect to time, and all outperform batch norm and SGD by a large margin.
- On the test set, we observe a small improvement for ACP over all techniques,
- in both the best (lower) value and the time spent to reach this value.
+\end_layout
+
+\begin_layout Standard
+In a third experiment, we compare all second order approximate methods on
+ the classification task on CIFAR10.
+ Similarly to the autoencoder, we use a minibatch size of 200, and we recompute
+ the inverse statistics every 100 updates.
+ As all methods are able to overfit very rapidly, we also report the error
+ rate on both the train set and a separated test set.
 \end_layout
 
 \begin_layout Standard
@@ -6136,7 +6199,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Comparison of second order methods
+MNIST autoencoder: comparison of second order methods
 \end_layout
 
 \end_inset
@@ -6170,7 +6233,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-CIFAR10 not definitive
+CIFAR10 classification: comparison of second order methods
 \end_layout
 
 \end_inset
@@ -6181,6 +6244,86 @@ CIFAR10 not definitive
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsection
+Interpretation and conclusions
+\end_layout
+
+\begin_layout Subsubsection
+
+\series bold
+How do all second order methods compare ?
+\end_layout
+
+\begin_layout Standard
+In terms of updates, our best performer is the natural gradient approximated
+ by KFAC on both experiments.
+ But in the case of the autoencoder, we see that because it is faster to
+ compute only the forward statistics, ACP and KFAC compare similarly.
+ Note that for the autoencoder, the best test set is attained by ACP, and
+ also in a shorter time than all other methods.
+\end_layout
+
+\begin_layout Subsubsection
+
+\series bold
+Does the improvement come from the centering trick or from the covariances
+ ?
+\end_layout
+
+\begin_layout Standard
+In the centering experiment, we clearly see that full ACP outperforms all
+ centered activation methods by a large margin.
+ In the case of centered gradient descent, it does not even improve on SGD.
+ This is in contradiction with our early experiments on a smaller number
+ of iterations, which showed much better progress for early training.
+ The best performing centered gradient is mean only batch norm.
+ In addition to centering the gradients, it also probably better condition
+ the problem by modifying the backpropagated gradients.
+\end_layout
+
+\begin_layout Standard
+We can thus conclude that the improvement of ACP and other second order
+ methods does not only come from centering the activations, but also from
+ the full covariance.
+\end_layout
+
+\begin_layout Subsubsection
+
+\series bold
+Stability
+\end_layout
+
+\begin_layout Standard
+There is a stability issue with ACP.
+ Recall that we divide the Tikhonov regularization factor by a varying 
+\begin_inset Formula $\alpha$
+\end_inset
+
+, proportional to the gradient incoming in the current layer.
+ This stability issue could probably be eased with regularization by adding
+ a small scalar value before dividing.
+\end_layout
+
+\begin_layout Subsubsection
+
+\series bold
+How does KFAC compare to KFAC for Gauss-Newton ?
+\end_layout
+
+\begin_layout Standard
+As mentionned, the FIM and the GN are the same for the quadratic error.
+ But this is not the case for the cross entropy.
+ Both methods can be decomposed using the Kronecker product of 2 small matrices,
+ so we want to compare how they perform.
+ We observe that the natural gradient version performs much better than
+ the GN version, with respect to both the number of updates and the wallclock
+ time.
+ It is remarkable as the natural gradient version takes much longer to recompute
+ stats, because it needs the whole jacobians of the output of the network,
+ whereas GN only needs the derivative, so there is no additional cost for
+ the backpropagation.
 \end_layout
 
 \begin_layout Chapter*
