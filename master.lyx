@@ -109,8 +109,8 @@ Neural networks
 \end_layout
 
 \begin_layout Standard
-In this chapter, we will progressively introduce concepts and techniques
- that are used in artificial intelligence tasks.
+In this chapter, we will introduce concepts and techniques that are used
+ in artificial intelligence tasks.
  In particular, we will introduce neural networks, that have proven a powerful
  model and produced state of the art results in a variety of tasks.
 \end_layout
@@ -469,6 +469,13 @@ key "deng2009imagenet"
 
 \begin_layout Subsection
 Empirical risk and bias-variance tradeoff
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Empirical-risk-and"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -571,7 +578,8 @@ Regularization
 
 \begin_layout Standard
 A way of combatting overfitting is to use regularization.
- It is a way of constraining the parameters of a function using priors.
+ It is a way of constraining the values of the parameters of a function
+ using priors.
  For example L2 regularization penalizes the squared norm of the parameter
  vector.
  It constrains all values to stay small.
@@ -687,7 +695,7 @@ key "rosenblatt1961principles"
 
 \begin_layout Standard
 These perceptrons were designed to approximately replicate the computations
- made by a biological neuron.
+ made by a network of biological neurons.
  Each neuron gets input data from several other neurons, consisting in voltage
  spikes.
  The rate at which these spikes occur can be intepreted as whether a neuron
@@ -695,11 +703,14 @@ These perceptrons were designed to approximately replicate the computations
  Each neuron has different sensibilities regarding how it will react to
  an increase in spike rate from other neurons, this sensibility being mimicked
  by the weights in artificial neural networks.
+ In its most simple modeling, the human brain is just a very complex network
+ of these neurons.
+ This is the inspiration for artificial neural networks.
 \end_layout
 
 \begin_layout Standard
 This single perceptron is extended in a more complex model called the multilayer
- perceptron.
+ perceptron (MLP).
  It consists in alternatively stacking layers of linear transformation 
 \begin_inset Formula $a=Wx+b$
 \end_inset
@@ -726,7 +737,7 @@ This single perceptron is extended in a more complex model called the multilayer
 \begin_inset Formula $f$
 \end_inset
 
- is an elementwise function.
+ is often an elementwise function.
  We stack these transformations to get more complex functions.
  An example for 2 layers gives a function 
 \begin_inset Formula $y\left(x\right)=f_{2}\left(W_{2}f_{1}\left(W_{1}x+b_{1}\right)+b_{2}\right)$
@@ -741,6 +752,9 @@ This single perceptron is extended in a more complex model called the multilayer
  the same input data, but encoded in a different way.
  A trained neural network will create representations that are better suited
  for its task.
+ For example, if we imagine a task of classifying images between those which
+ picture a dog and those with a cat, we are interested in a high level represent
+ation of characteristics such as a long tail, whiskers or sharp ears.
 \end_layout
 
 \begin_layout Standard
@@ -788,9 +802,9 @@ key "lecun1989backpropagation"
 
  are well-suited for tasks involving sequential (timeseries) or spatial
  data (images).
- Instead of multiplying a weight matrix with the whole input vector, we
- split this input into smaller chunks of fixed sized corresponding to small
- vectors (2d case) or small matrices (3d case).
+ Instead of multiplying a weight matrix with the whole input vector as in
+ MLPs, we split this input into smaller chunks of fixed sized corresponding
+ to small vectors (2d case) or small matrices (3d case).
  The same weight matrix is applied to each of this smaller vectors so as
  to get a result at each position.
  In fact it amounts to a standard MLP with the weight matrix sharing weight
@@ -827,6 +841,10 @@ key "hinton2006reducing,vincent2008extracting"
  the encoded representation.
  This representation is automatically created by learning from the data.
  It is a special case for regression.
+ In order to be efficient, a well designed autoencoder will need to create
+ a relevant representation of the data.
+ For example, if we want to encode pictures of faces, relevant representations
+ could be the gender, the color and size of hair, and so on.
 \end_layout
 
 \begin_layout Section
@@ -1037,8 +1055,8 @@ Learning using gradient descent
 
 \begin_layout Standard
 Once we have chosen a model, and supposing that this model capable of solving
- a given task, the main challenge is now to learn the parameters of the
- model from the data.
+ a given task with a dataset of examples of this task, the main challenge
+ is now to learn the parameters of the model from the data.
  Some simple models have closed form solutions, this is for example the
  case for a linear model and a regression task.
  For more complex models such as neural networks, we can not derive a simple
@@ -1077,10 +1095,14 @@ Once we have chosen a model, and supposing that this model capable of solving
 
 \begin_layout Standard
 Once we have a direction, we must choose how far to move in this direction.
- Several line search algorithms have been developed, but they require evaluating
- our objective several times, which can be costly for deep networks or big
- datasets.
- We will stick to a simple fixed learning rate, so that each iteration becomes:
+ One way of choosing this rate is by using a line search algorithm.
+ But its requires evaluating our objective several times, which can be costly
+ for deep networks or big datasets.
+ We will stick to a simple fixed scalar learning rate 
+\begin_inset Formula $\lambda$
+\end_inset
+
+, so that each iteration becomes:
 \end_layout
 
 \begin_layout Standard
@@ -1101,10 +1123,11 @@ Of course the scalar parameters
 
  plays a very important role.
  If we choose a value that is too small then it will take several steps
- to reach the same point, so it will take longer.
+ to reach the same performance, so it will take longer.
  If the value is too big then we can go too far, to a point in the space
  of parameters where the gradient has changed so the direction that we are
  following is no longer a descent direction.
+ In this case, we can even decrease the performance.
  For a practical example think of a valley.
  We start from a side of the valley and follow the steepest descent direction.
  If we go too far we will pass the bottom of the valley and start going
@@ -1298,8 +1321,8 @@ key "bastien2012theano"
 \family typewriter
 grad
 \family default
- that takes care of the computation required to get the gradients with respect
- to the parameters.
+ that takes care of building the computational graph of all operations required
+ to get the gradients with respect to the parameters.
 \end_layout
 
 \begin_layout Section
@@ -1320,7 +1343,14 @@ While backpropagation is an efficient way of computing the exact gradient
  of the gradient, as long as this estimate will make our objective decrease.
  It is worth recalling at this point that even the exact gradient of the
  empirical risk is different of the real gradient we would like to follow,
- which is the gradient of the true risk.
+ which is the gradient of the true risk 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Empirical-risk-and"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -1351,7 +1381,7 @@ reference "fprop-bprop"
 ) is proportional to the size of the minibatch.
  As datasets become bigger and bigger, while GPUs used for accelerating
  the computations have limited memory, adjusting the batch size is a good
- way of making an experiment fit on a selected computer.
+ way of making an experiment fit on a given computer.
 \end_layout
 
 \begin_layout Section
@@ -1379,9 +1409,12 @@ on of our learning procedure.
  Hyperparameters also include the structure of our model, such as the number
  of hidden layers and hidden units, the number of training iterations, the
  coefficients of the regularization terms.
- We do not find the optimal value for the hyperparameters using gradient
- descent, but instead we tune it by running several time the same experiment
- with different hyperparameter values, and control 
+ The success of our learning procedure is dependant on the values of the
+ hyperparameters.
+ We do not find the optimal value using gradient descent, but instead we
+ tune it by running several time the same experiment with different hyperparamet
+er values, and compare the final value of the risk.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -1401,8 +1434,15 @@ fair
  benchmarks, we usually tune the values of the hyperparameters by trying
  several sets of values.
  Hyperparameters tuning is a research field on its own, so we will just
- introduce 3 methods and motivate our use of a new technique that we call
- biased random search.
+ introduce 2 existing methods and we will later motivate our use of a new
+ technique that we call biased random search 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "biased-random-search"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -1418,8 +1458,9 @@ r: the learning rate.
 \begin_inset Formula $\left\{ 10^{-3},10^{-2},10^{-1},1\right\} $
 \end_inset
 
- for a fixed number of updates and select the value for which we obtained
- the best value for our target criteria such as the validation loss.
+ for a fixed number of updates and select the learning rate for which we
+ obtained the best value for our target criteria such as the validation
+ loss.
  When generalizing to several hyperparameters, we have to select all combination
 s of values, which make our search space grow exponentially, and similarly
  for the number of experiments we will have to run.
@@ -1443,6 +1484,9 @@ key "bergstra2012random"
 
 .
  It will explore more different values for the other hyperparameters.
+ In this case, it clearly appears that they are correlated, in the sense
+ that the best value for one hyperparameter depends on the chosen value
+ for the other hyperparameter.
 \end_layout
 
 \begin_layout Standard
@@ -1486,7 +1530,7 @@ These plots and this random search technique are a key component for assessing
  4 and 5.
  Indeed it is easy to experimentally find that a new optimization technique
  gives better performance than a baseline if we spend too much time tuning
- hyperparameters for our new technique.
+ hyperparameters for our new technique but stick to default values for baselines.
 \end_layout
 
 \begin_layout Standard
@@ -1515,6 +1559,8 @@ status open
 \begin_layout Plain Layout
 Relation between 2 hyperparameters: for this experiment we can clearly see
  that the plotted hyperparameters are not independant one from each other.
+ The color scale represents the final performance (best performing runs
+ in blue).
 \end_layout
 
 \end_inset
@@ -1599,7 +1645,7 @@ key "martens2011learning"
 
 \end_inset
 
-, that we will present in chapter 3.
+.
 \end_layout
 
 \begin_layout Subsection
@@ -1716,15 +1762,10 @@ Second order methods in neural networks
 \end_layout
 
 \begin_layout Standard
-Gradient descent is a black box technique that can be applied to any kind
- of optimization problem.
- But we are interested in optimizing a very specific function, which is
- a sum of stacked transformations and a loss function.
- In this section, we introduce the well known second order methods known
- as Newton's method and Natural gradient descent.
- We then derive the updates of this methods adapted to neural networks,
- and show how second order methods can be approximated in order to be applied
- to real scale tasks.
+In this section, we introduce the well known second order methods known
+ as Newton's method and the less popular but very effective natural gradient
+ descent.
+ We then derive the updates of this methods adapted to neural networks.
 \end_layout
 
 \begin_layout Section
@@ -1774,11 +1815,15 @@ f\left(x+\Delta x\right) & = & f\left(x\right)+\left(\nabla f\right)_{x}^{T}\Del
 \end_inset
 
 .
- By ignoring higher order terms (
+ By constraining 
+\begin_inset Formula $\left\Vert \Delta x\right\Vert _{2}^{2}$
+\end_inset
+
+ too stay small, we can ignore higher order terms (
 \begin_inset Formula $o\left(\left\Vert \Delta x\right\Vert _{2}^{2}\right)=0$
 \end_inset
 
-) we have a quadratic approximation for 
+) and we have a quadratic approximation for 
 \begin_inset Formula $f$
 \end_inset
 
@@ -1871,6 +1916,12 @@ Newton step
 \begin_layout Standard
 The main difficulty of this algorithm is that it does not scale well when
  applied to problems with many variables such as neural network optimization.
+ In this case 
+\begin_inset Formula $f$
+\end_inset
+
+ is the empirical risk, and the variables that we are optimizing are the
+ parameters of the network.
  The limitations come from the following aspects:
 \end_layout
 
@@ -1890,7 +1941,7 @@ reference "subsec:gauss-newton"
 
 \end_inset
 
-.
+ and present an approximate value of the Hessian called Gauss-Newton.
 \end_layout
 
 \begin_layout Enumerate
@@ -2215,7 +2266,7 @@ By making use of the chain rule we can also give an expression for the second
 \begin_inset Formula $G_{f}\left(x_{i},\theta\right)$
 \end_inset
 
- is called the Gauss-Newton approximation of the Hessian 
+ is called the Gauss-Newton (GN) approximation of the Hessian 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "schraudolph2002fast"
@@ -2475,7 +2526,7 @@ G_{f}\left(\theta\right) & = & \frac{1}{n}\sum_{i}\mathbf{J}_{\theta}\left(x_{i}
 We will show in 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sec:2ndorder-newpers"
+reference "chap:Factorized-second-order"
 
 \end_inset
 
@@ -2562,6 +2613,12 @@ locally
 Natural gradient methods
 \end_layout
 
+\begin_layout Standard
+We now present the natural gradient.
+ We give some context and interpration for the natural gradient, and we
+ give its expression for neural networks.
+\end_layout
+
 \begin_layout Subsection
 Fisher Information Matrix
 \end_layout
@@ -2612,7 +2669,8 @@ natural
 \end_layout
 
 \begin_layout Standard
-It is a non-negative quantity that resembles a measure of how much 
+From, a broad view, it is a non-negative quantity that measures how much
+ 
 \begin_inset Formula $q$
 \end_inset
 
@@ -2631,6 +2689,20 @@ It is a non-negative quantity that resembles a measure of how much
 
 .
  Note that it is not symmetric, so it can not directly be used as a metric.
+ We now use the probabilistic interpretation of neural networks, and consider
+ that the examples from a dataset are drawn from a joint distribution 
+\begin_inset Formula $p\left(x,y\right)=p\left(y|x\right)p\left(x\right)$
+\end_inset
+
+ where 
+\begin_inset Formula $p\left(y|x\right)$
+\end_inset
+
+ is the function that is modelized by the neural network, and 
+\begin_inset Formula $p\left(x\right)$
+\end_inset
+
+ is the input distribution.
 \end_layout
 
 \begin_layout Standard
@@ -2687,8 +2759,8 @@ key "pascanu2013revisiting"
 \begin_inset Formula $\mathbf{F}=\mathbb{E}_{x}\left[\left(\frac{\partial\log p_{\theta}\left(x\right)}{\partial\theta}\right)^{T}\left(\frac{\partial\log p_{\theta}\left(x\right)}{\partial\theta}\right)\right]$
 \end_inset
 
- is the Fisher information matrix, which can now be used directly as a regulariz
-er.
+ is the Fisher information matrix (FIM), which can now be used directly
+ as a regularizer.
  Interestingly, even if the KL divergence is not symmetric, its second order
  approximation is, as we also have 
 \begin_inset Formula $\text{KL}\left(p_{\theta+\Delta\theta}\Vert p_{\theta}\right)=\Delta\theta^{T}\mathbf{F}\Delta\theta+o(\left\Vert \Delta\theta\right\Vert _{2}^{2})$
@@ -2709,7 +2781,7 @@ The usual gradient descent algorithm can be formulated as the minimization
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\Delta\theta^{*} & = & \text{argmin}_{\Delta\theta}\left\{ \Delta\theta^{T}\nabla_{\theta}R+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert ^{2}\right\} 
+\Delta\theta^{*} & = & \text{argmin}_{\Delta\theta}\Delta\theta^{T}\nabla_{\theta}R+\frac{1}{2\lambda}\left\Vert \Delta\theta\right\Vert ^{2}
 \end{eqnarray*}
 
 \end_inset
@@ -2720,16 +2792,15 @@ The usual gradient descent algorithm can be formulated as the minimization
 \begin_layout Standard
 This expression can be easily solved giving the usual gradient descent update
  
-\begin_inset Formula $\Delta\theta=-\frac{1}{\epsilon}\nabla_{\theta}R$
+\begin_inset Formula $\Delta\theta=-\lambda\nabla_{\theta}R$
 \end_inset
 
 .
  The parameter 
-\begin_inset Formula $\epsilon$
+\begin_inset Formula $\lambda$
 \end_inset
 
- is the inverse of the learning rate, and controls how much each parameter
- can change.
+ is the usual learning rate, and controls how much each parameter can change.
  We will now add a new regularizer using the FIM, and transform the minimization
  problem into:
 \end_layout
@@ -2737,7 +2808,7 @@ This expression can be easily solved giving the usual gradient descent update
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\Delta\theta^{*} & = & \text{argmin}_{\Delta\theta}\left\{ \Delta\theta^{T}\nabla_{\theta}R+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert ^{2}+\frac{\lambda}{2}\Delta\theta^{T}\mathbf{F}\Delta\theta\right\} 
+\Delta\theta^{*} & = & \text{argmin}_{\Delta\theta}\Delta\theta^{T}\nabla_{\theta}R+\frac{1}{2\lambda}\left\Vert \Delta\theta\right\Vert ^{2}+\frac{1}{2\epsilon}\Delta\theta^{T}\mathbf{F}\Delta\theta
 \end{eqnarray*}
 
 \end_inset
@@ -2750,7 +2821,7 @@ We now constrain our gradient step to be small in term of change of parameter
  values, and also to be small in term of how much the resulting distribution
  changes.
  This expression can be solved to give 
-\begin_inset Formula $\Delta\theta^{*}=\frac{1}{\lambda}\left(\mathbf{F}+\frac{\epsilon}{\lambda}\mathbf{I}\right)^{-1}\nabla_{\theta}R$
+\begin_inset Formula $\Delta\theta^{*}=-\lambda\left(\mathbf{I}+\frac{\lambda}{\epsilon}\mathbf{F}\right)^{-1}\nabla_{\theta}R$
 \end_inset
 
 .
@@ -2778,21 +2849,8 @@ An expression for the FIM using jacobians
 \end_layout
 
 \begin_layout Standard
-We use the probabilistic interpretation of neural networks.
- In this case the output is seen as a conditional probability 
-\begin_inset Formula $p\left(y|x\right)=f_{\theta}\left(x\right)$
-\end_inset
-
- of observing the value 
-\begin_inset Formula $y$
-\end_inset
-
- given an input 
-\begin_inset Formula $x$
-\end_inset
-
-.
- The FIM can be expressed 
+Using the probabilistic interpretation of neural networks, the FIM can be
+ expressed 
 \begin_inset Formula $\mathbf{F}=\mathbb{E}_{x,y\sim p\left(x,y\right)}\left[\left(\frac{\partial\log p_{\theta}\left(x,y\right)}{\partial\theta}\right)^{T}\left(\frac{\partial\log p_{\theta}\left(x,y\right)}{\partial\theta}\right)\right]$
 \end_inset
 
@@ -2892,7 +2950,7 @@ The values for
 \end_inset
 
  if we change the parameters.
- 
+ For usual loss functions, 
 \begin_inset Formula $D$
 \end_inset
 
@@ -3052,7 +3110,8 @@ Approximating the FIM
 \end_layout
 
 \begin_layout Standard
-The FIM is difficult to compute because of its size (
+Similarly to the Hessian, the FIM is difficult to compute because of its
+ size (
 \begin_inset Formula $n_{parameters}\times n_{parameters}$
 \end_inset
 
@@ -3115,20 +3174,20 @@ More elaborations on this second order methods
 \end_layout
 
 \begin_layout Subsection
-Relation with the GN approximation of the Hessian
+Relation between the FIM and the GN approximation of the Hessian
 \end_layout
 
 \begin_layout Standard
 We have just shown that the Gauss-Newton of the empirical risk with respect
  to the parameters, and the Fisher Information Matrix share a similar structure
  that is composed of the jacobians of the output of the network with respect
- to the parameters, and a diagonal matrix.
- The main difference is in this diagonal matrix.
+ to the parameters, and a symmetric matrix.
+ The main difference is in this symmetric matrix.
  For Fisher methods it does not depend on any true target and it is just
  an intrinsic property of a neural network, associated with an input distributio
 n.
- In the case of the GN matrix it depends on the true target except for the
- quadratic error.
+ In the case of the GN matrix it depends on the true target in general,
+ with a notable exception for the quadratic error.
 \end_layout
 
 \begin_layout Subsection
@@ -3136,8 +3195,12 @@ Interpretation from the output of the network
 \end_layout
 
 \begin_layout Standard
-We can rewrite the GN matrix applied to an update as a norm in the space
- of the output of the network:
+In the cases where 
+\begin_inset Formula $D$
+\end_inset
+
+ is a diagonal matrix, we can rewrite the GN matrix applied to an update
+ as a norm in the space of the output of the network:
 \end_layout
 
 \begin_layout Standard
@@ -4364,7 +4427,7 @@ s between layers that are separated by several others.
 Factorized second order
 \begin_inset CommandInset label
 LatexCommand label
-name "sec:2ndorder-newpers"
+name "chap:Factorized-second-order"
 
 \end_inset
 
