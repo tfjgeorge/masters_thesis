@@ -495,10 +495,10 @@ In practice, often, we do not have access to a data generating function
 
 \begin_layout Standard
 \begin_inset Formula 
-\begin{align*}
+\begin{align}
 \begin{array}{ccccc}
-\mathcal{R}\left(\theta,p\right) & \approx & R\left(\theta,\mathcal{D}\right) & = & \frac{1}{n}\sum_{x\in\mathcal{D}}l\left(f_{\theta}\left(x\right)\right)\end{array}
-\end{align*}
+\mathcal{R}\left(\theta,p\right) & \approx & R\left(\theta,\mathcal{D}\right) & = & \frac{1}{n}\sum_{x\in\mathcal{D}}l\left(f_{\theta}\left(x\right)\right)\end{array}\label{eq:empirical-risk}
+\end{align}
 
 \end_inset
 
@@ -2041,6 +2041,13 @@ reference "subsec:focus-covariance"
 
 \begin_layout Subsection
 The learning rate
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:The-learning-rate"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -2089,7 +2096,11 @@ By solving this minimization problem we recover the update
 \begin_inset Formula $\Delta x^{*}=-\frac{1}{\lambda}\left(\nabla f\right)_{x}$
 \end_inset
 
-.
+ with 
+\begin_inset Formula $\frac{1}{\lambda}$
+\end_inset
+
+ playing the role of the usual learning rate.
  But of course this 
 \begin_inset Formula $\lambda$
 \end_inset
@@ -2504,10 +2515,6 @@ e, and the
 
 \end_layout
 
-\begin_layout Plain Layout
-
-\end_layout
-
 \end_inset
 
 
@@ -2676,7 +2683,7 @@ natural
 \end_layout
 
 \begin_layout Standard
-From, a broad view, it is a non-negative quantity that measures how much
+From a broad view, it is a non-negative quantity that measures how much
  
 \begin_inset Formula $q$
 \end_inset
@@ -2695,17 +2702,17 @@ From, a broad view, it is a non-negative quantity that measures how much
 \end_inset
 
 .
- Note that it is not symmetric, so it can not directly be used as a metric.
+ Note that it is not symmetric, so it cannot be considered a true metric.
  We now use the probabilistic interpretation of neural networks, and consider
  that the examples from a dataset are drawn from a joint distribution 
-\begin_inset Formula $p\left(x,y\right)=p\left(y|x\right)p\left(x\right)$
+\begin_inset Formula $p_{\theta}\left(x,y\right)=p_{\theta}\left(y|x\right)p\left(x\right)$
 \end_inset
 
  where 
-\begin_inset Formula $p\left(y|x\right)$
+\begin_inset Formula $p_{\theta}\left(y|x\right)$
 \end_inset
 
- is the function that is modelized by the neural network, and 
+ is the function that we model with the neural network, and 
 \begin_inset Formula $p\left(x\right)$
 \end_inset
 
@@ -2713,10 +2720,10 @@ From, a broad view, it is a non-negative quantity that measures how much
 \end_layout
 
 \begin_layout Standard
-The idea of the natural gradient is to use the KL divergence as a regularizer
- when doing gradient descent.
+One can view natural gradient as using KL divergence as a regularizer when
+ doing gradient descent.
  We will denote by 
-\begin_inset Formula $p_{\theta}$
+\begin_inset Formula $p_{\theta}\left(x,y\right)$
 \end_inset
 
  a parametric model and 
@@ -2725,16 +2732,17 @@ The idea of the natural gradient is to use the KL divergence as a regularizer
 
  a change in its parameter values.
  
-\begin_inset Formula $\text{KL}\left(p_{\theta}\parallel p_{\theta+\Delta\theta}\right)$
+\begin_inset Formula $\text{KL}\left(p_{\theta}\left(x,y\right)\parallel p_{\theta+\Delta\theta}\left(x,y\right)\right)$
 \end_inset
 
  is used as our regularizer, so that each change 
 \begin_inset Formula $\Delta\theta$
 \end_inset
 
- gives the same change in the distribution space.
+ gives a desired change magnitude in the distribution space that we control
+ using a new hyperparameter.
  Instead of using the full expression for 
-\begin_inset Formula $\text{KL}\left(p_{\theta}\parallel p_{\theta+\Delta\theta}\right)$
+\begin_inset Formula $\text{KL}\left(p_{\theta}\left(x,y\right)\parallel p_{\theta+\Delta\theta}\left(x,y\right)\right)$
 \end_inset
 
  we will use its second order Taylor series around 
@@ -2754,7 +2762,7 @@ key "pascanu2013revisiting"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\text{KL}\left(p_{\theta}\Vert p_{\theta+\Delta\theta}\right) & = & \Delta\theta^{T}\mathbf{F}\Delta\theta+o(\left\Vert \Delta\theta\right\Vert _{2}^{2})
+\text{KL}\left(p_{\theta}\left(x,y\right)\Vert p_{\theta+\Delta\theta}\left(x,y\right)\right) & = & \Delta\theta^{T}\mathbf{F}\Delta\theta+o(\left\Vert \Delta\theta\right\Vert _{2}^{2})
 \end{eqnarray*}
 
 \end_inset
@@ -2763,11 +2771,11 @@ key "pascanu2013revisiting"
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\mathbf{F}=\mathbb{E}_{x}\left[\left(\frac{\partial\log p_{\theta}\left(x\right)}{\partial\theta}\right)^{T}\left(\frac{\partial\log p_{\theta}\left(x\right)}{\partial\theta}\right)\right]$
+\begin_inset Formula $\mathbf{F}=\mathbb{E}_{p_{\theta}\left(x,y\right)}\left[\left(\frac{\partial\log p_{\theta}\left(x,y\right)}{\partial\theta}\right)^{T}\left(\frac{\partial\log p_{\theta}\left(x,y\right)}{\partial\theta}\right)\right]$
 \end_inset
 
- is the Fisher information matrix (FIM), which can now be used directly
- as a regularizer.
+ is the Fisher information matrix (FIM), which can be used directly as a
+ regularizer as we shall see shortly.
  Interestingly, even if the KL divergence is not symmetric, its second order
  approximation is, as we also have 
 \begin_inset Formula $\text{KL}\left(p_{\theta+\Delta\theta}\Vert p_{\theta}\right)=\Delta\theta^{T}\mathbf{F}\Delta\theta+o(\left\Vert \Delta\theta\right\Vert _{2}^{2})$
@@ -2781,19 +2789,48 @@ Natural gradient descent
 \end_layout
 
 \begin_layout Standard
-The usual gradient descent algorithm can be formulated as the minimization
- of the following expression:
+As noted in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:The-learning-rate"
+
+\end_inset
+
+, the parameter update vector used in ordinary gradient descent can be otabined
+ as the result of the following minimization problem:
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\Delta\theta^{*} & = & \text{argmin}_{\Delta\theta}\Delta\theta^{T}\nabla_{\theta}R+\frac{1}{2\lambda}\left\Vert \Delta\theta\right\Vert ^{2}
+\Delta\theta^{*} & = & \text{argmin}_{\Delta\theta}\Delta\theta^{T}\nabla_{\theta}R+\frac{1}{2\lambda}\Delta\theta^{T}\Delta\theta
 \end{eqnarray*}
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula $R$
+\end_inset
+
+ is the empirical risk, as previously defined in eq 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:empirical-risk"
+
+\end_inset
+
+ in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Empirical-risk-and"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -2815,7 +2852,7 @@ This expression can be easily solved giving the usual gradient descent update
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\Delta\theta^{*} & = & \text{argmin}_{\Delta\theta}\Delta\theta^{T}\nabla_{\theta}R+\frac{1}{2\lambda}\left\Vert \Delta\theta\right\Vert ^{2}+\frac{1}{2\epsilon}\Delta\theta^{T}\mathbf{F}\Delta\theta
+\Delta\theta^{*} & = & \text{argmin}_{\Delta\theta}\Delta\theta^{T}\nabla_{\theta}R+\frac{1}{2\lambda}\Delta\theta^{T}\Delta\theta+\frac{1}{2\epsilon}\Delta\theta^{T}\mathbf{F}\Delta\theta
 \end{eqnarray*}
 
 \end_inset
@@ -2858,7 +2895,7 @@ An expression for the FIM using jacobians
 \begin_layout Standard
 Using the probabilistic interpretation of neural networks, the FIM can be
  expressed 
-\begin_inset Formula $\mathbf{F}=\mathbb{E}_{x,y\sim p\left(x,y\right)}\left[\left(\frac{\partial\log p_{\theta}\left(x,y\right)}{\partial\theta}\right)^{T}\left(\frac{\partial\log p_{\theta}\left(x,y\right)}{\partial\theta}\right)\right]$
+\begin_inset Formula $\mathbf{F}=\mathbb{E}_{p_{\theta}\left(x,y\right)}\left[\left(\frac{\partial\log p_{\theta}\left(x,y\right)}{\partial\theta}\right)^{T}\left(\frac{\partial\log p_{\theta}\left(x,y\right)}{\partial\theta}\right)\right]$
 \end_inset
 
  which simplifies in:
@@ -2867,8 +2904,8 @@ Using the probabilistic interpretation of neural networks, the FIM can be
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathbf{F} & = & \mathbb{E}_{x,y\sim p\left(x,y\right)}\left[\left(\frac{\partial\log p_{\theta}\left(x,y\right)}{\partial\theta}\right)^{T}\left(\frac{\partial\log p_{\theta}\left(x,y\right)}{\partial\theta}\right)\right]\\
- & = & \mathbb{E}_{x\sim q\left(x\right)}\left[\mathbb{E}_{y\sim p_{\theta}\left(y|x\right)}\left[\left(\frac{\partial\log p_{\theta}\left(x,y\right)}{\partial\theta}\right)^{T}\left(\frac{\partial\log p_{\theta}\left(x,y\right)}{\partial\theta}\right)\right]\right]
+\mathbf{F} & = & \mathbb{E}_{p_{\theta}\left(x,y\right)}\left[\left(\frac{\partial\log p_{\theta}\left(x,y\right)}{\partial\theta}\right)^{T}\left(\frac{\partial\log p_{\theta}\left(x,y\right)}{\partial\theta}\right)\right]\\
+ & = & \mathbb{E}_{x\sim p\left(x\right)}\left[\mathbb{E}_{y\sim p_{\theta}\left(y|x\right)}\left[\left(\frac{\partial\log p_{\theta}\left(x,y\right)}{\partial\theta}\right)^{T}\left(\frac{\partial\log p_{\theta}\left(x,y\right)}{\partial\theta}\right)\right]\right]
 \end{eqnarray*}
 
 \end_inset
@@ -2878,11 +2915,11 @@ Using the probabilistic interpretation of neural networks, the FIM can be
 
 \begin_layout Standard
 Since 
-\begin_inset Formula $\log p_{\theta}\left(x,y\right)=\log p_{\theta}\left(y|x\right)+\log q\left(x\right)$
+\begin_inset Formula $\log p_{\theta}\left(x,y\right)=\log p_{\theta}\left(y|x\right)+\log p\left(x\right)$
 \end_inset
 
  and 
-\begin_inset Formula $q$
+\begin_inset Formula $p\left(x\right)$
 \end_inset
 
  does not depend on 
@@ -2895,7 +2932,7 @@ Since
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathbf{F} & = & \mathbb{E}_{x\sim q\left(x\right)}\left[\mathbb{E}_{y\sim p_{\theta}\left(y|x\right)}\left[\left(\frac{\partial\log p_{\theta}\left(y|x\right)}{\partial\theta}\right)^{T}\left(\frac{\partial\log p_{\theta}\left(y|x\right)}{\partial\theta}\right)\right]\right]
+\mathbf{F} & = & \mathbb{E}_{x\sim p\left(x\right)}\left[\mathbb{E}_{y\sim p_{\theta}\left(y|x\right)}\left[\left(\frac{\partial\log p_{\theta}\left(y|x\right)}{\partial\theta}\right)^{T}\left(\frac{\partial\log p_{\theta}\left(y|x\right)}{\partial\theta}\right)\right]\right]
 \end{eqnarray*}
 
 \end_inset
@@ -2951,8 +2988,11 @@ The values for
 \end_inset
 
 ), with respect to the parameters.
- In other words, it measures how much the output of the network will change
- for a given 
+ In other words, it measures how much the output of the network 
+\begin_inset Formula $p\left(y|x\right)$
+\end_inset
+
+ will change for a given 
 \begin_inset Formula $x$
 \end_inset
 
@@ -2963,7 +3003,14 @@ The values for
 
  is a diagonal matrix with non negative diagonal terms, and depends of the
  cost function used.
- For the quadratic loss it is the identity.
+ For the quadratic loss it is the identity (table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "expressions-fisher"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Standard
@@ -3293,6 +3340,10 @@ key "ollivier2013riemannian"
  In the best of our knowledge this result as not been published before,
  which is very suprising as it gives a very cheap way of computing the GN
  matrix.
+\end_layout
+
+\begin_layout Section
+A cheaper Gauss-Newton matrix for cross-entropy
 \end_layout
 
 \begin_layout Chapter
