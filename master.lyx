@@ -56,8 +56,8 @@ figs-within-sections
 \use_package stackrel 1
 \use_package stmaryrd 1
 \use_package undertilde 1
-\cite_engine basic
-\cite_engine_type default
+\cite_engine natbib
+\cite_engine_type authoryear
 \biblio_style plain
 \use_bibtopic false
 \use_indices false
@@ -2128,6 +2128,13 @@ key "lecun1993automatic"
 
 \begin_layout Subsection
 Validity of Newton for non quadratic functions and Tikhonov regularization
+\begin_inset CommandInset label
+LatexCommand label
+name "tikhonov"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -2242,8 +2249,8 @@ In the case of neural network optimization, the Hessian matrix we need to
 \begin_inset Formula 
 \begin{eqnarray*}
 \mathbf{H} & = & \frac{\partial^{2}R}{\partial\theta^{2}}\\
- & = & \frac{\partial^{2}}{\partial\theta^{2}}\left\{ \frac{1}{n}\sum_{i}l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} \\
- & = & \frac{1}{n}\sum_{i}\frac{\partial^{2}}{\partial\theta^{2}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} 
+ & = & \frac{\partial^{2}}{\partial\theta^{2}}\left\{ \frac{1}{n}\sum_{i}l\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\} \\
+ & = & \frac{1}{n}\sum_{i}\frac{\partial^{2}}{\partial\theta^{2}}\left\{ l\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\} 
 \end{eqnarray*}
 
 \end_inset
@@ -2260,7 +2267,7 @@ By making use of the chain rule we can also give an expression for the second
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\frac{\partial}{\partial\theta}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\}  & = & \mathbf{J}_{\theta}\left(x_{i},\theta\right)^{T}\left(\frac{\partial}{\partial f}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} \right)^{T}
+\frac{\partial}{\partial\theta}\left\{ l\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\}  & = & \mathbf{J}_{\theta}\left(x_{i},\theta\right)^{T}\left(\frac{\partial}{\partial f}\left\{ l\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\} \right)^{T}
 \end{eqnarray*}
 
 \end_inset
@@ -2297,8 +2304,8 @@ By making use of the chain rule we can also give an expression for the second
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\frac{\partial^{2}}{\partial\theta^{2}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\}  & = & \underbrace{\mathbf{J}_{\theta}\left(x_{i},\theta\right)^{T}\frac{\partial^{2}}{\partial f^{2}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} \mathbf{J}_{\theta}\left(x_{i},\theta\right)}_{G_{f}\left(x_{i},\theta\right)}\\
- &  & +\sum_{j}\left(\nabla^{2}f_{j}\left(x_{i},\theta\right)\right)\left(\frac{\partial}{\partial f_{j}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} \right)^{T}
+\frac{\partial^{2}}{\partial\theta^{2}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\}  & = & \underbrace{\mathbf{J}_{\theta}\left(x_{i},\theta\right)^{T}\frac{\partial^{2}}{\partial f^{2}}\left\{ l\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\} \mathbf{J}_{\theta}\left(x_{i},\theta\right)}_{G_{f}\left(x_{i},\theta\right)}\\
+ &  & +\sum_{j}\left(\nabla^{2}f_{\theta}\left(x_{i}\right)_{j}\right)\left(\frac{\partial}{\partial f_{j}}\left\{ l\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\} \right)^{T}
 \end{eqnarray*}
 
 \end_inset
@@ -2319,7 +2326,7 @@ key "schraudolph2002fast"
 
 .
  The remainder is proportional to 
-\begin_inset Formula $\frac{\partial}{\partial f_{j}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} $
+\begin_inset Formula $\frac{\partial}{\partial f_{j}}\left\{ l\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\} $
 \end_inset
 
 .
@@ -2329,11 +2336,11 @@ key "schraudolph2002fast"
 
  as it is a first derivative, so the approximation will get more precise.
  At a minimum for 
-\begin_inset Formula $l\left(f\left(x_{i},\theta\right),y_{i}\right)$
+\begin_inset Formula $l\left(f_{\theta}\left(x_{i}\right),y_{i}\right)$
 \end_inset
 
 , we will have 
-\begin_inset Formula $\frac{\partial^{2}}{\partial\theta^{2}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} =G_{f}\left(x_{i},\theta\right)$
+\begin_inset Formula $\frac{\partial^{2}}{\partial\theta^{2}}\left\{ l\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\} =G_{f}\left(x_{i},\theta\right)$
 \end_inset
 
  so it is a reasonable approximation to use in practice.
@@ -2342,7 +2349,7 @@ key "schraudolph2002fast"
 \end_inset
 
  will not necessarily be a minimum for each example 
-\begin_inset Formula $l\left(f\left(x_{i},\theta\right),y_{i}\right)$
+\begin_inset Formula $l\left(f_{\theta}\left(x_{i}\right),y_{i}\right)$
 \end_inset
 
 , especially if the capacity of the neural network is not sufficient to
@@ -2399,7 +2406,7 @@ Loss function
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\frac{\partial^{2}}{\partial f^{2}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} $
+\begin_inset Formula $\frac{\partial^{2}}{\partial f_{\theta}^{2}}\left\{ l\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\} $
 \end_inset
 
 
@@ -2445,7 +2452,7 @@ cross entropy for binary decision
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\frac{y_{i}}{\left(f(x_{i},\theta)\right)^{2}}+\frac{1-y_{i}}{\left(1-f(x_{i},\theta)\right)^{2}}$
+\begin_inset Formula $\frac{y_{i}}{\left(f_{\theta}\left(x_{i}\right)\right)^{2}}+\frac{1-y_{i}}{\left(1-f_{\theta}\left(x_{i}\right)\right)^{2}}$
 \end_inset
 
 
@@ -2468,7 +2475,7 @@ cross entropy for multiclass classification
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\text{diag}\left(\frac{y_{i}}{\left(f(x_{i},\theta)\right)^{2}}\right)$
+\begin_inset Formula $\text{diag}\left(\frac{y_{i}}{\left(f_{\theta}\left(x_{i}\right)\right)^{2}}\right)$
 \end_inset
 
 
@@ -2528,7 +2535,7 @@ We finally give an expression for the Gauss-Newton approximation of the
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-G_{f}\left(\theta\right) & = & \frac{1}{n}\sum_{i}\mathbf{J}_{\theta}\left(x_{i},\theta\right)^{T}\frac{\partial^{2}}{\partial f^{2}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\} \mathbf{J}_{\theta}\left(x_{i},\theta\right)
+G_{f}\left(\theta\right) & = & \frac{1}{n}\sum_{i}\mathbf{J}_{\theta}\left(x_{i},\theta\right)^{T}\frac{\partial^{2}}{\partial f^{2}}\left\{ l\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\} \mathbf{J}_{\theta}\left(x_{i},\theta\right)
 \end{eqnarray*}
 
 \end_inset
@@ -2956,7 +2963,7 @@ key "pascanu2013revisiting"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathbf{F} & = & \mathbb{E}_{x\sim q\left(x\right)}\left[\boldsymbol{J}_{\boldsymbol{y}\left(x\right)}^{T}D\left(\boldsymbol{y}\left(x\right)\right)\boldsymbol{J}_{\boldsymbol{y}\left(x\right)}\right]
+\mathbf{F} & = & \mathbb{E}_{x\sim q\left(x\right)}\left[\mathbf{J}_{\theta}\left(x,\theta\right)^{T}D\left(f_{\theta}\left(x\right)\right)\mathbf{J}_{\theta}\left(x,\theta\right)^{T}\right]
 \end{eqnarray*}
 
 \end_inset
@@ -2974,8 +2981,15 @@ The values for
 \end_inset
 
 .
- The notation 
-\begin_inset Formula $\boldsymbol{J}_{\boldsymbol{y}\left(x\right)}$
+ Similarly to section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:gauss-newton"
+
+\end_inset
+
+, the notation 
+\begin_inset Formula $\mathbf{J}_{\theta}\left(x,\theta\right)^{T}$
 \end_inset
 
  is used for the jacobian of the output of the network (i.e.
@@ -3039,7 +3053,7 @@ Loss function
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $D\left(\boldsymbol{y}\left(x\right)\right)$
+\begin_inset Formula $D\left(f_{\theta}\left(x\right)\right)$
 \end_inset
 
 
@@ -3213,14 +3227,14 @@ A second common approximation we make in practice is to use the empirical
 \end_inset
 
 : 
-\begin_inset Formula $\mathbf{F}=\frac{1}{n}\sum_{i}\boldsymbol{J}_{\boldsymbol{y}\left(x_{i}\right)}^{T}D\left(\boldsymbol{y}\left(x_{i}\right)\right)\boldsymbol{J}_{\boldsymbol{y}\left(x_{i}\right)}$
+\begin_inset Formula $\mathbf{F}=\frac{1}{n}\sum_{i}\mathbf{J}_{\theta}\left(x_{i},\theta\right)^{T}D\left(f_{\theta}\left(x\right)\right)\mathbf{J}_{\theta}\left(x_{i},\theta\right)^{T}$
 \end_inset
 
 .
 \end_layout
 
 \begin_layout Section
-More elaborations on this second order methods
+Gauss-Newton and Fisher share a very similar structure
 \end_layout
 
 \begin_layout Standard
@@ -3235,17 +3249,264 @@ Relation between the FIM and the GN approximation of the Hessian
 We have just shown that the Gauss-Newton of the empirical risk with respect
  to the parameters, and the Fisher Information Matrix share a similar structure
  that is composed of the jacobians of the output of the network with respect
- to the parameters, and a symmetric matrix.
- The main difference is in this symmetric matrix.
+ to the parameters, and a symmetric matrix:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\frac{1}{n}\sum_{i}\mathbf{J}_{\theta}\left(x_{i},\theta\right)^{T}D\left(f_{\theta}\left(x_{i}\right)\underbrace{,y_{i}}_{\text{opt}}\right)\mathbf{J}_{\theta}\left(x_{i},\theta\right)^{T}\label{eq:general_form}
+\end{equation}
+
+\end_inset
+
+The main difference is in this symmetric matrix 
+\begin_inset Formula $D\left(f_{\theta}\left(x\right),y\right)$
+\end_inset
+
+.
  For Fisher methods it does not depend on any true target and it is just
  an intrinsic property of a neural network, associated with an input distributio
 n.
- In the case of the GN matrix it depends on the true target in general,
- with a notable exception for the quadratic error.
+ We can thus remove the 
+\begin_inset Formula $y$
+\end_inset
+
+: 
+\begin_inset Formula $D\left(f_{\theta}\left(x\right)\right)$
+\end_inset
+
+.
+ In the case of the GN matrix it depends on the true target 
+\begin_inset Formula $y$
+\end_inset
+
+ in general, with a notable exception for the quadratic error.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="3">
+<features tabularvalignment="middle">
+<column alignment="right" valignment="top" width="0pt">
+<column alignment="center" valignment="top" width="0pt">
+<column alignment="center" valignment="top" width="0pt">
+<row>
+<cell alignment="right" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Gauss-Newton
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Fisher
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $D\left(f_{\theta}\left(x\right),y\right)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $D\left(f_{\theta}\left(x\right)\right)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+quadratic error
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\mathbf{I}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\mathbf{I}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+cross entropy for binary decision
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{y_{i}}{\left(f_{\theta}\left(x_{i}\right)\right)^{2}}+\frac{1-y_{i}}{\left(1-f_{\theta}\left(x_{i}\right)\right)^{2}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{1}{f_{\theta}\left(x\right)\left(1-f_{\theta}\left(x\right)\right)}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+cross entropy for multiclass classification
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\text{diag}\left(\frac{y_{i}}{\left(f_{\theta}\left(x_{i}\right)\right)^{2}}\right)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\text{diag}\left(\frac{1}{f_{\theta}\left(x\right)}\right)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "gn-fim"
+
+\end_inset
+
+Expressions for the middle term 
+\begin_inset Formula $D\left(f_{\theta}\left(x\right),y\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $D\left(f_{\theta}\left(x\right)\right)$
+\end_inset
+
+ for GN and FIM
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
-Interpretation from the output of the network
+An original interpretation from the output of the network
 \end_layout
 
 \begin_layout Standard
@@ -3253,15 +3514,32 @@ In the cases where
 \begin_inset Formula $D$
 \end_inset
 
- is a diagonal matrix, we can rewrite the GN matrix applied to an update
- as a norm in the space of the output of the network:
+ is a diagonal matrix (i.e.
+ cross entropy and quadratic error, see eq.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:general_form"
+
+\end_inset
+
+ and table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "gn-fim"
+
+\end_inset
+
+), we can rewrite both GN and FIM matrices applied to an update as a norm
+ in the space of the output of the network:
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\Delta\theta^{*} & = & \text{argmin}_{\Delta\theta}\left(\nabla R\right)_{\theta}^{T}\Delta\theta+\frac{1}{2}\Delta\theta^{T}\frac{1}{n}\sum_{i}\mathbf{J}\left(x_{i},\theta\right)^{T}D\left(f\left(x_{i},\theta\right),y_{i}\right)\mathbf{J}\left(x_{i},\theta\right)\Delta\theta+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert _{2}^{2}\\
- & = & \text{argmin}_{\Delta\theta}\left(\nabla R\right)_{\theta}^{T}\Delta\theta+\frac{1}{2}\frac{1}{n}\sum_{i}\left\Vert \sqrt{D\left(f\left(x_{i},\theta\right),y_{i}\right)}\mathbf{J}\left(x_{i},\theta\right)\Delta\theta\right\Vert _{2}^{2}+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert _{2}^{2}
+\Delta\theta^{*} & = & \underset{\Delta\theta}{\text{argmin}}\left(\nabla R\right)_{\theta}^{T}\Delta\theta+\frac{1}{2}\Delta\theta^{T}\frac{1}{n}\sum_{i}\mathbf{J}_{\theta}\left(x_{i},\theta\right)^{T}D\left(f\left(x_{i},\theta\right),y_{i}\right)\mathbf{J}_{\theta}\left(x_{i},\theta\right)\Delta\theta+\frac{1}{2\lambda}\Delta\theta^{T}\Delta\theta\\
+ & = & \underset{\Delta\theta}{\text{argmin}}\left(\nabla R\right)_{\theta}^{T}\Delta\theta+\frac{1}{2}\frac{1}{n}\sum_{i}\left\langle D\left(f\left(x_{i},\theta\right),y_{i}\right)\mathbf{J}_{\theta}\left(x_{i},\theta\right)\Delta\theta,\mathbf{J}_{\theta}\left(x_{i},\theta\right)\Delta\theta\right\rangle +\frac{1}{2\lambda}\Delta\theta^{T}\Delta\theta\\
+ & = & \underset{\Delta\theta}{\text{argmin}}\left(\nabla R\right)_{\theta}^{T}\Delta\theta+\frac{1}{2}\frac{1}{n}\sum_{i}\left\langle D\left(f\left(x_{i},\theta\right),y_{i}\right)\Delta f_{\theta}\left(x_{i},\Delta\theta\right),\Delta f_{\theta}\left(x_{i},\Delta\theta\right)\right\rangle +\frac{1}{2\lambda}\Delta\theta^{T}\Delta\theta
 \end{eqnarray*}
 
 \end_inset
@@ -3270,62 +3548,161 @@ In the cases where
 \end_layout
 
 \begin_layout Standard
-By an abuse of notation we denoted by 
-\begin_inset Formula $\sqrt{\,}$
+We denoted by 
+\begin_inset Formula $\Delta f_{\theta}\left(x_{i},\Delta\theta\right)=\mathbf{J}_{\theta}\left(x_{i},\theta\right)\Delta\theta$
 \end_inset
 
- an elementwise square root.
- Written like this GN can be considered a first order measure of what will
- be the impact of a 
+ a first order approximation of the change in the value of 
+\begin_inset Formula $f_{\theta}\left(x_{i}\right)$
+\end_inset
+
+ induced by a change 
 \begin_inset Formula $\Delta\theta$
 \end_inset
 
- in terms of change of the output of the network as measured by some metrics
- 
+ of 
+\begin_inset Formula $\theta$
+\end_inset
+
+ for example 
+\begin_inset Formula $x_{i}$
+\end_inset
+
+.
+ With this decomposition we can understand GN and natural gradient as being
+ a regularizer for each example, using the metrics 
 \begin_inset Formula $D\left(f\left(x_{i},\theta\right),y_{i}\right)$
 \end_inset
 
- dependent on the example considered.
- It constrains all changes to induce a comparable change on the output.
- Interestingly, for log losses (binary and multiclass crossentropy) we have
+ that depends on the considered example.
+ We regularize for several undesirable effect:
+\end_layout
+
+\begin_layout Itemize
+We ensure that
+\begin_inset Formula $\Delta f_{\theta}\left(x_{i},\Delta\theta\right)$
+\end_inset
+
+ cannot take a large value.
+ This distributes the effect of the update evenly between examples, instead
+ of having a large change in 
+\begin_inset Formula $f_{\theta}\left(x_{i}\right)$
+\end_inset
+
+ for a single example, and smaller changes for others.
+\end_layout
+
+\begin_layout Itemize
+We weight this changes using 
+\begin_inset Formula $D\left(f\left(x_{i},\theta\right),y_{i}\right)$
+\end_inset
+
+.
+ For the cross entropies for instance we observe that this term grows with
+ 
+\begin_inset Formula $\frac{1}{f_{\theta}\left(x\right)}$
+\end_inset
+
+ (the vector of probabilities of each class).
+ If this vector is not evenly distributed, that is if for one class 
+\begin_inset Formula $t$
+\end_inset
+
+ we have a larger value of 
+\begin_inset Formula $\left(f_{\theta}\left(x\right)\right)_{t}$
+\end_inset
+
+, all other values will be close to 
+\begin_inset Formula $0$
+\end_inset
+
+, which means that 
+\begin_inset Formula $\left(\frac{1}{f_{\theta}\left(x\right)}\right)_{i\neq t}$
+\end_inset
+
+ will take a very large value.
+ In this case we put more weight on the examples for which our model is
+ more confident of its prediction.
+\end_layout
+
+\begin_layout Section
+A cheaper Gauss-Newton matrix for cross-entropy
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:gn-trick-cheap"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We now present a computational trick for computing the Gauss-Newton in the
+ case of cross-entropy.
+ Interestingly, in the expression of Gauss-Newton for log losses we have
  the unexpected equivalence 
-\begin_inset Formula $\left(\sqrt{D\left(f\left(x_{i},\theta\right),y_{i}\right)}\right)_{t}=-\left(\frac{\partial l}{\partial f}\right)^{T}$
+\begin_inset Formula $\left(\frac{\partial^{2}l}{\partial f_{\theta}^{2}}\right)_{tt}=-\left(\frac{\partial l}{\partial f_{\theta}}\right)_{t}^{2}$
+\end_inset
+
+ for the true class 
+\begin_inset Formula $t$
 \end_inset
 
  and 
-\begin_inset Formula $\left(\sqrt{D\left(f\left(x_{i},\theta\right),y_{i}\right)}\right)_{i}=0$
+\begin_inset Formula $\left(\frac{\partial^{2}l}{\partial f_{\theta}^{2}}\right)_{ii}=0=-\left(\frac{\partial l}{\partial f_{\theta}}\right)_{t}^{2}$
 \end_inset
 
  when 
 \begin_inset Formula $i\neq t$
 \end_inset
 
-, where 
-\begin_inset Formula $t$
-\end_inset
-
- is the true class, that is the only index of 
-\begin_inset Formula $y$
-\end_inset
-
- that equal to 
-\begin_inset Formula $1$
-\end_inset
-
-.
- This can be combined with the jacobian to give the simplified formulation:
+:
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\Delta\theta^{*} & = & \text{argmin}_{\Delta\theta}\left(\nabla R\right)_{\theta}^{T}\Delta\theta+\frac{1}{2}\frac{1}{n}\sum_{i}\left\Vert -\left(\frac{\partial l}{\partial f}\right)^{T}\mathbf{J}\left(x_{i},\theta\right)\Delta\theta\right\Vert _{2}^{2}+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert _{2}^{2}\\
- & = & \text{argmin}_{\Delta\theta}\left(\nabla R\right)_{\theta}^{T}\Delta\theta+\frac{1}{2}\frac{1}{n}\sum_{i}\left\Vert \left(\nabla l\left(f\left(x_{i},\theta\right),y_{i}\right)\right)_{\theta}^{T}\Delta\theta\right\Vert _{2}^{2}+\frac{\epsilon}{2}\left\Vert \Delta\theta\right\Vert _{2}^{2}
+l\left(f_{\theta}\left(x\right),y\right) & = & \sum_{i}y_{i}\log\left(\left(f_{\theta}\left(x\right)\right)_{i}\right)\\
+\left(\frac{\partial}{\partial f_{\theta}}l\left(f_{\theta}\left(x\right),y\right)\right)_{t} & = & \frac{1}{\left(f_{\theta}\left(x\right)\right)_{t}}\\
+\left(\frac{\partial^{2}}{\partial f_{\theta}^{2}}l\left(f_{\theta}\left(x\right),y\right)\right)_{tt} & = & -\frac{1}{\left(f_{\theta}\left(x\right)\right)_{t}^{2}}=-\left(\frac{\partial}{\partial f_{\theta}}l\left(f_{\theta}\left(x\right),y\right)\right)_{t}^{2}
 \end{eqnarray*}
 
 \end_inset
 
+Getting back to the expression of the GN matrix (here for a single example),
+ we can combine the second derivative with the jacobians and get a simple
+ expression:
+\end_layout
 
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray}
+G_{f}\left(x,\theta\right) & = & \mathbf{J}_{\theta}\left(x,\theta\right)^{T}\frac{\partial^{2}}{\partial f^{2}}\left\{ l\left(f_{\theta}\left(x\right),y\right)\right\} \mathbf{J}_{\theta}\left(x,\theta\right)\nonumber \\
+ & = & -\mathbf{J}_{\theta}\left(x,\theta\right)^{T}\left(\frac{\partial l}{\partial f_{\theta}}\right)\left(\frac{\partial l}{\partial f_{\theta}}\right)^{T}\mathbf{J}_{\theta}\left(x,\theta\right)\nonumber \\
+ & = & -\nabla_{\theta}l\left(f_{\theta}\left(x\right),y\right)\nabla_{\theta}l\left(f_{\theta}\left(x\right),y\right)^{T}\label{eq:simplified-gn}
+\end{eqnarray}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This gradient in eq 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:simplified-gn"
+
+\end_inset
+
+ is the exact same as the gradient used to compute the update in gradient
+ descent.
+ So for no additional cost we get the expression of the GN matrix.
+ Note that we still need to invert it, which is a 
+\begin_inset Formula $O\left(n^{3}\right)$
+\end_inset
+
+ operation in the size of the matrix.
 \end_layout
 
 \begin_layout Standard
@@ -3337,13 +3714,9 @@ key "ollivier2013riemannian"
 \end_inset
 
 .
- In the best of our knowledge this result as not been published before,
+ To the best of our knowledge this result has not been published before,
  which is very suprising as it gives a very cheap way of computing the GN
  matrix.
-\end_layout
-
-\begin_layout Section
-A cheaper Gauss-Newton matrix for cross-entropy
 \end_layout
 
 \begin_layout Chapter
@@ -3370,7 +3743,8 @@ name "biased-random-search"
 While comparing optimization techniques on real tasks, we found that it
  was very difficult to provide a fair benchmark, because a slight change
  in a hyperparameter value can drastically improve or alter its performance.
- Indeed, we were often able to improve the benchmarks provided in optimization
+ Indeed, with simple hyperparameter adjustments, we were often able to improve
+ the benchmarks reported as state-of-the-art in previous applied optimization
  papers.
 \end_layout
 
@@ -3394,7 +3768,14 @@ key "snoek2012practical"
 \series bold
 biased random search
 \series default
-, and we validate its performance using a simple experiment.
+ (algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "biased_random_search_algo"
+
+\end_inset
+
+), and we validate its performance using a simple experiment.
 \end_layout
 
 \begin_layout Standard
@@ -3674,6 +4055,13 @@ Biased random search
 \end_inset
 
 
+\begin_inset CommandInset label
+LatexCommand label
+name "biased_random_search_algo"
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -3684,8 +4072,17 @@ Biased random search
 \begin_layout Standard
 To assess the performance of biased random search we ran 100 searches of
  100 experiments on a simple task where we tuned 2 hyperparameters.
- We observe that it consistently find comparable or better results than
- standard random search (lower is better):
+ We observe that it consistently finds comparable or better results than
+ standard random search.
+ We report the results in the following table and in figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "hptune-comparison"
+
+\end_inset
+
+ (lower is better).
+ 
 \end_layout
 
 \begin_layout Standard
@@ -3824,7 +4221,20 @@ Biased random search
 \end_layout
 
 \begin_layout Standard
+In figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "hptune-comparison"
+
+\end_inset
+
+ we can clearly see that with biased random search the majority of experiments
+ is launched around the region with best performing hyperparameter values.
+\end_layout
+
+\begin_layout Standard
 \begin_inset Float figure
+placement h
 wide false
 sideways false
 status open
@@ -3889,7 +4299,7 @@ We now describe the main benchmark that we will be using in the rest of
  this document.
  The dataset MNIST 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "lecun2010mnist"
 
 \end_inset
@@ -3930,7 +4340,7 @@ reference "subsec:Autoencoders"
 This benchmark has a long history in the neural network optimization litterature
  
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "hinton2006reducing,martens2010deep,martens2015optimizing,desjardins2015natural"
 
 \end_inset
@@ -3970,7 +4380,7 @@ The second benchmark that we use is a multilayer perceptron with rectifier
  activation functions, trained to recognize images amongst 10 classes on
  the CIFAR-10 dataset 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "torralba200880"
 
 \end_inset
@@ -3991,7 +4401,8 @@ key "torralba200880"
 \end_layout
 
 \begin_layout Standard
-This architecture is far from producing state of the art for this task.
+This architecture is far from producing state of the art results for this
+ task.
  In particular, it starts overfitting for a very small number of updates.
  Instead, we use it to compare optimization algorithms, which means that
  we are more interested in its performance on the train set.
@@ -4000,7 +4411,8 @@ n to better condition the optimization problem.
 \end_layout
 
 \begin_layout Chapter
-Evolution of the backpropagated gradient while updating the parameters
+Proof of concept: Evolution of the backpropagated gradient while updating
+ the parameters
 \end_layout
 
 \begin_layout Standard
@@ -4516,10 +4928,9 @@ The expressions that we obtained for the FIM and the GN so far are generic
 \end_layout
 
 \begin_layout Standard
-In an unconvenional way, we will start by presenting the so called local
- criterion that we introduce, which allowed us to get very competitive results
- but is not really backed up by theory, and then we will introduce more
- general expressions and algorithms.
+In an unconvenional way, we will start by presenting the local criterion
+ that we introduce, which allowed us to get competitive results, and then
+ we will introduce more general expressions and algorithms.
 \end_layout
 
 \begin_layout Section
@@ -4542,7 +4953,7 @@ Neural networks are usually trained using gradients computed all the way
  from the loss function to the parameters.
  Inspired by target propagation 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "bengio2014auto,lee2015difference"
 
 \end_inset
@@ -4557,7 +4968,14 @@ reference "fprop-bprop"
 
 \end_inset
 
- we keep the usual computation for backpropagation (red lines) and replace
+ (page 
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "fprop-bprop"
+
+\end_inset
+
+) we keep the usual computation for backpropagation (red lines) and replace
  the part in green.
 \end_layout
 
@@ -4680,15 +5098,6 @@ We denoted by
 \end_inset
 
 .
- While experimenting with this updates on real tasks we found that gave
- very competitive performance, compared to state of the art applied optimization
- algorithms, but was very sensitive to hyperparameter values.
- In particular, there is a coupling between the learning rate and the Tikhonov
- regularization term 
-\begin_inset Formula $\epsilon$
-\end_inset
-
-.
 \end_layout
 
 \begin_layout Subsection
@@ -4759,7 +5168,7 @@ is different in 2 ways.
 .
  This is related to an old well used trick 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "lecun1998gradient,schraudolph2012centering"
 
 \end_inset
@@ -4774,11 +5183,12 @@ What is behind this local criteria
 \begin_layout Standard
 This new update is somewhere between usual gradient descent, and something
  that is inspired from target propagation.
- From a theoretical point of view it is not clear why it would provide sensitive
- updates.
- Also surprising is the effectiveness of these new updates.
+ From a theoretical point of view it is not yet clear why it would provide
+ sensible updates.
+ Also surprising is the effectiveness of these new updates as we will see
+ in experimental section.
  In the following sections, we will show that it is actually linked to second
- order applied to the particular structure of neural networks.
+ order methods applied to the particular structure of neural networks.
 \end_layout
 
 \begin_layout Section
@@ -4790,7 +5200,7 @@ In this section, we will show a convenient factorization of the Gauss-Newton
  approximation of the Hessian, that was first applied to the Fisher Information
  Matrix in the litterature 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "martens2015optimizing"
 
 \end_inset
@@ -4877,7 +5287,8 @@ vec\left(AXB\right) & = & \left(B^{T}\otimes A\right)vec\left(X\right)
 \end_layout
 
 \begin_layout Standard
-Getting back to the expression for the Gauss-Newton matrix derived in 
+Getting back to the expression for the Gauss-Newton matrix derived in section
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:gauss-newton"
@@ -4953,7 +5364,7 @@ a & = & vec\left(a\right)\\
 \begin_inset Formula $\mathbf{I}$
 \end_inset
 
- is the identity, of the same size than 
+ is the identity, of the same size as 
 \begin_inset Formula $a$
 \end_inset
 
@@ -5026,6 +5437,23 @@ h^{T} & 1\end{array}\right)\otimes\mathbf{J}_{a}\label{eq:jaco_factorization}
 \end_layout
 
 \begin_layout Standard
+where 
+\begin_inset Formula $\left(\begin{array}{cc}
+h^{T} & 1\end{array}\right)$
+\end_inset
+
+ is the concatenation of the row vector 
+\begin_inset Formula $h^{T}$
+\end_inset
+
+ and 
+\begin_inset Formula $1$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
 This jacobian is a first order measure of how much the output of the network
  will change if we change the values of the parameters of this layer, for
  a single example.
@@ -5033,7 +5461,7 @@ This jacobian is a first order measure of how much the output of the network
 \begin_inset Formula $G_{f}=\frac{1}{n}\sum_{i}\mathbf{J}_{\theta}\left(x_{i}\right)^{T}D\left(x_{i}\right)\mathbf{J}_{\theta}\left(x_{i}\right)$
 \end_inset
 
- from 
+ from section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:gauss-newton"
@@ -5041,7 +5469,7 @@ reference "subsec:gauss-newton"
 \end_inset
 
 .
- We can rewrite this expression using the factorization 
+ We can rewrite this expression using the factorization in eq 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "eq:jaco_factorization"
@@ -5086,36 +5514,53 @@ reference "fprop-bprop"
 
 \end_inset
 
+ page 
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "fprop-bprop"
+
+\end_inset
+
 ), and a part that only uses the forward statistics and that is local to
  a layer.
- While these 2 contributions are clearly separated for a single example,
- it becomes less clear as we sum up for several examples.
- As we will show in the next section, similar approximations were exploited
+ While these 2 contributions are clearly factorized for a single example,
+ it is not clear whether the resulting sum can still be factorized using
+ a kronecker product.
+ As we will show in the next section, similar factorizations were exploited
  in KFAC 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "martens2015optimizing"
 
 \end_inset
 
  and Natural Neural Networks 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "desjardins2015natural"
 
 \end_inset
 
  to build efficient optimization algorithms.
- Note that we contribute an explicit expression for the coupling between
- 
+ Note that in this formulation in eq 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:factored"
+
+\end_inset
+
+ we contribute an explicit distinction between the weight matrix 
 \begin_inset Formula $W$
 \end_inset
 
- and 
+ and the bias 
 \begin_inset Formula $b$
 \end_inset
 
- while previous work did not acknowledge this important link.
+ whereas in previous work authors usually put all parameters together in
+ a weight matrix with an extra column.
+ As we will see in future sections, this is key to understanding the role
+ of centering the updates.
 \end_layout
 
 \begin_layout Subsection
@@ -5170,15 +5615,15 @@ We now suppose that we can use the following approximation:
 
 \begin_layout Standard
 \begin_inset Formula 
-\begin{eqnarray*}
+\begin{eqnarray}
 \frac{1}{n}\sum_{i}\left(\begin{array}{cc}
 h_{i}h_{i}^{T} & h_{i}\\
 h_{i}^{T} & 1
-\end{array}\right)\otimes\left(\mathbf{J}_{a_{i}}^{T}D\left(x_{i}\right)\mathbf{J}_{a_{i}}\right) & = & \frac{1}{n}\sum_{i}\left(\begin{array}{cc}
+\end{array}\right)\otimes\left(\mathbf{J}_{a_{i}}^{T}D\left(x_{i}\right)\mathbf{J}_{a_{i}}\right) & \approx & \frac{1}{n}\sum_{i}\left(\begin{array}{cc}
 h_{i}h_{i}^{T} & h_{i}\\
 h_{i}^{T} & 1
-\end{array}\right)\otimes\alpha\mathbf{I}=G_{in}
-\end{eqnarray*}
+\end{array}\right)\otimes\alpha\mathbf{I}=G_{in}\label{eq:approx_alpha}
+\end{eqnarray}
 
 \end_inset
 
@@ -5289,7 +5734,22 @@ h_{j}\\
 \end_layout
 
 \begin_layout Standard
-The corresponding update is:
+The corresponding update is a Newton step using the approximate Hessian
+ (see eq 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:newton-step"
+
+\end_inset
+
+ page 
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "eq:newton-step"
+
+\end_inset
+
+):
 \end_layout
 
 \begin_layout Standard
@@ -5366,8 +5826,8 @@ And the update for
 \end_layout
 
 \begin_layout Standard
-Using an argument based on second order methods, we thus gt back to the
- very same update as in 
+Using an argument based on second order methods, we thus get back to the
+ very same update as in eq 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "lol"
@@ -5391,6 +5851,13 @@ We now present 2 algorithms.
 
 \begin_layout Subsection
 Centered gradient descent
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Centered-gradient-descent"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -5398,7 +5865,7 @@ Following the update for
 \begin_inset Formula $W$
 \end_inset
 
- derived in 
+ derived in eq 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "eq:upd_w"
@@ -5407,7 +5874,7 @@ reference "eq:upd_w"
 
 , we simply replace the usual update for the weight matrices by a centered
  version 
-\begin_inset Formula $\Delta W=\frac{1}{n}\sum_{j}\nabla_{a_{j}}l\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}$
+\begin_inset Formula $\Delta W=\frac{1}{n}\sum_{j}\nabla_{a_{j}}l\left(h_{j}-\overbrace{\frac{1}{n}\sum_{i}h_{i}}^{\text{centering}}\right)^{T}$
 \end_inset
 
 .
@@ -5418,14 +5885,30 @@ mean-only batch normalization
 \shape default
  
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "salimans2016weight"
 
 \end_inset
 
- but the difference here is that we do not reparametrize the forward propagation
-, instead we just follow a slightly different direction which is not the
- gradient but a centered gradient.
+ where the value of 
+\begin_inset Formula $h$
+\end_inset
+
+ is replaced by 
+\begin_inset Formula $h-\mathbb{E}\left[h\right]$
+\end_inset
+
+ in the forward pass, with the expectation being computed using a mini-batch.
+ The difference here is that we do not reparametrize the forward propagation,
+ instead we just follow a slightly different direction which is not the
+ gradient but a centered gradient, as suggested by eq 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:upd_w"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -5586,24 +6069,39 @@ Centered gradient descent
 
 \begin_layout Subsection
 Amortized covariance preconditioner
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Amortized-covariance-preconditio"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-In the updates derived from the covariance 
+In the updates derived from the covariance (for 
+\begin_inset Formula $b$
+\end_inset
+
+ eq 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "eq:upd_b"
 
 \end_inset
 
- 
+ and for 
+\begin_inset Formula $W$
+\end_inset
+
+ eq 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "eq:upd_w"
 
 \end_inset
 
-, we require an inverse of the matrix 
+), we require an inverse of the matrix 
 \begin_inset Formula $C=\frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{j}h_{j}\right)\left(h_{i}-\frac{1}{n}\sum_{j}h_{j}\right)^{T}$
 \end_inset
 
@@ -5628,18 +6126,25 @@ A question remains for the choice of
 \begin_inset Formula $\alpha$
 \end_inset
 
+ that we used to approximate the real GN matrix in eq 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:approx_alpha"
+
+\end_inset
+
 .
  We adopt two approaches.
  The first one consists in treating it as a fixed value, so it is a hyperparamet
-er that we tune using our biased random search 
+er that we tune using our biased random search (section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "biased-random-search"
 
 \end_inset
 
-.
- The second one is a very experimental heuristics, which consists in taking
+).
+ The second one is a very experimental heuristic, which consists in taking
  the maximum value of the squarred gradient 
 \begin_inset Formula $\alpha=\max_{i\in\text{minibatch},j\leq n_{out}}\left(\nabla_{a_{i}}l\right)_{j}^{2}$
 \end_inset
@@ -5648,8 +6153,8 @@ reference "biased-random-search"
  This gives a different value for each layer, and also different for each
  minibatch.
  We found it worked very well experimentally, and we justify it as being
- a measure of the curvature of the empirical risk, with respect to the output
- of the layer.
+ a rough heuristic estimate of the curvature of the empirical risk, with
+ respect to the output of the layer.
 \end_layout
 
 \begin_layout Standard
@@ -5657,8 +6162,20 @@ For numerical stability and to account for the imprecision of
 \begin_inset Formula $C$
 \end_inset
 
- between two estimates, we use Tikhonov regularization.
- In this case it is scaled by 
+ between two estimates, we use Tikhonov regularization (section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tikhonov"
+
+\end_inset
+
+).
+ This adds a scalar value 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+ to the diagonal of our approximate GN, which in this case is scaled by
+ 
 \begin_inset Formula $\frac{1}{\alpha}$
 \end_inset
 
@@ -5671,10 +6188,25 @@ For numerical stability and to account for the imprecision of
 \frac{1}{n}\sum_{i}\left(\begin{array}{cc}
 h_{i}h_{i}^{T} & h_{i}\\
 h_{i}^{T} & 1
-\end{array}\right)\otimes\alpha\mathbf{I}_{out}+\lambda\mathbf{I} & = & \frac{1}{n}\sum_{i}\left(\begin{array}{cc}
-h_{i}h_{i}^{T}+\frac{\lambda}{\alpha}\mathbf{I} & h_{i}\\
-h_{i}^{T} & 1+\frac{\lambda}{\alpha}
+\end{array}\right)\otimes\alpha\mathbf{I}_{out}+\epsilon\mathbf{I} & = & \frac{1}{n}\sum_{i}\left(\begin{array}{cc}
+h_{i}h_{i}^{T}+\frac{\epsilon}{\alpha}\mathbf{I} & h_{i}\\
+h_{i}^{T} & 1+\frac{\epsilon}{\alpha}
 \end{array}\right)\otimes\alpha\mathbf{I}_{out}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+and the updated covariance matrix becomes:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+C & = & \frac{1}{n}\sum_{i}\left(h_{i}-\frac{1}{n}\sum_{j}h_{j}\right)\left(h_{i}-\frac{1}{n}\sum_{j}h_{j}\right)^{T}+\frac{\epsilon}{\alpha}\mathbf{I}
 \end{eqnarray*}
 
 \end_inset
@@ -5800,7 +6332,15 @@ left( C^{
 \backslash
 left(j
 \backslash
-right)} 
+right)}+
+\backslash
+frac{
+\backslash
+epsilon}{
+\backslash
+alpha}
+\backslash
+mathbf{I} 
 \backslash
 right)$}
 \end_layout
@@ -5882,7 +6422,11 @@ State{$b
 \backslash
 leftarrow b + 
 \backslash
-lambda 
+frac{
+\backslash
+lambda}{
+\backslash
+alpha} 
 \backslash
 frac{1}{n} 
 \backslash
@@ -5899,11 +6443,24 @@ right)}}$}
 
 
 \backslash
+Comment{eq 
+\backslash
+ref{eq:upd_b}}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
 State{$W
 \backslash
 leftarrow W + 
 \backslash
-lambda 
+frac{
+\backslash
+lambda}{
+\backslash
+alpha} 
 \backslash
 frac{1}{n} 
 \backslash
@@ -5936,6 +6493,15 @@ _C^{
 left(j
 \backslash
 right)}$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+Comment{eq 
+\backslash
+ref{eq:upd_w}}
 \end_layout
 
 \begin_layout Plain Layout
@@ -5977,7 +6543,7 @@ end{algorithmic}
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Amortized covariance preconditioner
+Amortized covariance preconditioner (ACP)
 \end_layout
 
 \end_inset
@@ -5996,7 +6562,7 @@ Other related approximate second order algorithms
 
 \begin_layout Standard
 The 2 following techniques have been proposed using the same factorization
- of the FIM that we wrote in 
+ of the FIM that we wrote in eq 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "eq:factored"
@@ -6015,7 +6581,7 @@ KFAC
 \begin_layout Standard
 KFAC 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "martens2015optimizing"
 
 \end_inset
@@ -6050,14 +6616,36 @@ The Kronecker product has the nice property that for 2 invertible square
 
 .
  It follows that inverting the FIM now requires inverting 2 smaller matrices.
- As for the approximation we made in section 
+ As for the approximation we made in eq 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:approx_alpha"
+
+\end_inset
+
+ section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:focus-covariance"
 
 \end_inset
 
-, we lose the coupling between the forward and backward part of the FIM.
+, we lose the coupling between both parts of the kronecker product of each
+ example in the FIM (see eq 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:factored"
+
+\end_inset
+
+ page 
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "eq:factored"
+
+\end_inset
+
+).
  In our experiments we found a comparable performance between KFAC and ACP.
 \end_layout
 
@@ -6073,7 +6661,7 @@ Natural Neural Networks
 \begin_layout Standard
 Natural neural networks 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "desjardins2015natural"
 
 \end_inset
@@ -6232,7 +6820,8 @@ Centering tricks
 \end_layout
 
 \begin_layout Standard
-We compare our algorithms using the autoencoder benchmark presented in 
+We compare our algorithms using the autoencoder benchmark presented in section
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:autoencoder-benchmark"
@@ -6245,7 +6834,14 @@ reference "sec:autoencoder-benchmark"
 
 \begin_layout Standard
 For each experiment we plot the expected loss on the train set, and on a
- test set that we did not use for learning.
+ test set that we did not use for learning (figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "centering"
+
+\end_inset
+
+).
  To assess the practical performance, the x-axis represents the actual time
  spent on each experiment.
  We selected the best hyperparameters using biased random search, and we
@@ -6279,8 +6875,35 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-MNIST autoencoder: Comparison of centering methods
+Comparison of centering methods on MNIST autoencoder: blue: standard SGD
+ with fixed learning rate; orange: mean-only batch norm; green: centered
+ updates as presented in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Centered-gradient-descent"
+
+\end_inset
+
+; red: ACP with fixed 
+\begin_inset Formula $\alpha$
+\end_inset
+
+ as presented in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Amortized-covariance-preconditio"
+
+\end_inset
+
+.
 \end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "centering"
 
 \end_inset
 
@@ -6306,6 +6929,14 @@ In the second experiment, we compare all second order approximations to
  For all experiments we use an amortization factor of 100, that is we update
  the statistics and invert the corresponding matrices every 100 updates.
  We use a minibatch size of 200 for each update as well as for the statistics.
+ See figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "mnist-autoencoder"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -6315,6 +6946,14 @@ In a third experiment, we compare all second order approximate methods on
  the inverse statistics every 100 updates.
  As all methods are able to overfit very rapidly, we also report the error
  rate on both the train set and a separated test set.
+ See figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "cifar10"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -6338,8 +6977,39 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-MNIST autoencoder: comparison of second order methods
+Comparison of second order methods on MNIST autoencoder: blue: ACP with
+ fixed 
+\begin_inset Formula $\alpha$
+\end_inset
+
+ as presented in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Amortized-covariance-preconditio"
+
+\end_inset
+
+; orange: ACP with heuristic for 
+\begin_inset Formula $\alpha$
+\end_inset
+
+ as presented in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Amortized-covariance-preconditio"
+
+\end_inset
+
+; green: Natural Neural Network; red: KFAC; purple: batch norm with standard
+ SGD; brown: standard SGD
 \end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "mnist-autoencoder"
 
 \end_inset
 
@@ -6372,8 +7042,39 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-CIFAR10 classification: comparison of second order methods
+Comparison of second order methods on CIFAR10 classification: blue: ACP
+ with fixed 
+\begin_inset Formula $\alpha$
+\end_inset
+
+ as presented in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Amortized-covariance-preconditio"
+
+\end_inset
+
+; orange: ACP with heuristic for 
+\begin_inset Formula $\alpha$
+\end_inset
+
+ as presented in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Amortized-covariance-preconditio"
+
+\end_inset
+
+; green: Natural Neural Network; red: KFAC for Gauss-Newton; purple: batch
+ norm with standard SGD; brown: standard SGD; pink: KFAC for natural gradient
 \end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "cifar10"
 
 \end_inset
 
@@ -6414,7 +7115,7 @@ Does the improvement come from the centering trick or from the covariances
 \begin_layout Standard
 In the centering experiment, we clearly see that full ACP outperforms all
  centered activation methods by a large margin.
- In the case of centered gradient descent, it does not even improve on SGD.
+ Centered gradient descent does not even improve on SGD.
  This is in contradiction with our early experiments on a smaller number
  of iterations, which showed much better progress for early training.
  The best performing centered gradient is mean only batch norm.
@@ -6435,7 +7136,15 @@ Stability
 \end_layout
 
 \begin_layout Standard
-There is a stability issue with ACP.
+There is a stability issue with ACP visible on the blue curve in figure
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "cifar10"
+
+\end_inset
+
+.
  Recall that we divide the Tikhonov regularization factor by a varying 
 \begin_inset Formula $\alpha$
 \end_inset
@@ -6456,13 +7165,27 @@ As mentionned, the FIM and the GN are the same for the quadratic error.
  But this is not the case for the cross entropy.
  Both methods can be decomposed using the Kronecker product of 2 small matrices,
  so we want to compare how they perform.
- We observe that the natural gradient version performs much better than
- the GN version, with respect to both the number of updates and the wallclock
- time.
+ As can be seen in figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "cifar10"
+
+\end_inset
+
+ by comparing the red curve for GN and the pink curve for FIM, we observe
+ that the natural gradient version performs much better than the GN version,
+ with respect to both the number of updates and the wallclock time.
  It is remarkable as the natural gradient version takes much longer to recompute
  stats, because it needs the whole jacobians of the output of the network,
- whereas GN only needs the derivative, so there is no additional cost for
- the backpropagation.
+ whereas GN only needs the gradient, so there is no additional cost for
+ the backpropagation as we mentionned in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:gn-trick-cheap"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Chapter*
@@ -6488,8 +7211,8 @@ We also introduced a tentative modification of backpropagation in order
  to obtain better derivatives.
  This algorithm showed promising result since it provided better updates
  than vanilla gradient descent.
- However it remains some limits to applying this technique in a real setup
- as it is still too computationnally expensive.
+ However there remains some limits to applying this technique in a real
+ setup as it is still too computationnally expensive.
 \end_layout
 
 \begin_layout Standard
@@ -6541,7 +7264,7 @@ te methods that are computationnally cheaper, we will carry on contributing
 
 \begin_layout Standard
 \begin_inset Branch hidden
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset CommandInset bibtex
