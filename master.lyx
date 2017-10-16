@@ -458,7 +458,7 @@ cross entropy
 .
  An example classification task is proposed by the ImageNet project 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "deng2009imagenet"
 
 \end_inset
@@ -609,7 +609,7 @@ Neural networks are a family of parametrized models.
  an automated system to read handwritten digits on bank checks, using convolutio
 nal neural networks 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "lecun1998gradient"
 
 \end_inset
@@ -634,7 +634,7 @@ Multilayer perceptron
 We now define the simplest neural network structure called the perceptron
  
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "rosenblatt1961principles"
 
 \end_inset
@@ -795,7 +795,7 @@ Convolutional networks
 \begin_layout Standard
 Convolutional networks 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "lecun1989backpropagation"
 
 \end_inset
@@ -825,7 +825,7 @@ name "subsec:Autoencoders"
 \begin_layout Standard
 Autoencoders 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "hinton2006reducing,vincent2008extracting"
 
 \end_inset
@@ -873,14 +873,14 @@ Neural art
 \series default
 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "gatys2015neural"
 
 \end_inset
 
  and its feed-forward extension 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "ulyanov2016texture"
 
 \end_inset
@@ -972,7 +972,7 @@ key "ulyanov2016texture"
  are scalar values that control the influence of each part of the loss.
  In the original paper 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "gatys2015neural"
 
 \end_inset
@@ -1015,7 +1015,7 @@ Generative Adversarial Networks
 \series default
 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "goodfellow2014generative"
 
 \end_inset
@@ -1310,7 +1310,7 @@ A key component in training neural networks is the library that we use to
  inspired models, is solved using an automatic differentiation tool, such
  as Theano 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "bastien2012theano"
 
 \end_inset
@@ -1364,7 +1364,7 @@ stochastic gradient descent
 \series default
  (SGD) 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "bottou2010large"
 
 \end_inset
@@ -1396,21 +1396,22 @@ Hyperparameters
 \end_layout
 
 \begin_layout Standard
-In the preceding sections we have introduced the learning rate 
+In the preceding sections we have introduced the learning rate (section
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Gradient-descent-and"
 
 \end_inset
 
- and the minibatch size 
+) and the minibatch size (section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Stochastic-gradient-descent"
 
 \end_inset
 
-.
+).
  These values are called hyperparameters, which is another kind of parametrizati
 on of our learning procedure.
  Hyperparameters also include the structure of our model, such as the number
@@ -1442,14 +1443,14 @@ fair
  several sets of values.
  Hyperparameters tuning is a research field on its own, so we will just
  introduce 2 existing methods and we will later motivate our use of a new
- technique that we call biased random search 
+ technique that we call biased random search (section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "biased-random-search"
 
 \end_inset
 
-.
+).
 \end_layout
 
 \begin_layout Standard
@@ -1484,7 +1485,7 @@ random search
  Its main advantage over grid search shows up when any hyperparameters has
  no important effect on the learning algorithm 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "bergstra2012random"
 
 \end_inset
@@ -1521,7 +1522,7 @@ To give a more intuitive understanding of the effect of the hyperparameter
  on a scatter plot, with a color scale depicting the final result of each
  experiment.
  By observing this plot, we can identify 2d patterns of the link between
- 2 hyperparamters.
+ 2 hyperparameters.
  As an illustration, we use the task described in section 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -1659,7 +1660,7 @@ A common issue for deep networks or recurrents networks is how to control
 \begin_layout Standard
 This effect can be mitigated using gradient clipping 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "pascanu2013difficulty"
 
 \end_inset
@@ -1668,7 +1669,7 @@ key "pascanu2013difficulty"
  We can also use second order methods to compensate for gradient vanishing/explo
 ding as proposed in 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "martens2011learning"
 
 \end_inset
@@ -1703,14 +1704,14 @@ Initialization of the weight matrices is of crucial importance.
 The most common initialization scheme at the time of writing are Glorot
  initialization 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "glorot2010understanding"
 
 \end_inset
 
  and He initialization 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "he2015delving"
 
 \end_inset
@@ -1735,7 +1736,7 @@ key "he2015delving"
  depends on the activation function, and the papers propose default values
  for sigmoid and ReLU 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "glorot2011deep"
 
 \end_inset
@@ -1745,14 +1746,15 @@ key "glorot2011deep"
 \begin_inset Formula $\alpha$
 \end_inset
 
- as a hyperparameter, and tuned it using a biased random search 
+ as a hyperparameter, and tuned it using a biased random search (section
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "biased-random-search"
 
 \end_inset
 
-.
+).
 \end_layout
 
 \begin_layout Subsection
@@ -1770,21 +1772,21 @@ A family of optimization tricks use geometrical considerations in the space
  Many popular techniques use this principle, the most successful ones at
  the time of writing being Adam 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "kingma2014adam"
 
 \end_inset
 
 , RMSProp 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "tieleman2012lecture"
 
 \end_inset
 
 , Nesterov momentum 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "nesterov1983method"
 
 \end_inset
@@ -1969,7 +1971,7 @@ Getting the value of the Hessian matrix
  for the Hessian, by differentiating the symbolic expression of the gradient.
  But unlike the computation of the gradient, the graph produced to compute
  the Hessian will have much more nodes.
- We will explore this question in more details in 
+ We will explore this question in more details in section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:gauss-newton"
@@ -1995,7 +1997,8 @@ Storing the Hessian matrix
 \end_inset
 
 .
- We will present an approximation of the Hessian that saves memory in 
+ We will present an approximation of the Hessian that saves memory in section
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:Block-diagonal-Hessian"
@@ -2022,14 +2025,14 @@ Hessian Free
 \shape default
  
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "martens2010deep"
 
 \end_inset
 
 .
  We propose to factorize the Hessian so as to require inverting a smaller
- matrix while benefiting from some 2nd order information in 
+ matrix while benefiting from some 2nd order information in section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:focus-covariance"
@@ -2319,7 +2322,7 @@ By making use of the chain rule we can also give an expression for the second
 
  is called the Gauss-Newton (GN) approximation of the Hessian 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "schraudolph2002fast"
 
 \end_inset
@@ -2370,7 +2373,7 @@ In practice,
 
  presents a much more convenient expression for common loss functions, as
  the second derivative of the loss with respect to the ouput of the network
- simplifies (
+ simplifies (table 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "gn-loss"
@@ -2547,7 +2550,7 @@ G_{f}\left(\theta\right) & = & \frac{1}{n}\sum_{i}\mathbf{J}_{\theta}\left(x_{i}
 We will show in section 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "chap:Factorized-second-order"
+reference "sec:Decomposition-using-the"
 
 \end_inset
 
@@ -2648,14 +2651,14 @@ Fisher Information Matrix
 The Fisher information matrix (FIM) is well used in statistics.
  In the context of machine learning, and in particular deep learning, we
  use its inverse as a preconditioner for the gradient descent algorithm,
- similarly to the Newton algorithm 
+ similarly to the Newton algorithm (section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "eq:newton-step"
 
 \end_inset
 
-.
+).
  In this section, we show how the FIM can be derived from the KL divergence
  and how we get a better 
 \begin_inset Quotes eld
@@ -2887,7 +2890,7 @@ We now constrain our gradient step to be small in term of change of parameter
 , which control 2 different but related quantities expressed by our constraints.
  This new update is called the natural gradient 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "amari1998natural"
 
 \end_inset
@@ -3515,8 +3518,7 @@ In the cases where
 \end_inset
 
  is a diagonal matrix (i.e.
- cross entropy and quadratic error, see eq.
- 
+ cross entropy and quadratic error, see eq 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "eq:general_form"
@@ -3787,7 +3789,7 @@ During the hyperparameter tuning procedure, we create a model of our cost
  result will have higher probability of being explored.
  In practice, we use a simple 1-nearest neighbor regressor 
 \begin_inset CommandInset citation
-LatexCommand cite
+LatexCommand citep
 key "altman1992introduction"
 
 \end_inset
@@ -5193,6 +5195,13 @@ This new update is somewhere between usual gradient descent, and something
 
 \begin_layout Section
 Decomposition using the Kronecker product
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Decomposition-using-the"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
