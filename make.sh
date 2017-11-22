@@ -6,4 +6,10 @@ lyx --export latex appendix.lyx
 bibtex main
 pdflatex main.tex
 pdflatex main.tex
-evince main.pdf
+
+# diff
+latexdiff master_submitted.tex master.tex > master_diff.tex
+pdflatex main_diff.tex 
+
+# display
+evince main_diff.pdf

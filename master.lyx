@@ -162,8 +162,8 @@ To put things into context, we will now describe an example task.
  makes the provided sound.
  In a computer, a picture is often encoded as a mathematical tensor of scalar
  values or pixels, the sound as a timeseries of samples of the sound wave,
- and the final decision can be a single scalar values, which will be close
- to 0 is the animal is very unlikely to make the noise, or to 1 if the animal
+ and the final decision can be a single scalar value, which will be close
+ to 0 if the animal is very unlikely to make the noise, or to 1 if the animal
  is very likely to make the noise.
  The complex machinery inbetween is the intelligent part.
 \end_layout
@@ -195,7 +195,7 @@ Manually designing a program for such a task is an overwhelming task.
  Even if we only keep the combinations that are plausible, there is too
  many to create a naive program.
  Even with carefully engineered feature extractors based on image and sound
- processing techniques, the remaining work of is still challenging.
+ processing techniques, the remaining work is still challenging.
 \end_layout
 
 \begin_layout Standard
@@ -229,7 +229,7 @@ Generally speaking, machine learning consists in finding an unknown function
 \end_inset
 
 , that will solve a certain task.
- We typically restrict our search to a smaller family of functions, which
+ We typically restrict our search to a small family of functions, which
  consists in parametrized functions 
 \begin_inset Formula $\mathcal{F}_{\theta}$
 \end_inset
@@ -261,7 +261,7 @@ Generally speaking, machine learning consists in finding an unknown function
 \begin_layout Standard
 To this end, we need a measure of the performance of a given function at
  solving our task.
- We chose a loss function 
+ We choose a loss function 
 \begin_inset Formula $l$
 \end_inset
 
@@ -297,7 +297,7 @@ name "cost-function"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathcal{R}\left(\theta,p\right) & = & \mathbb{E}_{x\sim p}\left[l\left(f_{\theta}\left(x\right)\right)\right]
+\mathcal{R}\left(\theta,p\right) & = & \mathbb{E}_{x\sim p}\left[l\left(f_{\theta}\left(x\right),x\right)\right]
 \end{eqnarray*}
 
 \end_inset
@@ -360,8 +360,30 @@ supervised
 \begin_inset Formula $x$
 \end_inset
 
- and a target 
+ and a true target 
 \begin_inset Formula $y$
+\end_inset
+
+.
+ The risk can be written as 
+\begin_inset Formula $\mathcal{R}\left(\theta,p\right)=\mathbb{E}_{x,y\sim p}\left[l\left(f_{\theta}\left(x\right),y\right)\right]$
+\end_inset
+
+ meaning that the function 
+\begin_inset Formula $f_{\theta}$
+\end_inset
+
+ only uses the input, and returns a target 
+\begin_inset Formula $\hat{y}=f_{\theta}\left(x\right)$
+\end_inset
+
+.
+ In supervised learning, the loss function compares the true target 
+\begin_inset Formula $y$
+\end_inset
+
+ with the current estimated target 
+\begin_inset Formula $\hat{y}$
 \end_inset
 
 .
@@ -497,7 +519,7 @@ In practice, often, we do not have access to a data generating function
 \begin_inset Formula 
 \begin{align}
 \begin{array}{ccccc}
-\mathcal{R}\left(\theta,p\right) & \approx & R\left(\theta,\mathcal{D}\right) & = & \frac{1}{n}\sum_{x\in\mathcal{D}}l\left(f_{\theta}\left(x\right)\right)\end{array}\label{eq:empirical-risk}
+\mathcal{R}\left(\theta,p\right) & \approx & R\left(\theta,\mathcal{D}\right) & = & \frac{1}{n}\sum_{x\in\mathcal{D}}l\left(f_{\theta}\left(x\right),x\right)\end{array}\label{eq:empirical-risk}
 \end{align}
 
 \end_inset
@@ -603,7 +625,7 @@ Neural networks
 Neural networks are a family of parametrized models.
  They have empirically proven very powerful at solving complex tasks.
  Along with the availability of easy to use frameworks to build neural networks
- and learn from data, has developed new interests from industry to integrate
+ and learn from data, new interests have developed from industry to integrate
  artificial intelligence inspired techniques in more and more products.
  The first commercial successes date back to the 90s when AT&T developed
  an automated system to read handwritten digits on bank checks, using convolutio
@@ -671,7 +693,7 @@ key "rosenblatt1961principles"
 \begin_inset Formula $y$
 \end_inset
 
- to be different than just a linear function of its input 
+ to be different from just a linear function of its input 
 \begin_inset Formula $x$
 \end_inset
 
@@ -805,10 +827,10 @@ key "lecun1989backpropagation"
  Instead of multiplying a weight matrix with the whole input vector as in
  MLPs, we split this input into smaller chunks of fixed sized corresponding
  to small vectors (1d case) or small matrices (2d case).
- The same weight matrix is applied to each of this smaller vectors so as
+ The same weight matrix is applied to each of these smaller vectors so as
  to get a result at each position.
  In fact it amounts to a standard MLP with sparse connectivity and with
- the weight matrix sharing values between corresponding positions.
+ the weights sharing values between corresponding positions.
 \end_layout
 
 \begin_layout Subsection
@@ -830,7 +852,8 @@ key "hinton2006reducing,vincent2008extracting"
 
 \end_inset
 
- are neural networks that are composed of an encoder part a decoder.
+ are neural networks that are composed of an encoder part and a decoder
+ part.
  The encoder takes the input and encodes encodes it to a new representation
  (often with less dimension than the input).
  The decoder takes the encoded input with the task of reconstructing the
@@ -840,7 +863,6 @@ key "hinton2006reducing,vincent2008extracting"
  The autoencoder is trained end-to-end, without manually taking care of
  the encoded representation.
  This representation is automatically created by learning from the data.
- It is a special case for regression.
  In order to be efficient, a well designed autoencoder will need to create
  a relevant representation of the data.
  For example, if we want to encode pictures of faces, relevant representations
@@ -1122,9 +1144,9 @@ Of course the learning rate
 \end_inset
 
  plays a very important role.
- If we choose a value that is too small then it will take several steps
- to reach the same performance, so it will take longer.
- If the value is too big then we can go too far, to a point in the space
+ If we choose a value that is too small then it will take many steps to
+ reach the same performance, so it will take longer.
+ If the value is too large then we can go too far, to a point in the space
  of parameters where the gradient has changed so the direction that we are
  following is no longer a descent direction.
  In this case, we can even decrease the performance.
@@ -1387,7 +1409,7 @@ reference "fprop-bprop"
  very fast, and obtaining a direction that is more precise but that takes
  longer.
  Typically it is more efficient to compute several noisy gradients using
- mini-batches that in the GPU memory and make several updates, than to compute
+ mini-batches in the GPU memory and make several updates, than to compute
  a single more precise update on a bigger mini-batch or the full dataset.
 \end_layout
 
@@ -1421,8 +1443,8 @@ on of our learning procedure.
  hyperparameters.
  We do not find the optimal value using gradient descent, but instead we
  tune it by running several time the same experiment with different hyperparamet
-er values, and compare the final value of the risk.
- 
+er values, and compare the final value of the risk on a held-out set of
+ examples called the validation set.
 \end_layout
 
 \begin_layout Standard
@@ -1454,7 +1476,7 @@ reference "biased-random-search"
 \end_layout
 
 \begin_layout Standard
-The most simple hyperparamater tuning procedure, called 
+The most simple hyperparameter tuning procedure, called 
 \series bold
 grid search
 \series default
@@ -1482,7 +1504,7 @@ A first extension to grid search replaces the fixed length intervals by
 random search
 \series default
 .
- Its main advantage over grid search shows up when any hyperparameters has
+ Its main advantage over grid search shows up when any hyperparameter has
  no important effect on the learning algorithm 
 \begin_inset CommandInset citation
 LatexCommand citep
@@ -1553,8 +1575,9 @@ These plots and this random search technique are a key component for assessing
  the true performance of optimization techniques that we present in section
  4 and 5.
  Indeed it is easy to experimentally find that a new optimization technique
- gives better performance than a baseline if we spend too much time tuning
- hyperparameters for our new technique but stick to default values for baselines.
+ which gives better performance than a baseline if we spend too much time
+ tuning hyperparameters for our new technique but stick to default values
+ for baselines.
 \end_layout
 
 \begin_layout Standard
@@ -1637,18 +1660,18 @@ Gradient magnitudes
 \begin_layout Standard
 A common issue for deep networks or recurrents networks is how to control
  the magnitude of the gradient flow for many layers.
- If the jacobians 
-\begin_inset Formula $\left(\mathbf{J}_{a_{l}}^{h_{l-1}}\right)^{T}\left(\mathbf{J}_{h_{l}}^{a_{l}}\right)^{T}$
+ If the spectral norm of the jacobians 
+\begin_inset Formula $\mathbf{J}_{a_{l}}^{h_{l-1}}\mathbf{J}_{h_{l}}^{a_{l}}$
 \end_inset
 
- have a spectral norm that is too big, then the gradient will become bigger
- and bigger for lower layers.
+ is too large, then the norm of the gradient will exponentially grow for
+ lower layers.
  This can happen if the weight matrices have singular values that are too
- big compared to 
+ large compared to 
 \begin_inset Formula $1$
 \end_inset
 
-, or if the derivatives of the activation functions take big values.
+ while the derivatives of the activation functions take large values.
  In this case, we are in a situation of exploding gradients.
  This effect is amplified in recurrent networks, where the same weight matrix
  is repeatedly used in the backward pass.
@@ -1695,8 +1718,8 @@ Initialization of the weight matrices is of crucial importance.
  A good initialization scheme must at least make sure that there is enough
  signal flowing in forward and backward direction, that is: the weights
  must be chosen not too small, otherwise the forward signal will be smaller
- and smaller, and in the meantime the weights must not be too big, so as
- to avoid exploding gradients in the backward pass, and saturating functions
+ and smaller, and in the meantime the weights must not be too large, so
+ as to avoid exploding gradients in the backward pass, and saturating functions
  in the forward pass.
 \end_layout
 
@@ -1733,21 +1756,20 @@ key "he2015delving"
 \begin_inset Formula $\alpha$
 \end_inset
 
- depends on the activation function, and the papers propose default values
- for sigmoid and ReLU 
+ depends on the activation function.
+ While 
 \begin_inset CommandInset citation
-LatexCommand citep
-key "glorot2011deep"
+LatexCommand citet
+key "glorot2010understanding"
 
 \end_inset
 
-.
- In our experiments, we treated 
+ propose default values for tanh and ReLU, we treated 
 \begin_inset Formula $\alpha$
 \end_inset
 
- as a hyperparameter, and tuned it using a biased random search (section
- 
+ as a hyperparameter in our experiments, and tuned it using a biased random
+ search (section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "biased-random-search"
@@ -1762,7 +1784,7 @@ Gradient smoothing methods
 \end_layout
 
 \begin_layout Standard
-A family of optimization tricks use geometrical considerations in the space
+A family of optimization tricks uses geometrical considerations in the space
  of parameter values.
  In this case with some common sense we can define a simple principle to
  derive better updates which is that for an equivalent decrease of the empirical
@@ -3664,9 +3686,9 @@ We now present a computational trick for computing the Gauss-Newton in the
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-l\left(f_{\theta}\left(x\right),y\right) & = & \sum_{i}y_{i}\log\left(\left(f_{\theta}\left(x\right)\right)_{i}\right)\\
-\left(\frac{\partial}{\partial f_{\theta}}l\left(f_{\theta}\left(x\right),y\right)\right)_{t} & = & \frac{1}{\left(f_{\theta}\left(x\right)\right)_{t}}\\
-\left(\frac{\partial^{2}}{\partial f_{\theta}^{2}}l\left(f_{\theta}\left(x\right),y\right)\right)_{tt} & = & -\frac{1}{\left(f_{\theta}\left(x\right)\right)_{t}^{2}}=-\left(\frac{\partial}{\partial f_{\theta}}l\left(f_{\theta}\left(x\right),y\right)\right)_{t}^{2}
+l\left(f_{\theta}\left(x\right),y\right) & = & -\sum_{i}y_{i}\log\left(\left(f_{\theta}\left(x\right)\right)_{i}\right)\\
+\left(\frac{\partial}{\partial f_{\theta}}l\left(f_{\theta}\left(x\right),y\right)\right)_{t} & = & -\frac{1}{\left(f_{\theta}\left(x\right)\right)_{t}}\\
+\left(\frac{\partial^{2}}{\partial f_{\theta}^{2}}l\left(f_{\theta}\left(x\right),y\right)\right)_{tt} & = & \frac{1}{\left(f_{\theta}\left(x\right)\right)_{t}^{2}}=\left(\frac{\partial}{\partial f_{\theta}}l\left(f_{\theta}\left(x\right),y\right)\right)_{t}^{2}
 \end{eqnarray*}
 
 \end_inset
@@ -3680,8 +3702,8 @@ Getting back to the expression of the GN matrix (here for a single example),
 \begin_inset Formula 
 \begin{eqnarray}
 G_{f}\left(x,\theta\right) & = & \mathbf{J}_{\theta}\left(x,\theta\right)^{T}\frac{\partial^{2}}{\partial f^{2}}\left\{ l\left(f_{\theta}\left(x\right),y\right)\right\} \mathbf{J}_{\theta}\left(x,\theta\right)\nonumber \\
- & = & -\mathbf{J}_{\theta}\left(x,\theta\right)^{T}\left(\frac{\partial l}{\partial f_{\theta}}\right)\left(\frac{\partial l}{\partial f_{\theta}}\right)^{T}\mathbf{J}_{\theta}\left(x,\theta\right)\nonumber \\
- & = & -\nabla_{\theta}l\left(f_{\theta}\left(x\right),y\right)\nabla_{\theta}l\left(f_{\theta}\left(x\right),y\right)^{T}\label{eq:simplified-gn}
+ & = & \mathbf{J}_{\theta}\left(x,\theta\right)^{T}\left(\frac{\partial l}{\partial f_{\theta}}\right)\left(\frac{\partial l}{\partial f_{\theta}}\right)^{T}\mathbf{J}_{\theta}\left(x,\theta\right)\nonumber \\
+ & = & \nabla_{\theta}l\left(f_{\theta}\left(x\right),y\right)\nabla_{\theta}l\left(f_{\theta}\left(x\right),y\right)^{T}\label{eq:simplified-gn}
 \end{eqnarray}
 
 \end_inset
