@@ -1969,7 +1969,11 @@ Newton step
 \series default
 .
  By making several iterations of Newton, and under the assumption that we
- are close enough to a minimum, the updates will converge to it.
+ are close enough to a minimum so that 
+\begin_inset Formula $\left(\nabla^{2}f\right)_{x}$
+\end_inset
+
+ remains positive definite, the updates will converge to this minimum.
 \end_layout
 
 \begin_layout Standard
@@ -1992,7 +1996,7 @@ Getting the value of the Hessian matrix
 : Using an automatic differentiation software, we can get an expression
  for the Hessian, by differentiating the symbolic expression of the gradient.
  But unlike the computation of the gradient, the graph produced to compute
- the Hessian will have much more nodes.
+ the Hessian will have many more nodes.
  We will explore this question in more details in section 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -2062,6 +2066,24 @@ reference "subsec:focus-covariance"
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Enumerate
+
+\shape italic
+Saddle points
+\shape default
+: The optimization problem of minimizing a cost function over a dataset
+ has many more saddle points than local minima 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "dauphin2014identifying"
+
+\end_inset
+
+.
+ In this case using the Hessian will fail as it will converge to a saddle
+ point instead of escaping from it in order to find a minimum.
 \end_layout
 
 \begin_layout Subsection
@@ -2355,7 +2377,7 @@ key "schraudolph2002fast"
 \end_inset
 
 .
- As we get closer to the the optimum, this part will go toward 
+ As we get closer to the optimum, this part will go toward 
 \begin_inset Formula $0$
 \end_inset
 
@@ -2661,7 +2683,7 @@ Natural gradient methods
 
 \begin_layout Standard
 We now present the natural gradient.
- We give some context and interpration for the natural gradient, and we
+ We give some context and interpretation for the natural gradient, and we
  give its expression for neural networks.
 \end_layout
 
@@ -2828,7 +2850,7 @@ reference "subsec:The-learning-rate"
 
 \end_inset
 
-, the parameter update vector used in ordinary gradient descent can be otabined
+, the parameter update vector used in ordinary gradient descent can be obtained
  as the result of the following minimization problem:
 \end_layout
 
@@ -2988,7 +3010,7 @@ key "pascanu2013revisiting"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathbf{F} & = & \mathbb{E}_{x\sim q\left(x\right)}\left[\mathbf{J}_{\theta}\left(x,\theta\right)^{T}D\left(f_{\theta}\left(x\right)\right)\mathbf{J}_{\theta}\left(x,\theta\right)^{T}\right]
+\mathbf{F} & = & \mathbb{E}_{x\sim p\left(x\right)}\left[\mathbf{J}_{\theta}\left(x,\theta\right)^{T}D\left(f_{\theta}\left(x\right)\right)\mathbf{J}_{\theta}\left(x,\theta\right)^{T}\right]
 \end{eqnarray*}
 
 \end_inset
@@ -3002,7 +3024,7 @@ The values for
 \end_inset
 
  are drawn from the data generating distribution 
-\begin_inset Formula $q$
+\begin_inset Formula $p$
 \end_inset
 
 .
@@ -3603,7 +3625,7 @@ We denoted by
 \end_layout
 
 \begin_layout Itemize
-We ensure that
+We ensure that 
 \begin_inset Formula $\Delta f_{\theta}\left(x_{i},\Delta\theta\right)$
 \end_inset
 
@@ -3693,7 +3715,20 @@ l\left(f_{\theta}\left(x\right),y\right) & = & -\sum_{i}y_{i}\log\left(\left(f_{
 
 \end_inset
 
-Getting back to the expression of the GN matrix (here for a single example),
+The reason is that the second derivative of the 
+\begin_inset Formula $\log$
+\end_inset
+
+ function (
+\begin_inset Formula $x\longmapsto-\frac{1}{x^{2}}$
+\end_inset
+
+) is minus the square of its first derivative (
+\begin_inset Formula $x\longmapsto\frac{1}{x}$
+\end_inset
+
+).
+ Getting back to the expression of the GN matrix (here for a single example),
  we can combine the second derivative with the jacobians and get a simple
  expression:
 \end_layout
@@ -3702,7 +3737,7 @@ Getting back to the expression of the GN matrix (here for a single example),
 \begin_inset Formula 
 \begin{eqnarray}
 G_{f}\left(x,\theta\right) & = & \mathbf{J}_{\theta}\left(x,\theta\right)^{T}\frac{\partial^{2}}{\partial f^{2}}\left\{ l\left(f_{\theta}\left(x\right),y\right)\right\} \mathbf{J}_{\theta}\left(x,\theta\right)\nonumber \\
- & = & \mathbf{J}_{\theta}\left(x,\theta\right)^{T}\left(\frac{\partial l}{\partial f_{\theta}}\right)\left(\frac{\partial l}{\partial f_{\theta}}\right)^{T}\mathbf{J}_{\theta}\left(x,\theta\right)\nonumber \\
+ & = & \mathbf{J}_{\theta}\left(x,\theta\right)^{T}\left(\frac{\partial l}{\partial f_{\theta}}\right)^{T}\left(\frac{\partial l}{\partial f_{\theta}}\right)\mathbf{J}_{\theta}\left(x,\theta\right)\nonumber \\
  & = & \nabla_{\theta}l\left(f_{\theta}\left(x\right),y\right)\nabla_{\theta}l\left(f_{\theta}\left(x\right),y\right)^{T}\label{eq:simplified-gn}
 \end{eqnarray}
 
@@ -3786,7 +3821,7 @@ key "snoek2012practical"
  While hyperparameter tuning is an active research area on its own, it is
  not the focus of our work.
  We just use a simple technique that refines random search, by allocating
- more ressource to explore regions in the hyperparameter space that are
+ more ressources to explore regions in the hyperparameter space that are
  more likely to give a good performance.
  We now describe this method that we call 
 \series bold
@@ -3835,7 +3870,16 @@ key "altman1992introduction"
 \begin_inset Formula $p=\frac{c_{max}-c_{estimate}}{c_{max}-c_{min}}$
 \end_inset
 
- (in this notation, the criteria needs to be minimized).
+ (in this notation, the criteria needs to be minimized) where 
+\begin_inset Formula $c_{max}$
+\end_inset
+
+ and 
+\begin_inset Formula $c_{min}$
+\end_inset
+
+ are defined as the current maximum and minimum value that we have obtained
+ so far.
  This value for 
 \begin_inset Formula $p$
 \end_inset
@@ -4334,14 +4378,14 @@ key "lecun2010mnist"
 
  grayscale images of handwritten digits, and the corresponding value of
  the digit that is represented in the image.
- For this benchmark, we use an autoencoder 
+ For this benchmark, we use an autoencoder (see section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:Autoencoders"
 
 \end_inset
 
- with layer sizes 
+) with layer sizes 
 \begin_inset Formula $\left\{ 784,1000,500,250,30,250,500,1000,784\right\} $
 \end_inset
 
@@ -4351,7 +4395,7 @@ reference "subsec:Autoencoders"
 \end_inset
 
 , and then decodes it to reconstruct the original image.
- We use the quadratic error 
+ We use the reconstruction error 
 \begin_inset Formula $l\left(f\left(x\right),y\right)=\left\Vert f\left(x\right)-y\right\Vert _{2}^{2}$
 \end_inset
 
@@ -4447,21 +4491,53 @@ s between parameters of different layers while computing updates.
 \end_layout
 
 \begin_layout Section
-How is the gradient modified when changing the value of a parameter
+How is the gradient modified when changing the value of the parameters of
+ a layer
 \end_layout
 
 \begin_layout Standard
 In usual gradient descent, we compute the gradient of the empirical risk
  with respect to all parameters, then we update all parameters at once.
- But since we are using backpropagation, then the process of getting the
- partial derivatives is sequential, that is, we get the derivatives of the
- top layers first, and afterwards we get the derivatives of the bottom layers.
+ But it is not really clear that in doing so we will actually decrease the
+ value of the empirical risk.
+ The direction provided by the gradient is locally a descent direction.
+ But how much locally? As we increase the number of parameters, we might
+ need to use an optimal learning rate that is even too small to make any
+ perceptible progress overall.
+\end_layout
+
+\begin_layout Standard
+We experiment with a technique that aims at improving the update directions.
+ It is a modification of the gradient, that can be computed following the
+ same chaining of operations as computing the gradient using forward and
+ backward propagation, but requiring more computation.
+\end_layout
+
+\begin_layout Standard
+We now present the technique, and describe the derivation of this new update
+ direction.
+\end_layout
+
+\begin_layout Standard
+Since we are using backpropagation, then the process of getting the partial
+ derivatives is sequential, that is, we get the derivatives of the top layers
+ first, and afterwards we get the derivatives of the bottom layers.
  Now suppose that we apply the update for the parameters of the top layers
- before backpropagating through it.
- The idea here is to estimate the new backpropagated signal.
- This can also be interpreted as doing gradient descent separately for each
- layer, but instead of recomputing the full forward and backward propagation
- to the target layer, we just do a single updated backpropagation.
+ before backpropagating through them.
+ We are now optimizing an updated function.
+ Instead of using the backropagated gradient that we have obtained so far,
+ we could reestimate the forward and backward pass for this updated function
+ and get a new backpropagated signal.
+ To a certain extent it could be seen as doing coordinate descent, but instead
+ of optimizing each parameter separately, we group them by layer, and we
+ optimize each layer separately.
+\end_layout
+
+\begin_layout Standard
+What we propose lies somewhere in-between: instead of recomputing the whole
+ forward pass and the backward pass up until the current layer, we estimate
+ how updating the parameters of the top layers will modify the backpropagated
+ signal.
 \end_layout
 
 \begin_layout Standard
@@ -4482,14 +4558,19 @@ a_{l} & = & Wh_{l-1}+b
 \end_layout
 
 \begin_layout Standard
-Using backpropagation through this layer we get the partial derivative:
+Using backpropagation through this layer we get the partial derivative of
+ the loss function 
+\begin_inset Formula $\ell$
+\end_inset
+
+:
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray}
-\frac{\partial l}{\partial h_{l-1}} & = & \frac{\partial l}{\partial f}\frac{\partial f}{\partial a_{l}}\frac{\partial a_{l}}{\partial h_{l-1}}\nonumber \\
- & = & \frac{\partial l}{\partial f}\frac{\partial f}{\partial a_{l}}W\label{eq:dldhl}
+\frac{\partial\ell}{\partial h_{l-1}} & = & \frac{\partial\ell}{\partial a_{l}}\frac{\partial a_{l}}{\partial h_{l-1}}\nonumber \\
+ & = & \frac{\partial\ell}{\partial a_{l}}W\label{eq:dldhl}
 \end{eqnarray}
 
 \end_inset
@@ -4511,20 +4592,26 @@ This partial derivative is thus a function of
 \begin_inset Formula $b$
 \end_inset
 
- through the other terms 
-\begin_inset Formula $\frac{\partial l}{\partial f}$
-\end_inset
-
- and 
-\begin_inset Formula $\frac{\partial f}{\partial a_{l}}$
+ through the other term 
+\begin_inset Formula $\frac{\partial\ell}{\partial a_{l}}$
 \end_inset
 
 .
  Can we get an update expression for 
-\begin_inset Formula $\frac{\partial l}{\partial h_{l-1}}\left(W+\Delta W,b+\Delta b\right)$
+\begin_inset Formula $\frac{\partial\ell}{\partial h_{l-1}}\left(W+\Delta W,b+\Delta b\right)$
 \end_inset
 
-?
+? This gradient 
+\begin_inset Formula $\frac{\partial\ell}{\partial h_{l-1}}$
+\end_inset
+
+ is in turn used for computing the gradient of each preceding (deeper) layer
+ using the chain rule.
+ By obtaining a more accurate value for 
+\begin_inset Formula $\frac{\partial\ell}{\partial h_{l-1}}\left(W+\Delta W,b+\Delta b\right)$
+\end_inset
+
+ we expect to improve all consecutive parameter updates.
 \end_layout
 
 \begin_layout Section
@@ -4532,14 +4619,28 @@ A first order update of a first order derivative
 \end_layout
 
 \begin_layout Standard
-A simple first order expansion gives a way of getting such an update:
+We now focus on a single layer.
+ Suppose that we update 
+\begin_inset Formula $W\leftarrow W+\Delta W$
+\end_inset
+
+ and 
+\begin_inset Formula $b\leftarrow b+\Delta b$
+\end_inset
+
+.
+ We want to estimate 
+\begin_inset Formula $\frac{\partial\ell}{\partial h_{l-1}}\left(W+\Delta W,b+\Delta b\right)$
+\end_inset
+
+, using a first order approximation:
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{align*}
-\frac{\partial l}{\partial h_{l-1}}\left(W+\Delta W,b+\Delta b\right)\approx & \frac{\partial l}{\partial h_{l-1}}\left(W,b\right)+\frac{\partial}{\partial\text{vec}\left(W\right)}\left\{ \frac{\partial l}{\partial h_{l-1}}\left(W,b\right)\right\} \text{vec}\left(\Delta W\right)\\
- & +\frac{\partial}{\partial b}\left\{ \frac{\partial l}{\partial h_{l-1}}\left(W,b\right)\right\} \Delta b
+\frac{\partial\ell}{\partial h_{l-1}}\left(W+\Delta W,b+\Delta b\right)\approx & \frac{\partial\ell}{\partial h_{l-1}}\left(W,b\right)+\left(\frac{\partial}{\partial\text{vec}\left(W\right)}\left\{ \frac{\partial\ell}{\partial h_{l-1}}\left(W,b\right)\right\} \text{vec}\left(\Delta W\right)\right)^{T}\\
+ & +\left(\frac{\partial}{\partial b}\left\{ \frac{\partial\ell}{\partial h_{l-1}}\left(W,b\right)\right\} \Delta b\right)^{T}
 \end{align*}
 
 \end_inset
@@ -4554,7 +4655,7 @@ We used the vec operator in order to have a matrix expression for the second
 \end_inset
 
 .
- Using the expression 
+ Using the expression in eq 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "eq:dldhl"
@@ -4562,24 +4663,31 @@ reference "eq:dldhl"
 \end_inset
 
  for 
-\begin_inset Formula $\frac{\partial l}{\partial h_{l-1}}$
+\begin_inset Formula $\frac{\partial\ell}{\partial h_{l-1}}$
 \end_inset
 
- we see that it requires deriving 3 terms.
- Indeed the second derivative of the jacobian of the input of the network,
- with respect to the preactivation 
-\begin_inset Formula $\frac{\partial f}{\partial a_{l}}$
+ we see that it requires deriving 2 terms: 
+\begin_inset Formula $\frac{\partial\ell}{\partial a_{l}}$
 \end_inset
 
- is too costly to be used in a real problem.
- We choose not to use it.
- The remaining 2 derivatives give an update:
+ and 
+\begin_inset Formula $W$
+\end_inset
+
+:
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\frac{\partial l}{\partial h_{l-1}}\left(W+\Delta W,b+\Delta b\right) & \approx & \left(\frac{\partial l}{\partial f}\frac{\partial f}{\partial a_{l}}\right)^{T}\Delta W+W^{T}\left(\frac{\partial f}{\partial a_{l}}\right)^{T}\frac{\partial^{2}l}{\partial f^{2}}\frac{\partial f}{\partial a_{l}}\left(\Delta Wh_{l-1}+\Delta b\right)
+\frac{\partial}{\partial\text{vec}\left(W\right)}\left\{ \frac{\partial\ell}{\partial h_{l-1}}\left(W,b\right)\right\} \text{vec}\left(\Delta W\right) & = & \frac{\partial}{\partial\text{vec}\left(W\right)}\left\{ \frac{\partial\ell}{\partial a_{l}}W\right\} \text{vec}\left(\Delta W\right)\\
+ & = & \frac{\partial}{\partial\text{vec}\left(W\right)}\left\{ \text{vec}\left(W\right)^{T}\left(\mathbf{I}\otimes\left(\frac{\partial\ell}{\partial a_{l}}\right)^{T}\right)\right\} \text{vec}\left(\Delta W\right)\\
+ & = & \left(\left(\mathbf{I}\otimes\left(\frac{\partial\ell}{\partial a_{l}}\right)\right)+W^{T}\frac{\partial^{2}\ell}{\partial a_{l}^{2}}\frac{\partial a_{l}}{\partial\text{vec}\left(W\right)}\right)\text{vec}\left(\Delta W\right)\\
+ & = & \left(\left(\mathbf{I}\otimes\left(\frac{\partial\ell}{\partial a_{l}}\right)\right)+W^{T}\frac{\partial^{2}\ell}{\partial a_{l}^{2}}\left(h_{l-1}^{T}\otimes\mathbf{I}\right)\right)\text{vec}\left(\Delta W\right)\\
+ & = & \frac{\partial\ell}{\partial a_{l}}\Delta W+W^{T}\frac{\partial^{2}\ell}{\partial a_{l}^{2}}\Delta Wh_{l-1}\\
+\frac{\partial}{\partial b}\left\{ \frac{\partial\ell}{\partial h_{l-1}}\left(W,b\right)\right\} \Delta b & = & \frac{\partial}{\partial b}\left\{ \frac{\partial\ell}{\partial a_{l}}W\right\} \Delta b\\
+ & = & W^{T}\frac{\partial^{2}\ell}{\partial a_{l}^{2}}\frac{\partial a_{l}}{\partial b}\Delta b\\
+ & = & W^{T}\frac{\partial^{2}\ell}{\partial a_{l}^{2}}\Delta b
 \end{eqnarray*}
 
 \end_inset
@@ -4588,15 +4696,151 @@ reference "eq:dldhl"
 \end_layout
 
 \begin_layout Standard
-In the process, we did 2 approximations: the first one in using a first
- order expansion, the second one in not using the true second derivatives,
- but instead just a part of them.
- We propose to replace the backpropagation step by backpropagating this
- updated derivative.
+Overall we get the following form:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\frac{\partial\ell}{\partial h_{l-1}}\left(W+\Delta W,b+\Delta b\right) & \approx & \frac{\partial\ell}{\partial h_{l-1}}\left(W,b\right)+\Delta W^{T}\left(\frac{\partial\ell}{\partial a_{l}}\right)^{T}+\left(\Delta Wh_{l-1}+\Delta b\right)^{T}\frac{\partial^{2}\ell}{\partial a_{l}^{2}}W
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This can be further simplified by using the chain rule for 
+\begin_inset Formula $\frac{\partial\ell}{\partial h_{l-1}}\left(W,b\right)$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\frac{\partial\ell}{\partial h_{l-1}}\left(W+\Delta W,b+\Delta b\right) & \approx & W^{T}\left(\frac{\partial\ell}{\partial a_{l}}\right)^{T}+\Delta W^{T}\left(\frac{\partial\ell}{\partial a_{l}}\right)^{T}+\left(\Delta Wh_{l-1}+\Delta b\right)^{T}\frac{\partial^{2}\ell}{\partial a_{l}^{2}}W\\
+ & = & \left(W+\Delta W\right)^{T}\left(\frac{\partial\ell}{\partial a_{l}}\right)^{T}+\left(\Delta Wh_{l-1}+\Delta b\right)^{T}\frac{\partial^{2}\ell}{\partial a_{l}^{2}}W
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This approximate new backpropagated gradient thus decomposes into 2 terms.
+ The first one 
+\begin_inset Formula $\left(W+\Delta W\right)^{T}\left(\frac{\partial\ell}{\partial a_{l}}\right)^{T}$
+\end_inset
+
+ is very similar to the usual backpropagated gradient but accounts for the
+ updated value of 
+\begin_inset Formula $W$
+\end_inset
+
+.
+ The second term 
+\begin_inset Formula $\left(\Delta Wh_{l-1}+\Delta b\right)^{T}\frac{\partial^{2}\ell}{\partial a_{l}^{2}}W$
+\end_inset
+
+ measures a global change in the gradient.
+ It requires using the Hessian of the preactivation.
+ This Hessian estimates how much will the gradient 
+\begin_inset Formula $\frac{\partial\ell}{\partial a_{l}}$
+\end_inset
+
+ change when the value of 
+\begin_inset Formula $a_{l}$
+\end_inset
+
+ changes, which is exactly what is computed by 
+\begin_inset Formula $\Delta Wh_{l-1}+\Delta b$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The Hessian 
+\begin_inset Formula $\frac{\partial^{2}\ell}{\partial a_{l}^{2}}$
+\end_inset
+
+ is currently the limiting factor for this technique to be truly efficient.
+ It must be computed for every example.
+ It has the size of the number of output units for this layer, and must
+ be computed for each example.
+ It is thus smaller compared to the true Hessian that we use in Newton's
+ method, which has the size 
+\begin_inset Formula $n_{parameters}\times n_{parameters}$
+\end_inset
+
+ and also requires computing a Hessian for each example that is summed in
+ order to get the Hessian of the empirical risk.
+\end_layout
+
+\begin_layout Standard
+This Hessian 
+\begin_inset Formula $\frac{\partial^{2}\ell}{\partial a_{l}^{2}}$
+\end_inset
+
+ can also be approximated by Gauss-Newton (see section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:gauss-newton"
+
+\end_inset
+
+): 
+\begin_inset Formula $\frac{\partial^{2}\ell}{\partial a_{l}^{2}}\approx\mathbf{J}_{a_{l}}{}^{T}\frac{\partial^{2}\ell}{\partial f^{2}}\mathbf{J}_{a_{l}}$
+\end_inset
+
+ where the jacobians 
+\begin_inset Formula $\mathbf{J}_{a_{l}}=\frac{\partial f}{\partial a_{l}}$
+\end_inset
+
+ are the jacobians of the output of the network with respect to the preactivatio
+n of the current layer 
+\begin_inset Formula $a_{l}$
+\end_inset
+
+.
+ This approximation drastically reduces the computation required during
+ backpropagation, and experimentally proves to be equally efficient as using
+ the true Hessian.
+\end_layout
+
+\begin_layout Section
+Updated backpropagation algorithm
+\end_layout
+
+\begin_layout Standard
+Starting from the usual gradient computation, we propose to replace the
+ backpropagation step by backpropagating this updated gradient.
  We call this technique updated backpropagation (UBP), and we describe a
- simple algorithm that implements it.
- Note that it requires backpropagating a jacobian of the output of the network,
- in addition to the usual gradient of the loss.
+ simple algorithm that implements it (algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:updbprop"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+In addition to backpropagating the gradient, we must also backpropagate
+ the jacobians 
+\begin_inset Formula $\frac{\partial f}{\partial a_{l}}$
+\end_inset
+
+ for each example.
+ This can be done in a similar fashion than the gradient, the main difference
+ being that the jacobians are matrices for each example, whereas the gradients
+ are vectors.
+ The size of the jacobians grows with the size of the output of the network.
 \end_layout
 
 \begin_layout Standard
@@ -4643,14 +4887,17 @@ State{$dh_i
 \backslash
 leftarrow 
 \backslash
+left( 
+\backslash
 frac{
 \backslash
 partial l}{
 \backslash
-partial f_i}$}
+partial f_i} 
 \backslash
-Comment{Derivative of the loss w.r.t the output of the NN for each examples
- $i$}
+right)^T$}
+\backslash
+Comment{Gradient of the loss w.r.t the output of the NN for examples $i$}
 \end_layout
 
 \begin_layout Plain Layout
@@ -4669,7 +4916,7 @@ partial^{2}l}{
 \backslash
 partial f^{2}}}$}
 \backslash
-Comment{Jacobian of the output of the NN for each examples $i$}
+Comment{Jacobian of the loss of the NN for examples $i$}
 \end_layout
 
 \begin_layout Plain Layout
@@ -4687,15 +4934,19 @@ in $ layers from top to bottom}
 \backslash
 State{$da_i 
 \backslash
-leftarrow dh_i 
+leftarrow 
+\backslash
+left( 
 \backslash
 frac{
 \backslash
 partial f_l^{(i)}}{
 \backslash
-partial a_l^{(i)}}$}
+partial a_l^{(i)}} 
 \backslash
-Comment{Derivative of the loss w.r.t the preactivation for all examples $i$}
+right)^T dh_i$}
+\backslash
+Comment{Derivative of the loss w.r.t the preactivation for examples $i$}
 \end_layout
 
 \begin_layout Plain Layout
@@ -4711,23 +4962,29 @@ frac{
 partial f_l^{(i)}}{
 \backslash
 partial a_l^{(i)}}$}
+\backslash
+Comment{For elementwise functions $
+\backslash
+frac{
+\backslash
+partial f_l^{(i)}}{
+\backslash
+partial a_l^{(i)}}$ is diagonal}
 \end_layout
 
 \begin_layout Plain Layout
 
 
 \backslash
-State{$b
+State{$
 \backslash
-leftarrow b - 
+Delta b 
+\backslash
+leftarrow - 
 \backslash
 lambda 
 \backslash
-sum_i 
-\backslash
-left( da_i 
-\backslash
-right)^T$}
+sum_i^n da_i $}
 \backslash
 Comment{bias update}
 \end_layout
@@ -4736,13 +4993,15 @@ Comment{bias update}
 
 
 \backslash
-State{$W
+State{$
 \backslash
-leftarrow W - 
+Delta W 
+\backslash
+leftarrow - 
 \backslash
 lambda 
 \backslash
-sum_i da_i h_{l-1}^{(i)}$}
+sum_i^n da_i h_{l-1}^T$}
 \backslash
 Comment{weights update}
 \end_layout
@@ -4753,13 +5012,13 @@ Comment{weights update}
 \backslash
 State{$dh_i 
 \backslash
-leftarrow da_i 
+leftarrow 
 \backslash
 left(W + 
 \backslash
 Delta W 
 \backslash
-right) + W^{T}J^T J 
+right)^T da_i + W^{T}J_i^T J_i 
 \backslash
 left(
 \backslash
@@ -4768,6 +5027,8 @@ Delta Wh_{l-1}^{(i)}+
 Delta b
 \backslash
 right)$}
+\backslash
+Comment{Updated backprop.}
 \end_layout
 
 \begin_layout Plain Layout
@@ -4777,6 +5038,28 @@ right)$}
 State{$J_i 
 \backslash
 leftarrow J_i W$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$b
+\backslash
+leftarrow b +
+\backslash
+Delta b$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{$W
+\backslash
+leftarrow W +
+\backslash
+Delta W$}
 \end_layout
 
 \begin_layout Plain Layout
@@ -4808,6 +5091,13 @@ Updated backpropagation
 \end_inset
 
 
+\begin_inset CommandInset label
+LatexCommand label
+name "alg:updbprop"
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -4830,8 +5120,8 @@ reference "ubp-fig"
 \end_inset
 
 .
- In terms of updates, we observe that this method outperforms significantly
- compared to SGD (note that this is a logarithmic scale).
+ In terms of updates, we observe that this method significantly outperforms
+ SGD (note that this is a logarithmic scale).
  However it takes 10 times longer to obtain an update using UBP making it
  unpractical on this task.
 \end_layout
@@ -5018,7 +5308,7 @@ We now focus on a single layer
 
 .
  The gradients on the preactivation are given by 
-\begin_inset Formula $\nabla_{a}l=\left(\frac{\partial l}{\partial a}\right)^{T}$
+\begin_inset Formula $\nabla_{a}\ell=\left(\frac{\partial\ell}{\partial a}\right)^{T}$
 \end_inset
 
  as usual.
@@ -5028,7 +5318,7 @@ We now focus on a single layer
 
  so that in expectation we will match the opposite gradients of preactivations
  times a learning rate 
-\begin_inset Formula $-\lambda\nabla_{a}l$
+\begin_inset Formula $-\lambda\nabla_{a}\ell$
 \end_inset
 
 .
@@ -5047,8 +5337,9 @@ local
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\Delta W^{*},\Delta b^{*} & = & \text{argmin}_{\Delta W,\Delta b}\frac{1}{n}\sum_{i}\left\Vert \Delta Wh^{(i)}+\Delta b+\lambda\nabla_{a^{(i)}}l\right\Vert _{2}^{2}+\epsilon\left\Vert \Delta W\right\Vert _{2}^{2}\\
- & = & \text{argmin}_{\Delta W,\Delta b}l_{C}\left(\Delta W,\Delta b\right)
+\Delta W^{*},\Delta b^{*} & = & \text{argmin}_{\Delta W,\Delta b}\frac{1}{n}\sum_{i}\left\Vert \Delta Wh^{(i)}+\Delta b-\left(-\lambda\nabla_{a^{(i)}}\ell\right)\right\Vert _{2}^{2}+\epsilon\left\Vert \Delta W\right\Vert _{2}^{2}\\
+ & = & \text{argmin}_{\Delta W,\Delta b}\frac{1}{n}\sum_{i}\left\Vert \Delta Wh^{(i)}+\Delta b+\lambda\nabla_{a^{(i)}}\ell\right\Vert _{2}^{2}+\epsilon\left\Vert \Delta W\right\Vert _{2}^{2}\\
+ & = & \text{argmin}_{\Delta W,\Delta b}\ell_{C}\left(\Delta W,\Delta b\right)
 \end{eqnarray*}
 
 \end_inset
@@ -5057,7 +5348,12 @@ local
 \end_layout
 
 \begin_layout Standard
-Instead of using gradient descent to find the optimal values for 
+We denoted by 
+\begin_inset Formula $\ell_{C}\left(\Delta W,\Delta b\right)$
+\end_inset
+
+ this new local criterion, to be solved for each layer.
+ Instead of using gradient descent to find the optimal values for 
 \begin_inset Formula $\Delta W^{*},\Delta b^{*}$
 \end_inset
 
@@ -5079,12 +5375,12 @@ Instead of using gradient descent to find the optimal values for
 
 \begin_layout Standard
 \begin_inset Formula 
-\begin{eqnarray*}
-\frac{\partial l_{C}}{\partial\Delta W} & = & \frac{1}{n}\sum_{i}\left(\Delta Wh^{(i)}+\Delta b+\lambda\nabla_{a^{(i)}}l\right)h^{(i)T}+\epsilon\Delta W\\
- & = & \Delta b\frac{1}{n}\sum_{i}h^{(i)T}+\epsilon\Delta W+\Delta W\frac{1}{n}\sum_{i}h^{(i)}h^{(i)T}+\frac{\lambda}{n}\sum_{i}\left(\nabla_{a^{(i)}}l\right)h^{(i)T}\\
-\frac{\partial l_{C}}{\partial\Delta b} & = & \frac{1}{n}\sum_{i}\left(\Delta Wh^{(i)}+\Delta b+\lambda\nabla_{a^{(i)}}l\right)\\
- & = & \Delta b+\Delta W\frac{1}{n}\sum_{i}h^{(i)}+\frac{\lambda}{n}\sum_{i}\nabla_{a^{(i)}}l
-\end{eqnarray*}
+\begin{eqnarray}
+\nabla_{\Delta W}\ell_{C} & = & \frac{1}{n}\sum_{i}\left(\Delta Wh^{(i)}+\Delta b+\lambda\nabla_{a^{(i)}}\ell\right)h^{(i)T}+\epsilon\Delta W\nonumber \\
+ & = & \Delta b\frac{1}{n}\sum_{i}h^{(i)T}+\epsilon\Delta W+\Delta W\frac{1}{n}\sum_{i}h^{(i)}h^{(i)T}+\frac{\lambda}{n}\sum_{i}\left(\nabla_{a^{(i)}}\ell\right)h^{(i)T}\label{eq:dwlocal}\\
+\nabla_{\Delta b}\ell_{C} &  & \frac{1}{n}\sum_{i}\left(\Delta Wh^{(i)}+\Delta b+\lambda\nabla_{a^{(i)}}\ell\right)\nonumber \\
+ & = & \Delta b+\Delta W\frac{1}{n}\sum_{i}h^{(i)}+\frac{\lambda}{n}\sum_{i}\nabla_{a^{(i)}}\ell\label{eq:dblocal}
+\end{eqnarray}
 
 \end_inset
 
@@ -5092,8 +5388,60 @@ Instead of using gradient descent to find the optimal values for
 \end_layout
 
 \begin_layout Standard
-By putting both expressions together and simplifying for 
-\begin_inset Formula $\Delta W^{*}$
+By solving 
+\begin_inset Formula $\nabla_{\Delta b}\ell_{C}=0$
+\end_inset
+
+ for 
+\begin_inset Formula $\Delta b$
+\end_inset
+
+ in eq 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:dblocal"
+
+\end_inset
+
+ we get:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray}
+\Delta b^{*} & = & -\frac{\lambda}{n}\sum_{i}\nabla_{a^{(i)}}\ell-\Delta W\frac{1}{n}\sum_{i}h^{(i)}\label{eq:dbinter}
+\end{eqnarray}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+By solving 
+\begin_inset Formula $\nabla_{\Delta W}\ell_{C}=0$
+\end_inset
+
+ for 
+\begin_inset Formula $\Delta W$
+\end_inset
+
+ in eq 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:dwlocal"
+
+\end_inset
+
+ and replacing 
+\begin_inset Formula $\Delta b$
+\end_inset
+
+ using eq 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:dbinter"
+
 \end_inset
 
  we get:
@@ -5102,8 +5450,24 @@ By putting both expressions together and simplifying for
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\Delta W^{*}\left(C+\epsilon\mathbf{I}\right) & = & -\frac{\lambda}{n}\sum_{i}\left(\nabla_{a^{(i)}}l\right)\left(h^{(i)}-\frac{1}{n}\sum_{i}h^{(i)}\right)^{T}\\
-\Delta b^{*} & = & -\frac{\lambda}{n}\sum_{i}\nabla_{a^{(i)}}l-\frac{1}{n}\Delta W^{*}\sum_{i}h^{(i)}
+\Delta W^{*}\left(\frac{1}{n}\sum_{i}h^{(i)}h^{(i)T}-\frac{1}{n}\sum_{i}h^{(i)}\frac{1}{n}\sum_{i}h^{(i)T}+\epsilon\mathbf{I}\right) & = & -\frac{\lambda}{n}\sum_{i}\left(\nabla_{a^{(i)}}\ell\right)h^{(i)T}+\frac{\lambda}{n}\sum_{i}\left(\nabla_{a^{(i)}}\ell\right)\frac{1}{n}\sum_{i}h^{(i)T}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+By putting both expressions together and simplifying the covariances we
+ obtain:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\Delta W^{*}\left(C+\epsilon\mathbf{I}\right) & = & -\frac{\lambda}{n}\sum_{i}\left(\nabla_{a^{(i)}}\ell\right)\left(h^{(i)}-\frac{1}{n}\sum_{i}h^{(i)}\right)^{T}\\
+\Delta b^{*} & = & -\frac{\lambda}{n}\sum_{i}\nabla_{a^{(i)}}\ell-\frac{1}{n}\Delta W^{*}\sum_{i}h^{(i)}
 \end{eqnarray*}
 
 \end_inset
@@ -5130,11 +5494,11 @@ Comparison with standard SGD
 
 \begin_layout Standard
 The updates for standard SGD are 
-\begin_inset Formula $\Delta_{SGD}b=-\frac{\lambda}{n}\sum_{i}\nabla_{a^{(i)}}l$
+\begin_inset Formula $\Delta_{SGD}b=-\frac{\lambda}{n}\sum_{i}\nabla_{a^{(i)}}\ell$
 \end_inset
 
  and 
-\begin_inset Formula $\Delta_{SGD}W=-\frac{\lambda}{n}\sum_{i}\left(\nabla_{a^{(i)}}l\right)h^{(i)T}$
+\begin_inset Formula $\Delta_{SGD}W=-\frac{\lambda}{n}\sum_{i}\left(\nabla_{a^{(i)}}\ell\right)h^{(i)T}$
 \end_inset
 
 .
@@ -5163,7 +5527,7 @@ update for
 \end_inset
 
  is typically at least one order of magnitude smaller than 
-\begin_inset Formula $\frac{\lambda}{n}\sum_{i}\nabla_{a^{(i)}}l$
+\begin_inset Formula $\frac{\lambda}{n}\sum_{i}\nabla_{a^{(i)}}\ell$
 \end_inset
 
 .
@@ -5458,7 +5822,11 @@ And finally by the chain rule:
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray}
-\mathbf{J}_{\theta} & = & \left(\begin{array}{cc}
+\mathbf{J}_{\theta} & = & \mathbf{J}_{a}\left(\left(\begin{array}{cc}
+h^{T} & 1\end{array}\right)\otimes\mathbf{I}\right)\nonumber \\
+ & = & \left(1\otimes\mathbf{J}_{a}\right)\left(\left(\begin{array}{cc}
+h^{T} & 1\end{array}\right)\otimes\mathbf{I}\right)\nonumber \\
+ & = & \left(\begin{array}{cc}
 h^{T} & 1\end{array}\right)\otimes\mathbf{J}_{a}\label{eq:jaco_factorization}
 \end{eqnarray}
 
@@ -5605,7 +5973,7 @@ In second order algorithms, inverting the Hessian matrix is often the limiting
 \end_inset
 
 .
- The Kronecker product as the pleasing property that it turns the inversion
+ The Kronecker product has the pleasing property that it turns the inversion
  of a big matrix into inverting 2 smaller matrices since 
 \begin_inset Formula $\left(A\otimes B\right)^{-1}=A^{-1}\otimes B^{-1}$
 \end_inset
@@ -5666,7 +6034,7 @@ Here
 \begin_inset Formula $\alpha$
 \end_inset
 
- does not depend on 
+ is the same for all examples, it does not depend on 
 \begin_inset Formula $i$
 \end_inset
 
@@ -5675,8 +6043,26 @@ Here
  preactivations.
  Instead we just focus on some statistics of the activations of the current
  layer.
- Looking back at the use we will make of this preconditioner, we can interpret
- it as penalizing an update if the corresponding activation has a high variance.
+\end_layout
+
+\begin_layout Standard
+Looking back at the use we will make of this preconditioner, namely 
+\begin_inset Formula $\Delta\theta=-\lambda G_{in}^{-1}\nabla_{\theta}R$
+\end_inset
+
+ or equivalently 
+\begin_inset Formula $G_{in}\Delta\theta=-\lambda\nabla_{\theta}R$
+\end_inset
+
+, we can observe that this will penalize an update direction of 
+\begin_inset Formula $\theta$
+\end_inset
+
+ if the corresponding activation has a high variance, as measured by 
+\begin_inset Formula $h_{i}h_{i}^{T}$
+\end_inset
+
+.
  This makes sense since in this case changing the value here will change
  the next forward propagated signal more that if the variance of the correspondi
 ng activation were lower.
@@ -5756,7 +6142,7 @@ Applying this preconditioner to a gradient update we can get a new update
 \nabla_{\theta}R & = & -\frac{\lambda}{n}\sum_{j}\left(\begin{array}{c}
 h_{j}\\
 1
-\end{array}\right)\otimes\nabla_{a_{j}}l
+\end{array}\right)\otimes\nabla_{a_{j}}\ell
 \end{eqnarray*}
 
 \end_inset
@@ -5792,7 +6178,7 @@ C^{-1} & -C^{-1}\frac{1}{n}\sum_{i}h_{i}\\
 \end{array}\right)\left(\begin{array}{c}
 h_{j}\\
 1
-\end{array}\right)\otimes\frac{-\lambda}{\alpha}\nabla_{a_{j}}l
+\end{array}\right)\otimes\frac{-\lambda}{\alpha}\nabla_{a_{j}}\ell
 \end{eqnarray*}
 
 \end_inset
@@ -5811,8 +6197,8 @@ From this expression we can write the update for
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\Delta\text{vec}\left(W\right) & = & C^{-1}\frac{-\lambda}{n}\sum_{j}h_{j}\otimes\frac{1}{\alpha}\nabla_{a_{j}}l-C^{-1}\frac{1}{n}\sum_{i}h_{i}\otimes\frac{-\lambda}{n}\sum_{j}\frac{1}{\alpha}\nabla_{a_{j}}l\\
- & = & \frac{1}{\alpha}C^{-1}\frac{-\lambda}{n}\sum_{j}\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)\otimes\nabla_{a_{j}}l
+\Delta\text{vec}\left(W\right) & = & C^{-1}\frac{-\lambda}{n}\sum_{j}h_{j}\otimes\frac{1}{\alpha}\nabla_{a_{j}}\ell-C^{-1}\frac{1}{n}\sum_{i}h_{i}\otimes\frac{-\lambda}{n}\sum_{j}\frac{1}{\alpha}\nabla_{a_{j}}\ell\\
+ & = & \frac{1}{\alpha}C^{-1}\frac{-\lambda}{n}\sum_{j}\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)\otimes\nabla_{a_{j}}\ell
 \end{eqnarray*}
 
 \end_inset
@@ -5820,7 +6206,7 @@ From this expression we can write the update for
 
 \begin_inset Formula 
 \begin{equation}
-\boxed{\Delta W=\frac{-\lambda}{\alpha}\frac{1}{n}\sum_{j}\nabla_{a_{j}}l\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}C^{-1}}\label{eq:upd_w}
+\boxed{\Delta W=\frac{-\lambda}{\alpha}\frac{1}{n}\sum_{j}\nabla_{a_{j}}\ell\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)^{T}C^{-1}}\label{eq:upd_w}
 \end{equation}
 
 \end_inset
@@ -5839,8 +6225,8 @@ And the update for
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\Delta b & = & -\frac{-\lambda}{n}\sum_{j}\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}h_{j}\frac{1}{\alpha}\nabla_{a_{j}}l+\left(1+\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}\frac{1}{n}\sum_{i}h_{i}\right)\frac{-\lambda}{n}\sum_{j}\frac{1}{\alpha}\nabla_{a_{j}}l\\
- & = & \frac{-\lambda}{n}\sum_{j}\frac{1}{\alpha}\nabla_{a_{j}}l+\frac{\lambda}{n}\sum_{j}\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)\frac{1}{\alpha}\nabla_{a_{j}}l
+\Delta b & = & -\frac{-\lambda}{n}\sum_{j}\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}h_{j}\frac{1}{\alpha}\nabla_{a_{j}}\ell+\left(1+\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}\frac{1}{n}\sum_{i}h_{i}\right)\frac{-\lambda}{n}\sum_{j}\frac{1}{\alpha}\nabla_{a_{j}}\ell\\
+ & = & \frac{-\lambda}{n}\sum_{j}\frac{1}{\alpha}\nabla_{a_{j}}\ell+\frac{\lambda}{n}\sum_{j}\frac{1}{n}\sum_{i}h_{i}^{T}C^{-1}\left(h_{j}-\frac{1}{n}\sum_{i}h_{i}\right)\frac{1}{\alpha}\nabla_{a_{j}}\ell
 \end{eqnarray*}
 
 \end_inset
@@ -5848,7 +6234,7 @@ And the update for
 
 \begin_inset Formula 
 \begin{equation}
-\boxed{\Delta b=-\frac{\lambda}{\alpha}\frac{1}{n}\sum_{j}\nabla_{a_{j}}l-\Delta W\frac{1}{n}\sum_{i}h_{i}}\label{eq:upd_b}
+\boxed{\Delta b=-\frac{\lambda}{\alpha}\frac{1}{n}\sum_{j}\nabla_{a_{j}}\ell-\Delta W\frac{1}{n}\sum_{i}h_{i}}\label{eq:upd_b}
 \end{equation}
 
 \end_inset
@@ -5910,7 +6296,7 @@ reference "eq:upd_w"
 
 .
  The gradient, as well as the inner expectation, are computed using a minibatch.
- Some author refer to a very similar idea as 
+ Some authors refer to a very similar idea as 
 \shape italic
 mean-only batch normalization
 \shape default
@@ -5990,7 +6376,7 @@ State{$
 \backslash
 Delta_{a_i}
 \backslash
-leftarrow
+leftarrow - 
 \backslash
 nabla_{a_i} l
 \backslash
@@ -6298,6 +6684,8 @@ If{$n_{updates}
 mod
 \backslash
 mathbf{N}=0$}
+\backslash
+Comment{Amortization}
 \end_layout
 
 \begin_layout Plain Layout
@@ -6306,7 +6694,7 @@ mathbf{N}=0$}
 \backslash
 State{Sample a minibatch $
 \backslash
-mathcal{D}$}
+mathcal{D}$ and compute forward pass}
 \end_layout
 
 \begin_layout Plain Layout
@@ -6328,7 +6716,9 @@ right)}
 \backslash
 leftarrow 
 \backslash
-text{cov} 
+text{cov}_
+\backslash
+mathcal{D} 
 \backslash
 left(h^{
 \backslash
@@ -6400,7 +6790,7 @@ EndIf
 \backslash
 State{Sample a minibatch $
 \backslash
-mathcal{D}$}
+mathcal{D}$ and compute forward pass}
 \end_layout
 
 \begin_layout Plain Layout
@@ -6422,7 +6812,7 @@ left(j
 \backslash
 right)}}
 \backslash
-leftarrow
+leftarrow - 
 \backslash
 nabla_{a_i^{
 \backslash
@@ -6461,7 +6851,11 @@ alpha}
 \backslash
 frac{1}{n} 
 \backslash
-sum_i 
+sum_{i 
+\backslash
+in 
+\backslash
+mathcal{D}} 
 \backslash
 Delta_{a_i^{
 \backslash
@@ -6495,7 +6889,11 @@ alpha}
 \backslash
 frac{1}{n} 
 \backslash
-sum_i 
+sum_{i 
+\backslash
+in 
+\backslash
+mathcal{D}} 
 \backslash
 Delta_{a_i^{
 \backslash
@@ -6511,7 +6909,11 @@ right)}-
 \backslash
 frac{1}{n}
 \backslash
-sum_{k}h_{k}^{
+sum_{k 
+\backslash
+in 
+\backslash
+mathcal{D}}h_{k}^{
 \backslash
 left(j
 \backslash
@@ -6681,7 +7083,7 @@ reference "eq:factored"
 \end_layout
 
 \begin_layout Standard
-KFAC has been introduced for the natural gradient, but as we shown in the
+KFAC has been introduced for the natural gradient, but as we showed in the
  previous sections, it can also be adapted to Gauss-Newton.
 \end_layout
 
@@ -7207,7 +7609,7 @@ reference "cifar10"
  that the natural gradient version performs much better than the GN version,
  with respect to both the number of updates and the wallclock time.
  It is remarkable as the natural gradient version takes much longer to recompute
- stats, because it needs the whole jacobians of the output of the network,
+ stats, because it needs the whole jacobian of the output of the network,
  whereas GN only needs the gradient, so there is no additional cost for
  the backpropagation as we mentionned in section 
 \begin_inset CommandInset ref
@@ -7224,8 +7626,8 @@ Conclusions
 \end_layout
 
 \begin_layout Standard
-During this work, we derived new expressions for the well known GN matrix
- and FIM.
+In this work, we derived new expressions for the well known GN matrix and
+ FIM.
  We showed that there is a common factor in both matrices that is composed
  of the covariance matrix of the activation at each layer, in the case of
  a block diagonal approximation.
@@ -7263,8 +7665,8 @@ key "grosse2016kronecker"
 \end_inset
 
 .
- Networks with very small outputs can also be good candidates as computing
- the jacobians thus the FIM is linear in the number of outputs.
+ Networks with very small outputs can also be good candidates, as computing
+ the jacobians and thus the FIM is linear in the number of outputs.
  Amongst them is the very popular family of GAN networks where the output
  is a single unit, and where the natural gradient could be used as a way
  to stabilize the training by balancing the rate of change of the output
@@ -7279,14 +7681,14 @@ Another direction of pursuing this research is to look for better approximations
  that are more efficient.
  Amortization can also be improved, by monitoring how our inverse statistics
  stay close to the true statistics, and just performing updates of these
- preconditioner when it is necessary, allowing for less updates (and less
+ preconditioners when it is necessary, allowing for less updates (and less
  matrix inversions) for layers where the statistics do not change much.
 \end_layout
 
 \begin_layout Standard
 As a last word, let us just state that second order methods have proven
  very powerful in a wide variety of optimization problems, but suffer from
- their computation complexity and the difficulty to use them in a setup
+ their computational complexity and the difficulty to use them in a setup
  with a lot of variables to optimize.
  We hope that by pursuing this effort of clarifying things and finding approxima
 te methods that are computationnally cheaper, we will carry on contributing

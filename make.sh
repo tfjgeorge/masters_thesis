@@ -5,10 +5,10 @@ lyx --export latex intro.lyx
 lyx --export latex appendix.lyx
 bibtex main
 pdflatex main.tex
-pdflatex main.tex
 
 # diff
-latexdiff master_submitted.tex master.tex > master_diff.tex
+latexdiff --exclude-textcmd="section,subsection" master_submitted.tex master.tex > master_diff.tex
+bibtex main_diff
 pdflatex main_diff.tex 
 
 # display
