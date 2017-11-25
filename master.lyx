@@ -262,12 +262,12 @@ Generally speaking, machine learning consists in finding an unknown function
 To this end, we need a measure of the performance of a given function at
  solving our task.
  We choose a loss function 
-\begin_inset Formula $l$
+\begin_inset Formula $\ell$
 \end_inset
 
 , adapted to this task.
  The better our function, the lower the value of 
-\begin_inset Formula $l$
+\begin_inset Formula $\ell$
 \end_inset
 
 .
@@ -297,7 +297,7 @@ name "cost-function"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathcal{R}\left(\theta,p\right) & = & \mathbb{E}_{x\sim p}\left[l\left(f_{\theta}\left(x\right),x\right)\right]
+\mathcal{R}\left(\theta,p\right) & = & \mathbb{E}_{x\sim p}\left[\ell\left(f_{\theta}\left(x\right),x\right)\right]
 \end{eqnarray*}
 
 \end_inset
@@ -366,7 +366,7 @@ supervised
 
 .
  The risk can be written as 
-\begin_inset Formula $\mathcal{R}\left(\theta,p\right)=\mathbb{E}_{x,y\sim p}\left[l\left(f_{\theta}\left(x\right),y\right)\right]$
+\begin_inset Formula $\mathcal{R}\left(\theta,p\right)=\mathbb{E}_{x,y\sim p}\left[\ell\left(f_{\theta}\left(x\right),y\right)\right]$
 \end_inset
 
  meaning that the function 
@@ -408,7 +408,7 @@ In
 \end_inset
 
 , we use the loss function 
-\begin_inset Formula $l\left(f_{\theta}\left(x\right),y\right)=\left\Vert f_{\theta}\left(x\right)-y\right\Vert _{2}^{2}$
+\begin_inset Formula $\ell\left(f_{\theta}\left(x\right),y\right)=\left\Vert f_{\theta}\left(x\right)-y\right\Vert _{2}^{2}$
 \end_inset
 
 , called the quadratic error.
@@ -467,7 +467,7 @@ ity is a valuable property for machine learning.
  We use the loss called 
 \shape italic
 cross entropy 
-\begin_inset Formula $l\left(f_{\theta}\left(x\right),y\right)=-\log\left(\left(f_{\theta}\left(x\right)\right)_{y}\right)$
+\begin_inset Formula $\ell\left(f_{\theta}\left(x\right),y\right)=-\log\left(\left(f_{\theta}\left(x\right)\right)_{y}\right)$
 \end_inset
 
 
@@ -519,7 +519,7 @@ In practice, often, we do not have access to a data generating function
 \begin_inset Formula 
 \begin{align}
 \begin{array}{ccccc}
-\mathcal{R}\left(\theta,p\right) & \approx & R\left(\theta,\mathcal{D}\right) & = & \frac{1}{n}\sum_{x\in\mathcal{D}}l\left(f_{\theta}\left(x\right),x\right)\end{array}\label{eq:empirical-risk}
+\mathcal{R}\left(\theta,p\right) & \approx & R\left(\theta,\mathcal{D}\right) & = & \frac{1}{n}\sum_{x\in\mathcal{D}}\ell\left(f_{\theta}\left(x\right),x\right)\end{array}\label{eq:empirical-risk}
 \end{align}
 
 \end_inset
@@ -1107,7 +1107,7 @@ Once we have chosen a model, and supposing that this model is capable of
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\nabla_{\theta}R & = & \frac{1}{n}\sum_{i}\nabla_{\theta}l\left(f_{\theta}\left(x_{i}\right),y_{i}\right)
+\nabla_{\theta}R & = & \frac{1}{n}\sum_{i}\nabla_{\theta}\ell\left(f_{\theta}\left(x_{i}\right),y_{i}\right)
 \end{eqnarray*}
 
 \end_inset
@@ -1183,8 +1183,8 @@ reference "fprop-bprop"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\nabla_{h_{l-1}}l & = & \left(\mathbf{J}_{a_{l}}^{h_{l-1}}\right)^{T}\nabla_{a_{l}}l\\
- & = & \left(\mathbf{J}_{a_{l}}^{h_{l-1}}\right)^{T}\left(\mathbf{J}_{h_{l}}^{a_{l}}\right)^{T}\nabla_{h_{l}}l
+\nabla_{h_{l-1}}\ell & = & \left(\mathbf{J}_{a_{l}}^{h_{l-1}}\right)^{T}\nabla_{a_{l}}\ell\\
+ & = & \left(\mathbf{J}_{a_{l}}^{h_{l-1}}\right)^{T}\left(\mathbf{J}_{h_{l}}^{a_{l}}\right)^{T}\nabla_{h_{l}}\ell
 \end{eqnarray*}
 
 \end_inset
@@ -1263,8 +1263,8 @@ reference "fprop-bprop"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathbf{J}_{a_{l}}^{W_{l}} & = & \nabla_{a_{l}}l\left(h_{l-1}\right)^{T}\\
-\mathbf{J}_{a_{l}}^{b_{l}} & = & \nabla_{a_{l}}l
+\mathbf{J}_{a_{l}}^{W_{l}} & = & \nabla_{a_{l}}\ell\left(h_{l-1}\right)^{T}\\
+\mathbf{J}_{a_{l}}^{b_{l}} & = & \nabla_{a_{l}}\ell
 \end{eqnarray*}
 
 \end_inset
@@ -2328,8 +2328,8 @@ In the case of neural network optimization, the Hessian matrix we need to
 \begin_inset Formula 
 \begin{eqnarray*}
 \mathbf{H} & = & \frac{\partial^{2}R}{\partial\theta^{2}}\\
- & = & \frac{\partial^{2}}{\partial\theta^{2}}\left\{ \frac{1}{n}\sum_{i}l\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\} \\
- & = & \frac{1}{n}\sum_{i}\frac{\partial^{2}}{\partial\theta^{2}}\left\{ l\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\} 
+ & = & \frac{\partial^{2}}{\partial\theta^{2}}\left\{ \frac{1}{n}\sum_{i}\ell\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\} \\
+ & = & \frac{1}{n}\sum_{i}\frac{\partial^{2}}{\partial\theta^{2}}\left\{ \ell\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\} 
 \end{eqnarray*}
 
 \end_inset
@@ -2346,7 +2346,7 @@ By making use of the chain rule we can also give an expression for the second
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\frac{\partial}{\partial\theta}\left\{ l\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\}  & = & \mathbf{J}_{\theta}\left(x_{i},\theta\right)^{T}\left(\frac{\partial}{\partial f}\left\{ l\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\} \right)^{T}
+\frac{\partial}{\partial\theta}\left\{ \ell\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\}  & = & \mathbf{J}_{\theta}\left(x_{i},\theta\right)^{T}\left(\frac{\partial}{\partial f}\left\{ \ell\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\} \right)^{T}
 \end{eqnarray*}
 
 \end_inset
@@ -2383,8 +2383,8 @@ By making use of the chain rule we can also give an expression for the second
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\frac{\partial^{2}}{\partial\theta^{2}}\left\{ l\left(f\left(x_{i},\theta\right),y_{i}\right)\right\}  & = & \underbrace{\mathbf{J}_{\theta}\left(x_{i},\theta\right)^{T}\frac{\partial^{2}}{\partial f^{2}}\left\{ l\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\} \mathbf{J}_{\theta}\left(x_{i},\theta\right)}_{G_{f}\left(x_{i},\theta\right)}\\
- &  & +\sum_{j}\left(\nabla^{2}f_{\theta}\left(x_{i}\right)_{j}\right)\left(\frac{\partial}{\partial f_{j}}\left\{ l\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\} \right)^{T}
+\frac{\partial^{2}}{\partial\theta^{2}}\left\{ \ell\left(f\left(x_{i},\theta\right),y_{i}\right)\right\}  & = & \underbrace{\mathbf{J}_{\theta}\left(x_{i},\theta\right)^{T}\frac{\partial^{2}}{\partial f^{2}}\left\{ \ell\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\} \mathbf{J}_{\theta}\left(x_{i},\theta\right)}_{G_{f}\left(x_{i},\theta\right)}\\
+ &  & +\sum_{j}\left(\nabla^{2}f_{\theta}\left(x_{i}\right)_{j}\right)\left(\frac{\partial}{\partial f_{j}}\left\{ \ell\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\} \right)^{T}
 \end{eqnarray*}
 
 \end_inset
@@ -2405,7 +2405,7 @@ key "schraudolph2002fast"
 
 .
  The remainder is proportional to 
-\begin_inset Formula $\frac{\partial}{\partial f_{j}}\left\{ l\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\} $
+\begin_inset Formula $\frac{\partial}{\partial f_{j}}\left\{ \ell\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\} $
 \end_inset
 
 .
@@ -2415,11 +2415,11 @@ key "schraudolph2002fast"
 
  as it is a first derivative, so the approximation will get more precise.
  At a minimum for 
-\begin_inset Formula $l\left(f_{\theta}\left(x_{i}\right),y_{i}\right)$
+\begin_inset Formula $\ell\left(f_{\theta}\left(x_{i}\right),y_{i}\right)$
 \end_inset
 
 , we will have 
-\begin_inset Formula $\frac{\partial^{2}}{\partial\theta^{2}}\left\{ l\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\} =G_{f}\left(x_{i},\theta\right)$
+\begin_inset Formula $\frac{\partial^{2}}{\partial\theta^{2}}\left\{ \ell\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\} =G_{f}\left(x_{i},\theta\right)$
 \end_inset
 
  so it is a reasonable approximation to use in practice.
@@ -2428,7 +2428,7 @@ key "schraudolph2002fast"
 \end_inset
 
  will not necessarily be a minimum for each example 
-\begin_inset Formula $l\left(f_{\theta}\left(x_{i}\right),y_{i}\right)$
+\begin_inset Formula $\ell\left(f_{\theta}\left(x_{i}\right),y_{i}\right)$
 \end_inset
 
 , especially if the capacity of the neural network is not sufficient to
@@ -2485,7 +2485,7 @@ Loss function
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\frac{\partial^{2}}{\partial f_{\theta}^{2}}\left\{ l\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\} $
+\begin_inset Formula $\frac{\partial^{2}}{\partial f_{\theta}^{2}}\left\{ \ell\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\} $
 \end_inset
 
 
@@ -2614,7 +2614,7 @@ We finally give an expression for the Gauss-Newton approximation of the
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-G_{f}\left(\theta\right) & = & \frac{1}{n}\sum_{i}\mathbf{J}_{\theta}\left(x_{i},\theta\right)^{T}\frac{\partial^{2}}{\partial f^{2}}\left\{ l\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\} \mathbf{J}_{\theta}\left(x_{i},\theta\right)
+G_{f}\left(\theta\right) & = & \frac{1}{n}\sum_{i}\mathbf{J}_{\theta}\left(x_{i},\theta\right)^{T}\frac{\partial^{2}}{\partial f^{2}}\left\{ \ell\left(f_{\theta}\left(x_{i}\right),y_{i}\right)\right\} \mathbf{J}_{\theta}\left(x_{i},\theta\right)
 \end{eqnarray*}
 
 \end_inset
@@ -3737,7 +3737,7 @@ We now present a computational trick for computing the Gauss-Newton in the
  case of cross-entropy.
  Interestingly, in the expression of Gauss-Newton for log losses we have
  the unexpected equivalence 
-\begin_inset Formula $\left(\frac{\partial^{2}l}{\partial f_{\theta}^{2}}\right)_{tt}=-\left(\frac{\partial l}{\partial f_{\theta}}\right)_{t}^{2}$
+\begin_inset Formula $\left(\frac{\partial^{2}\ell}{\partial f_{\theta}^{2}}\right)_{tt}=-\left(\frac{\partial\ell}{\partial f_{\theta}}\right)_{t}^{2}$
 \end_inset
 
  for the true class 
@@ -3745,7 +3745,7 @@ We now present a computational trick for computing the Gauss-Newton in the
 \end_inset
 
  and 
-\begin_inset Formula $\left(\frac{\partial^{2}l}{\partial f_{\theta}^{2}}\right)_{ii}=0=-\left(\frac{\partial l}{\partial f_{\theta}}\right)_{t}^{2}$
+\begin_inset Formula $\left(\frac{\partial^{2}\ell}{\partial f_{\theta}^{2}}\right)_{ii}=0=-\left(\frac{\partial\ell}{\partial f_{\theta}}\right)_{t}^{2}$
 \end_inset
 
  when 
@@ -3758,9 +3758,9 @@ We now present a computational trick for computing the Gauss-Newton in the
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-l\left(f_{\theta}\left(x\right),y\right) & = & -\sum_{i}y_{i}\log\left(\left(f_{\theta}\left(x\right)\right)_{i}\right)\\
-\left(\frac{\partial}{\partial f_{\theta}}l\left(f_{\theta}\left(x\right),y\right)\right)_{t} & = & -\frac{1}{\left(f_{\theta}\left(x\right)\right)_{t}}\\
-\left(\frac{\partial^{2}}{\partial f_{\theta}^{2}}l\left(f_{\theta}\left(x\right),y\right)\right)_{tt} & = & \frac{1}{\left(f_{\theta}\left(x\right)\right)_{t}^{2}}=\left(\frac{\partial}{\partial f_{\theta}}l\left(f_{\theta}\left(x\right),y\right)\right)_{t}^{2}
+\ell\left(f_{\theta}\left(x\right),y\right) & = & -\sum_{i}y_{i}\log\left(\left(f_{\theta}\left(x\right)\right)_{i}\right)\\
+\left(\frac{\partial}{\partial f_{\theta}}\ell\left(f_{\theta}\left(x\right),y\right)\right)_{t} & = & -\frac{1}{\left(f_{\theta}\left(x\right)\right)_{t}}\\
+\left(\frac{\partial^{2}}{\partial f_{\theta}^{2}}\ell\left(f_{\theta}\left(x\right),y\right)\right)_{tt} & = & \frac{1}{\left(f_{\theta}\left(x\right)\right)_{t}^{2}}=\left(\frac{\partial}{\partial f_{\theta}}\ell\left(f_{\theta}\left(x\right),y\right)\right)_{t}^{2}
 \end{eqnarray*}
 
 \end_inset
@@ -3786,9 +3786,9 @@ The reason is that the second derivative of the
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray}
-G_{f}\left(x,\theta\right) & = & \mathbf{J}_{\theta}\left(x,\theta\right)^{T}\frac{\partial^{2}}{\partial f^{2}}\left\{ l\left(f_{\theta}\left(x\right),y\right)\right\} \mathbf{J}_{\theta}\left(x,\theta\right)\nonumber \\
- & = & \mathbf{J}_{\theta}\left(x,\theta\right)^{T}\left(\frac{\partial l}{\partial f_{\theta}}\right)^{T}\left(\frac{\partial l}{\partial f_{\theta}}\right)\mathbf{J}_{\theta}\left(x,\theta\right)\nonumber \\
- & = & \nabla_{\theta}l\left(f_{\theta}\left(x\right),y\right)\nabla_{\theta}l\left(f_{\theta}\left(x\right),y\right)^{T}\label{eq:simplified-gn}
+G_{f}\left(x,\theta\right) & = & \mathbf{J}_{\theta}\left(x,\theta\right)^{T}\frac{\partial^{2}}{\partial f^{2}}\left\{ \ell\left(f_{\theta}\left(x\right),y\right)\right\} \mathbf{J}_{\theta}\left(x,\theta\right)\nonumber \\
+ & = & \mathbf{J}_{\theta}\left(x,\theta\right)^{T}\left(\frac{\partial\ell}{\partial f_{\theta}}\right)^{T}\left(\frac{\partial\ell}{\partial f_{\theta}}\right)\mathbf{J}_{\theta}\left(x,\theta\right)\nonumber \\
+ & = & \nabla_{\theta}\ell\left(f_{\theta}\left(x\right),y\right)\nabla_{\theta}\ell\left(f_{\theta}\left(x\right),y\right)^{T}\label{eq:simplified-gn}
 \end{eqnarray}
 
 \end_inset
@@ -5286,7 +5286,7 @@ A second limit which can also be very problematic is that similarly to the
  this update can cause the backpropagated gradients to explode.
  Indeed, the problem resides in the fact that we have to multiply by the
  square matrix 
-\begin_inset Formula $\left(\frac{\partial f}{\partial a_{l}}\right)^{T}\frac{\partial^{2}l}{\partial f^{2}}\frac{\partial f}{\partial a_{l}}$
+\begin_inset Formula $\left(\frac{\partial f}{\partial a_{l}}\right)^{T}\frac{\partial^{2}\ell}{\partial f^{2}}\frac{\partial f}{\partial a_{l}}$
 \end_inset
 
  at each layer.
@@ -5301,14 +5301,14 @@ A second limit which can also be very problematic is that similarly to the
  as backpropagation computes the derivatives backward from the top layer
  to the bottom layer).
  In the next layer, this matrix will have the expression 
-\begin_inset Formula $\left(\frac{\partial f}{\partial a_{l-1}}\right)^{T}\frac{\partial^{2}l}{\partial f^{2}}\frac{\partial f}{\partial a_{l-1}}=\left(\frac{\partial a_{l}}{\partial a_{l-1}}\right)^{T}\left(\frac{\partial f}{\partial a_{l}}\right)^{T}\frac{\partial^{2}l}{\partial f^{2}}\frac{\partial f}{\partial a_{l}}\frac{\partial a_{l}}{\partial a_{l-1}}$
+\begin_inset Formula $\left(\frac{\partial f}{\partial a_{l-1}}\right)^{T}\frac{\partial^{2}\ell}{\partial f^{2}}\frac{\partial f}{\partial a_{l-1}}=\left(\frac{\partial a_{l}}{\partial a_{l-1}}\right)^{T}\left(\frac{\partial f}{\partial a_{l}}\right)^{T}\frac{\partial^{2}\ell}{\partial f^{2}}\frac{\partial f}{\partial a_{l}}\frac{\partial a_{l}}{\partial a_{l-1}}$
 \end_inset
 
 , so it will contain the former matrix.
  In this case, repeating this process multiple times will do something like
  a power method, which will either explode or vanish depending on the biggest
  eigenvalue of 
-\begin_inset Formula $\left(\frac{\partial f}{\partial a_{l-1}}\right)^{T}\frac{\partial^{2}l}{\partial f^{2}}\frac{\partial f}{\partial a_{l-1}}$
+\begin_inset Formula $\left(\frac{\partial f}{\partial a_{l-1}}\right)^{T}\frac{\partial^{2}\ell}{\partial f^{2}}\frac{\partial f}{\partial a_{l-1}}$
 \end_inset
 
 .
@@ -6398,7 +6398,7 @@ reference "eq:upd_w"
 
 , we simply replace the usual update for the weight matrices by a centered
  version 
-\begin_inset Formula $\Delta W=\frac{1}{n}\sum_{j}\nabla_{a_{j}}l\left(h_{j}-\overbrace{\frac{1}{n}\sum_{i}h_{i}}^{\text{centering}}\right)^{T}$
+\begin_inset Formula $\Delta W=\frac{1}{n}\sum_{j}\nabla_{a_{j}}\ell\left(h_{j}-\overbrace{\frac{1}{n}\sum_{i}h_{i}}^{\text{centering}}\right)^{T}$
 \end_inset
 
 .
@@ -6670,7 +6670,7 @@ reference "biased-random-search"
 ).
  The second one is a very experimental heuristic, which consists in taking
  the maximum value of the squarred gradient 
-\begin_inset Formula $\alpha=\max_{i\in\text{minibatch},j\leq n_{out}}\left(\nabla_{a_{i}}l\right)_{j}^{2}$
+\begin_inset Formula $\alpha=\max_{i\in\text{minibatch},j\leq n_{out}}\left(\nabla_{a_{i}}\ell\right)_{j}^{2}$
 \end_inset
 
 .
@@ -6925,7 +6925,9 @@ nabla_{a_i^{
 \backslash
 left(j
 \backslash
-right)}} l
+right)}} 
+\backslash
+ell
 \backslash
 left(f
 \backslash
@@ -6934,6 +6936,8 @@ left(x_i
 right), y_i
 \backslash
 right) 
+\backslash
+,
 \backslash
 forall i 
 \backslash
