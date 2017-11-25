@@ -76,14 +76,52 @@ This thesis presents my work during my master at MILA under the supervision
 \end_layout
 
 \begin_layout Standard
-This work is mostly focused on optimization in artificial neural networks.
+Artificial neural networks are a powerful machine learning tool for modeling
+ complex functions.
+ Training a neural network for a given task often reduces to minimizing
+ a scalar function of several millions of variables, which are the parameters
+ of the model.
+ While optimization is a full field of research on its own, usual methods
+ do not scale to the order of magnitude of several millions of variables.
+ For this reason neural networks practitioners stick to first order optimization
+ methods, while not benefiting of the acceleration provided by using more
+ powerful methods.
+ Amongst the family of optimization methods, second order methods are a
+ conceptually simple way of accelerating optimization.
+ But practically, they require too much memory and computational power in
+ order to be really useful when scaled to millions of parameters.
+ We circumvent these practical constraints by approximating second order
+ methods, trading off between computational cost, and speed up.
+\end_layout
+
+\begin_layout Standard
+This work is mostly focused on optimization applied to artificial neural
+ networks.
  My contributions are a deeper understanding of the many techniques involving
- second order applied to neural networks, the derivation of new expressions
- tuned for the particular structure of neural networks, and their use in
- the definition of a new algorithm that competes with current state of the
- art on a standard benchmark.
- In addition to this, I present a new optimization method that slightly
- modifies the usual backpropagation algorithm for computing derivatives.
+ second order techniques applied to neural networks, the derivation of new
+ expressions tuned for the particular structure of neural networks, and
+ their use in the definition of a new algorithm that competes with current
+ state of the art on a standard benchmark.
+ Crucially, this benchmark is a deep network with several millions of parameters
+, and is trained to convergence in approximately 1h on a single computer.
+\end_layout
+
+\begin_layout Standard
+In the process, I also explore alternatives to the backpropagation technique,
+ which is used to efficiently obtain gradients in neural network optimization.
+ As a core component of training neural networks, backpropagation has been
+ the object of much research efforts since it was first used in the 1980s,
+ but it has remained exactly the same since then.
+ We contribute to this research by exploiting the sequential computations
+ of backpropagation.
+ We derive an alternative to backpropagation and experimentally show that
+ it is able to find better update directions, at the cost of more computation.
+ This contribution is of no practical use as is, because it requires too
+ much computation.
+ However it is a proof a concept that backpropagation can be improved.
+ As the foundation of the whole training procedure of neural networks, a
+ computationnally cheaper method of improving backpropagation would impact
+ all other optimization methods that rely on computing the gradients.
 \end_layout
 
 \begin_layout Standard
@@ -114,17 +152,23 @@ natural gradient
 
 \begin_layout Itemize
 in chapter 4 we describe the experimental setup that we use next to assess
- the performance of our algorithms ;
+ the performance of our algorithms, and we contribute a simple hyperparameter
+ tuning procedure ;
 \end_layout
 
 \begin_layout Itemize
-in chapter 5 we introduce a new technique that modifies backpropagation
+in chapter 5 we contribute a new technique that modifies backpropagation
  ;
 \end_layout
 
 \begin_layout Itemize
-the last chapter presents a factorization that we can use to approximate
- second order methods, and a new algorithm that exploits this factorization.
+the last chapter presents a factorization that we can use to efficiently
+ approximate second order methods.
+ We contribute a detailed derivation of second order methods for the particular
+ structure of neural networks, and we highlight the links with some old
+ tricks.
+ We also contribute a new optimization algorithm that exploits this factorizatio
+n.
 \end_layout
 
 \end_body

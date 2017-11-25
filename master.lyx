@@ -1365,14 +1365,15 @@ While backpropagation is an efficient way of computing the exact gradient
  of the gradient, as long as this estimate will make our objective decrease.
  It is worth recalling at this point that even the exact gradient of the
  empirical risk is different of the real gradient we would like to follow,
- which is the gradient of the true expected risk 
+ which is the gradient of the true expected risk (as discussed in section
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:Empirical-risk-and"
 
 \end_inset
 
-.
+).
 \end_layout
 
 \begin_layout Standard
@@ -1439,7 +1440,7 @@ on of our learning procedure.
  Hyperparameters also include the structure of our model, such as the number
  of hidden layers and hidden units, the number of training iterations, the
  coefficients of the regularization terms.
- The success of our learning procedure is dependant on the values of the
+ The success of our learning procedure is dependent on the values of the
  hyperparameters.
  We do not find the optimal value using gradient descent, but instead we
  tune it by running several time the same experiment with different hyperparamet
@@ -1543,7 +1544,7 @@ To give a more intuitive understanding of the effect of the hyperparameter
  We launch a hyperparameter search on 2 hyperparameters and plot this point
  on a scatter plot, with a color scale depicting the final result of each
  experiment.
- By observing this plot, we can identify 2d patterns of the link between
+ By observing this plot, we can identify 2D patterns of the link between
  2 hyperparameters.
  As an illustration, we use the task described in section 
 \begin_inset CommandInset ref
@@ -1768,8 +1769,8 @@ key "glorot2010understanding"
 \begin_inset Formula $\alpha$
 \end_inset
 
- as a hyperparameter in our experiments, and tuned it using a biased random
- search (section 
+ as a hyperparameter when assessing for the performance of an optimization
+ algorithm, and tuned it using a biased random search (section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "biased-random-search"
@@ -1821,10 +1822,26 @@ Second order methods in neural networks
 \end_layout
 
 \begin_layout Standard
+In section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Gradient-descent-and"
+
+\end_inset
+
+ we described how training a neural network for a given task reduces to
+ an optimization task: the one of minimizing the empirical risk, by iteratively
+ updating the values of the parameters of the network.
+ We obtained the updates by following the direction given by minus the gradient.
+ But there are more efficient updates.
+\end_layout
+
+\begin_layout Standard
 In this section, we introduce the well known second order methods known
  as Newton's method and the less popular but very effective natural gradient
  descent.
- We then derive the updates of this methods adapted to neural networks.
+ We then derive the updates of this methods adapted to neural networks and
+ we contribute a unified formulation for both methods.
 \end_layout
 
 \begin_layout Section
@@ -1874,7 +1891,22 @@ f\left(x+\Delta x\right) & = & f\left(x\right)+\left(\nabla f\right)_{x}^{T}\Del
 \end_inset
 
 .
- By constraining 
+\end_layout
+
+\begin_layout Standard
+In the context of neural network optimization, 
+\begin_inset Formula $f$
+\end_inset
+
+ is the empirical risk, and 
+\begin_inset Formula $x$
+\end_inset
+
+ are the parameters.
+\end_layout
+
+\begin_layout Standard
+By constraining 
 \begin_inset Formula $\left\Vert \Delta x\right\Vert _{2}^{2}$
 \end_inset
 
@@ -1956,14 +1988,14 @@ If we assume that
 \end_layout
 
 \begin_layout Standard
-This update 
+This update (eq 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "eq:newton-step"
 
 \end_inset
 
- is called the 
+) is called the 
 \series bold
 Newton step
 \series default
@@ -3328,7 +3360,14 @@ n.
 \begin_inset Formula $y$
 \end_inset
 
- in general, with a notable exception for the quadratic error.
+ in general, with a notable exception for the quadratic error (table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "gn-fim"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Standard
@@ -3550,6 +3589,17 @@ Expressions for the middle term
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+This common structure is of great interest as we will show in chapter 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "chap:Factorized-second-order"
+
+\end_inset
+
+ since we will derive an approximate form that applies to both matrices.
 \end_layout
 
 \begin_layout Subsection
@@ -3785,6 +3835,147 @@ Experimental setup
 \begin_layout Standard
 In order to be able to assess the performance of the ideas and algorithms
  in the next chapters, we now present our experimental setup.
+\end_layout
+
+\begin_layout Standard
+We present 2 standard tasks.
+ We then contribute a simple method called 
+\shape italic
+biased random search 
+\shape default
+which improves random search of hyperparameter values, and motivate its
+ use in order to provide a fair comparison of optimization algorithms.
+\end_layout
+
+\begin_layout Section
+Benchmark tasks
+\end_layout
+
+\begin_layout Subsection
+A standard benchmark: Autoencoding written digits
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:autoencoder-benchmark"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We now describe the main benchmark that we will be using in the rest of
+ this document.
+ The dataset MNIST 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "lecun2010mnist"
+
+\end_inset
+
+ is composed of 60.000 
+\begin_inset Formula $28\times28$
+\end_inset
+
+ grayscale images of handwritten digits, and the corresponding value of
+ the digit that is represented in the image.
+ For this benchmark, we use an autoencoder (see section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Autoencoders"
+
+\end_inset
+
+) with layer sizes 
+\begin_inset Formula $\left\{ 784,1000,500,250,30,250,500,1000,784\right\} $
+\end_inset
+
+.
+ The autoencoder encodes the input image into a vector of size 
+\begin_inset Formula $30$
+\end_inset
+
+, and then decodes it to reconstruct the original image.
+ We use the reconstruction error 
+\begin_inset Formula $\ell\left(f\left(x\right),y\right)=\left\Vert f\left(x\right)-y\right\Vert _{2}^{2}$
+\end_inset
+
+.
+ The benchmark consists in minimizing the empirical risk over the train
+ set after a fixed time on the same architecture.
+\end_layout
+
+\begin_layout Standard
+This benchmark has a long history in the neural network optimization litterature
+ 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "hinton2006reducing,martens2010deep,martens2015optimizing,desjardins2015natural"
+
+\end_inset
+
+.
+ To assess the performance of an algorithm, we can use 2 metrics: the empirical
+ risk after a given number of iterations of the algorithm, and the empirical
+ risk after a fixed elapsed time for a given computer.
+ In real world tasks, the latter is more useful.
+ It gives a better understanding of the trade-off between a more complex
+ update that takes longer to compute and gives a better improvement, and
+ a fast update that gives a small improvement, but that can be iterated
+ several times in the meantime.
+\end_layout
+
+\begin_layout Standard
+The limits of the benchmark are many.
+ In particular the fact that the state of the art papers in computer vision
+ do not use MLPs and sigmoid activations but rather variants of mixed convolutio
+nal networks and residual connections, and variants of ReLU activations.
+ Another limit is in the use of the quadratic loss.
+ Nonetheless, we still use this benchmark as it is used by several other
+ papers which allows for a fair comparison, and because it is reasonably
+ deep (8 layers) and wide (the biggest weight matrix has size 
+\begin_inset Formula $1000\times784$
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Subsection
+A classification task on an image dataset
+\end_layout
+
+\begin_layout Standard
+The second benchmark that we use is a multilayer perceptron with rectifier
+ activation functions, trained to recognize images amongst 10 classes on
+ the CIFAR-10 dataset 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "torralba200880"
+
+\end_inset
+
+.
+ It is composed of 60.000 
+\begin_inset Formula $32\times32$
+\end_inset
+
+ color images, meaning that each image is composed of 
+\begin_inset Formula $32*32*3=3072$
+\end_inset
+
+ pixels.
+ The network has 8 hidden layers of size 100 making it reasonably deep but
+ still fast to train in order to experiment with many algorithms.
+ We train it using multiclass cross entropy.
+\end_layout
+
+\begin_layout Standard
+This architecture is far from producing state of the art results for this
+ task.
+ In particular, it starts overfitting for a very small number of updates.
+ Instead, we use it to compare optimization algorithms, which means that
+ we are more interested in its performance on the train set.
+ If we were interested in generalization performance, we could add regularizatio
+n to better condition the optimization problem.
 \end_layout
 
 \begin_layout Section
@@ -4139,21 +4330,43 @@ name "biased_random_search_algo"
 
 \begin_layout Standard
 To assess the performance of biased random search we ran 100 searches of
- 100 experiments on a simple task where we tuned 2 hyperparameters.
- We observe that it consistently finds comparable or better results than
- standard random search.
- We report the results in the following table and in figure 
+ 100 experiments on the MNIST autoencoder task (section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:autoencoder-benchmark"
+
+\end_inset
+
+) where we tuned 2 hyperparameters.
+ We observe that biased random search consistently finds comparable or better
+ results than standard random search.
+ We report the results in table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "table:risk-brs"
+
+\end_inset
+
+ and we show a comparison of a single search consisting in 100 experiments
+ in figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "hptune-comparison"
 
 \end_inset
 
- (lower is better).
+.
  
 \end_layout
 
 \begin_layout Standard
+\align center
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="4" columns="3">
@@ -4288,6 +4501,31 @@ Biased random search
 
 \end_layout
 
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Final empirical risk obtained after training 100 hyperparameter tuning procedure
+s, each consisting of 100 experiments (lower is better)
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "table:risk-brs"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Standard
 In figure 
 \begin_inset CommandInset ref
@@ -4322,7 +4560,7 @@ Comparison of hyperparameter tuning methods.
  On the left a grid search, in the middle a random search and on the right
  a biased random search.
  Each experiment consisted in 100 iterations of SGD from a randomly initialized
- network.
+ network (circles).
  We tune 2 hyperparameters on the x and y axis (what they represent is not
  relevant here).
  The color scale represents the final loss attained after a fixed number
@@ -4345,137 +4583,6 @@ name "hptune-comparison"
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-
-\end_layout
-
-\begin_layout Section
-A standard benchmark: Autoencoding written digits
-\begin_inset CommandInset label
-LatexCommand label
-name "sec:autoencoder-benchmark"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-We now describe the main benchmark that we will be using in the rest of
- this document.
- The dataset MNIST 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "lecun2010mnist"
-
-\end_inset
-
- is composed of 60.000 
-\begin_inset Formula $28\times28$
-\end_inset
-
- grayscale images of handwritten digits, and the corresponding value of
- the digit that is represented in the image.
- For this benchmark, we use an autoencoder (see section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:Autoencoders"
-
-\end_inset
-
-) with layer sizes 
-\begin_inset Formula $\left\{ 784,1000,500,250,30,250,500,1000,784\right\} $
-\end_inset
-
-.
- The autoencoder encodes the input image into a vector of size 
-\begin_inset Formula $30$
-\end_inset
-
-, and then decodes it to reconstruct the original image.
- We use the reconstruction error 
-\begin_inset Formula $l\left(f\left(x\right),y\right)=\left\Vert f\left(x\right)-y\right\Vert _{2}^{2}$
-\end_inset
-
-.
- The benchmark consists in minimizing the empirical risk over the train
- set after a fixed time on the same architecture.
-\end_layout
-
-\begin_layout Standard
-This benchmark has a long history in the neural network optimization litterature
- 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "hinton2006reducing,martens2010deep,martens2015optimizing,desjardins2015natural"
-
-\end_inset
-
-.
- To assess the performance of an algorithm, we can use 2 metrics: the empirical
- risk after a given number of iterations of the algorithm, and the empirical
- risk after a fixed elapsed time for a given computer.
- In real world tasks, the latter is more useful.
- It gives a better understanding of the trade-off between a more complex
- update that takes longer to compute and gives a better improvement, and
- a fast update that gives a small improvement, but that can be iterated
- several times in the meantime.
-\end_layout
-
-\begin_layout Standard
-The limits of the benchmark are many.
- In particular the fact that the state of the art papers in computer vision
- do not use MLPs and sigmoid activations but rather variants of mixed convolutio
-nal networks and residual connections, and variants of ReLU activations.
- Another limit is in the use of the quadratic loss.
- Nonetheless, we still use this benchmark as it is used by several other
- papers which allows for a fair comparison, and because it is reasonably
- deep (8 layers) and wide (the biggest weight matrix has size 
-\begin_inset Formula $1000\times784$
-\end_inset
-
-).
-\end_layout
-
-\begin_layout Section
-A classification task on an image dataset
-\end_layout
-
-\begin_layout Standard
-The second benchmark that we use is a multilayer perceptron with rectifier
- activation functions, trained to recognize images amongst 10 classes on
- the CIFAR-10 dataset 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "torralba200880"
-
-\end_inset
-
-.
- It is composed of 60.000 
-\begin_inset Formula $32\times32$
-\end_inset
-
- color images, meaning that each image is composed of 
-\begin_inset Formula $32*32*3=3072$
-\end_inset
-
- pixels.
- The network has 8 hidden layers of size 100 making it reasonably deep but
- still fast to train in order to experiment with many algorithms.
- We train it using multiclass cross entropy.
-\end_layout
-
-\begin_layout Standard
-This architecture is far from producing state of the art results for this
- task.
- In particular, it starts overfitting for a very small number of updates.
- Instead, we use it to compare optimization algorithms, which means that
- we are more interested in its performance on the train set.
- If we were interested in generalization performance, we could add regularizatio
-n to better condition the optimization problem.
 \end_layout
 
 \begin_layout Chapter
@@ -7012,14 +7119,15 @@ KFAC
 \end_layout
 
 \begin_layout Standard
-KFAC 
+Kronecker Factored Approximate Curvature (KFAC) 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "martens2015optimizing"
 
 \end_inset
 
- proposed to split the sum of Kronecker products into a product of sums:
+ is another factorization where the sum of Kronecker products is approximated
+ by a product of sums:
 \begin_inset Formula 
 \begin{eqnarray*}
 \mathbf{F} & \approx & \mathbb{E}\left[\left(\begin{array}{cc}
@@ -7634,7 +7742,7 @@ In this work, we derived new expressions for the well known GN matrix and
  By separating the bias and the weight matrices we introduced a new mathematical
  explanation for the well-known centering trick.
  Using this new expressions we derived a new algorithm ACP that loosely
- resembles 2 state of the art methods inspired by natural gradient.
+ resembles two state of the art methods inspired by natural gradient.
  We benchmarked our new algorithm against these methods and showed that
  they all perform similarly.
 \end_layout
