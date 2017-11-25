@@ -3328,6 +3328,13 @@ A second common approximation we make in practice is to use the empirical
 
 \begin_layout Section
 Gauss-Newton and Fisher share a very similar structure
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:shared-GN-FIM"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3614,6 +3621,11 @@ reference "chap:Factorized-second-order"
 \end_inset
 
  since we will derive an approximate form that applies to both matrices.
+ Acknowledging this share of structure is a minor contribution.
+ Regardless of the technique that we want to use between natural gradient
+ and Gauss-Newton, there is a shared part.
+ By designing optimization algorithms that exploit this part only, we can
+ approximately benefit from both methods.
 \end_layout
 
 \begin_layout Subsection
@@ -6182,8 +6194,8 @@ Looking back at the use we will make of this preconditioner, namely
 \begin_inset Formula $G_{in}\Delta\theta=-\lambda\nabla_{\theta}R$
 \end_inset
 
-, we can observe that this will penalize an update direction of 
-\begin_inset Formula $\theta$
+, we can observe that this will penalize an update direction 
+\begin_inset Formula $\Delta\theta$
 \end_inset
 
  if the corresponding activation has a high variance, as measured by 
@@ -6195,6 +6207,30 @@ Looking back at the use we will make of this preconditioner, namely
  the next forward propagated signal more that if the variance of the correspondi
 ng activation were lower.
  This would result in a bigger expected change in the output.
+\end_layout
+
+\begin_layout Standard
+By hiding all terms 
+\begin_inset Formula $\mathbf{J}_{a_{i}}^{T}D\left(x_{i}\right)\mathbf{J}_{a_{i}}$
+\end_inset
+
+ in a diagonal matrix 
+\begin_inset Formula $\alpha\mathbf{I}$
+\end_inset
+
+ we also focus on the part of the matrix 
+\begin_inset Formula $G_{in}$
+\end_inset
+
+ that is shared between the FIM and the GN matrix, removing the part that
+ differs (see section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:shared-GN-FIM"
+
+\end_inset
+
+).
  
 \end_layout
 

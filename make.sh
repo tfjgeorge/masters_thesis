@@ -8,6 +8,7 @@ pdflatex main.tex
 
 # diff
 latexdiff --exclude-textcmd="section,subsection" master_submitted.tex master.tex > master_diff.tex
+latexdiff --exclude-textcmd="section,subsection" intro_submitted.tex intro.tex > intro_diff.tex
 bibtex main_diff
 pdflatex main_diff.tex 
 
