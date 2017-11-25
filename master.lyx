@@ -650,6 +650,13 @@ Common types of neural networks
 
 \begin_layout Subsection
 Multilayer perceptron
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Multilayer-perceptron"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -2721,6 +2728,13 @@ We now present the natural gradient.
 
 \begin_layout Subsection
 Fisher Information Matrix
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Fisher-Information-Matrix"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -4921,6 +4935,13 @@ n of the current layer
 
 \begin_layout Section
 Updated backpropagation algorithm
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Updated-backpropagation-algorith"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -7120,6 +7141,13 @@ reference "eq:factored"
 
 \begin_layout Subsection
 KFAC
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:KFAC"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
