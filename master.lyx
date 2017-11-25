@@ -1847,8 +1847,10 @@ reference "sec:Gradient-descent-and"
 In this section, we introduce the well known second order methods known
  as Newton's method and the less popular but very effective natural gradient
  descent.
- We then derive the updates of this methods adapted to neural networks and
- we contribute a unified formulation for both methods.
+ We then derive the updates of these methods adapted to neural networks
+ and we contribute a unified formulation for both methods.
+ We also present a new interpretation of both methods and contribute a more
+ efficient way of computing the Gauss-Newton approximation.
 \end_layout
 
 \begin_layout Section
@@ -3613,10 +3615,10 @@ Expressions for the middle term
 \end_layout
 
 \begin_layout Standard
-This common structure is of great interest as we will show in chapter 
+This common structure is of great interest as we will show in section 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "chap:Factorized-second-order"
+reference "sec:Decomposition-using-the"
 
 \end_inset
 
@@ -5023,6 +5025,43 @@ lambda$ learning rate}
 
 
 \backslash
+Require{$f_{
+\backslash
+theta}$ a neural network parametrized by $
+\backslash
+theta$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+ForAll{$i 
+\backslash
+in 
+\backslash
+mathcal{D}$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{do forward propagation to get $f_{
+\backslash
+theta}^{(i)}=f_{
+\backslash
+theta}
+\backslash
+left(x_i 
+\backslash
+right)$ and intermediate representations $h_l^{(i)}$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
 State{$dh_i 
 \backslash
 leftarrow 
@@ -5031,13 +5070,17 @@ left(
 \backslash
 frac{
 \backslash
-partial l}{
+partial 
 \backslash
-partial f_i} 
+ell}{
+\backslash
+partial f_{
+\backslash
+theta}^{(i)}} 
 \backslash
 right)^T$}
 \backslash
-Comment{Gradient of the loss w.r.t the output of the NN for examples $i$}
+Comment{Gradient of the loss w.r.t the output of the NN for example $i$}
 \end_layout
 
 \begin_layout Plain Layout
@@ -5052,11 +5095,22 @@ sqrt{
 \backslash
 frac{
 \backslash
-partial^{2}l}{
+partial^{2}
 \backslash
-partial f^{2}}}$}
+ell}{
 \backslash
-Comment{Jacobian of the loss of the NN for examples $i$}
+partial f_{
+\backslash
+theta}^{(i)2}}}$}
+\backslash
+Comment{Jacobian of the loss of the NN for example $i$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+EndFor
 \end_layout
 
 \begin_layout Plain Layout
@@ -5066,6 +5120,17 @@ Comment{Jacobian of the loss of the NN for examples $i$}
 ForAll{$l 
 \backslash
 in $ layers from top to bottom}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+ForAll{$i 
+\backslash
+in 
+\backslash
+mathcal{D}$}
 \end_layout
 
 \begin_layout Plain Layout
@@ -5086,7 +5151,7 @@ partial a_l^{(i)}}
 \backslash
 right)^T dh_i$}
 \backslash
-Comment{Derivative of the loss w.r.t the preactivation for examples $i$}
+Comment{Derivative of the loss w.r.t the preactivation for example $i$}
 \end_layout
 
 \begin_layout Plain Layout
@@ -5110,6 +5175,13 @@ frac{
 partial f_l^{(i)}}{
 \backslash
 partial a_l^{(i)}}$ is diagonal}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+EndFor
 \end_layout
 
 \begin_layout Plain Layout
@@ -5150,6 +5222,17 @@ Comment{weights update}
 
 
 \backslash
+ForAll{$i 
+\backslash
+in 
+\backslash
+mathcal{D}$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
 State{$dh_i 
 \backslash
 leftarrow 
@@ -5178,6 +5261,13 @@ Comment{Updated backprop.}
 State{$J_i 
 \backslash
 leftarrow J_i W$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+EndFor
 \end_layout
 
 \begin_layout Plain Layout
@@ -5225,7 +5315,7 @@ end{algorithmic}
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Updated backpropagation
+Updated backpropagation applied to a single training iteration using a minibatch
 \end_layout
 
 \end_inset
