@@ -2,7 +2,7 @@
 
 % Tout commentaire est bienvenu et devrait être adressé à "support@dms.umontreal.ca".
 
-\documentclass[12pt,maitrise,nobabel,anglais,twoside,initial]{template/dms} 
+\documentclass[12pt,maitrise,nobabel,anglais,twoside]{template/dms} 
 % La commande précédente charge la classe "dms.cls" avec les options suivantes : 
 %   -police de caractères en 12 pts 
 %   -format adapté à une thèse de doctorat 
@@ -154,13 +154,13 @@
  
 \chapter*{Sommaire} 	% La commande "\chapter*" crée un chapitre sans numéro, contrairement \`a la commande "\chapter" réguli\`ere.
 
-\noindent Les méthodes d'optimisation de premier ordre (descente de gradient) ont permis d'obtenir des succès impressionnants pour entrainer des réseaux de neurones artificiels. Les méthodes de second ordre permettent en théorie d'accélérer l'optimisation d'une fonction, mais dans le cas des réseaux de neurones le nombre de variables est bien trop important. Dans ce mémoire de maitrise, je présente les méthodes de second ordre habituellement appliquées en optimisation, ainsi que des méthodes approchées qui permettent de les appliquer aux réseaux de neurones profonds.
+\noindent Les méthodes d'optimisation de premier ordre (descente de gradient) ont permis d'obtenir des succès impressionnants pour entrainer des réseaux de neurones artificiels. Les méthodes de second ordre permettent en théorie d'accélérer l'optimisation d'une fonction, mais dans le cas des réseaux de neurones le nombre de variables est bien trop important. Dans ce mémoire de maitrise, je présente les méthodes de second ordre habituellement appliquées en optimisation, ainsi que des méthodes approchées qui permettent de les appliquer aux réseaux de neurones profonds. J'introduis un nouvel algorithme basé sur une approximation des méthodes de second ordre, et je valide empiriquement qu'il présente un intérêt pratique. J'introduis aussi une modification de l'algorithme de rétropropagation du gradient, utilisé pour calculer efficacement les gradients nécessaires aux méthodes d'optimisation.
 
 \textbf{Mots-clés}: Apprentissage automatique, apprentissage profond, optimisation, second ordre, gradient naturel
 
 \chapter*{Summary}
 
-\noindent First order optimization methods (gradient descent) enabled impressive successes for training artificial neural networks. Second order methods theoretically allow accelerating optimization of functions, but in the case of neural networks the number of variables is far too big. In this master's thesis, I present usual second order methods, as well as approximate methods that allow applying them to deep neural networks. 
+\noindent First order optimization methods (gradient descent) have enabled impressive successes for training artificial neural networks. Second order methods theoretically allow accelerating optimization of functions, but in the case of neural networks the number of variables is far too big. In this master's thesis, I present usual second order methods, as well as approximate methods that allow applying them to deep neural networks. I introduce a new algorithm based on an approximation of second order methods, and I experimentally show that it is of practical interest. I also introduce a modification of the backpropagation algorithm, used to efficiently compute the gradients required in optimization.
 
 \textbf{Keywords}: Machine learning, deep learning, optimization, second order, natural gradient
 
